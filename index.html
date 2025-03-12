@@ -1,1 +1,785 @@
-Hola mundo
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSH - Excelencia en Salud</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --dark-color: #2c3e50;
+            --light-color: #ecf0f1;
+        }
+
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .logo-icon {
+            color: var(--secondary-color);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .hero {
+            background: linear-gradient(rgba(46, 204, 113, 0.1), rgba(52, 152, 219, 0.2));
+            padding: 5rem 5%;
+            text-align: center;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #555;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+            margin-left: 1rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: #27ae60;
+        }
+
+        .section {
+            padding: 5rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: "";
+            display: block;
+            width: 50px;
+            height: 3px;
+            background-color: var(--primary-color);
+            margin: 0.5rem auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .service-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-content {
+            padding: 1.5rem;
+        }
+
+        .service-icon {
+            display: inline-block;
+            background-color: rgba(52, 152, 219, 0.1);
+            color: var(--primary-color);
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            line-height: 60px;
+            font-size: 1.5rem;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+        }
+
+        .service-title {
+            margin-bottom: 0.5rem;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .about-image {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .about-text h3 {
+            margin-bottom: 1rem;
+        }
+
+        .contact-info {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .contact-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .contact-icon {
+            color: var(--primary-color);
+        }
+
+        .contact-form {
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 3rem 5%;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .social-icon {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            color: white;
+            transition: background-color 0.3s;
+        }
+
+        .social-icon:hover {
+            background-color: var(--primary-color);
+        }
+
+        .copyright {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1.5rem;
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Estilos para dispositivos móviles */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark-color);
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                background-color: white;
+                width: 100%;
+                flex-direction: column;
+                gap: 0;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s ease-out;
+                z-index: 100;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            }
+
+            .nav-links.active {
+                max-height: 300px;
+            }
+
+            .nav-links a {
+                display: block;
+                padding: 1rem 2rem;
+                border-bottom: 1px solid #eee;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .btn {
+                display: block;
+                margin: 1rem auto;
+                width: 80%;
+                text-align: center;
+            }
+
+            .btn-secondary {
+                margin: 1rem auto;
+            }
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .testimonials {
+            margin-top: 3rem;
+        }
+
+        .testimonial-container {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .testimonial-slide {
+            display: none;
+            padding: 2rem;
+            text-align: center;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .testimonial-slide.active {
+            display: block;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+
+        .testimonial-author {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .testimonial-nav {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .testimonial-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark-color);
+            cursor: pointer;
+            margin: 0 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .testimonial-btn:hover {
+            color: var(--primary-color);
+        }
+
+        /* Loader para el formulario */
+        .loader {
+            display: none;
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .success-message {
+            display: none;
+            background-color: var(--secondary-color);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Encabezado -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <span class="logo-icon">❤️</span> SSH - Excelencia en Salud
+            </div>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+            <div class="nav-links" id="navLinks">
+                <a href="#inicio">Inicio</a>
+                <a href="#servicios">Servicios</a>
+                <a href="#nosotros">Nosotros</a>
+                <a href="#testimonios">Testimonios</a>
+                <a href="#contacto">Contacto</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sección Hero -->
+    <section class="hero" id="inicio">
+        <div class="hero-content animate">
+            <h1>Asesoría Profesional en el Cumplimiento de Requisitos de Habilitación y Capacitación </h1>
+            <p>Te acompañamos con expertos en los procesos de cumplimiento de requisitos de habilitación según la normatividad Vigente. </p> 
+	    <p>Capacitacion continua para la atención segura y de Calidad.</p>
+            <a href="#contacto" class="btn">Solicitar asesoría</a>
+            <a href="#servicios" class="btn btn-secondary">Nuestros servicios</a>
+        </div>
+    </section>
+
+    <!-- Sección de Servicios -->
+    <section class="section" id="servicios">
+        <h2 class="section-title">Nuestros Servicios</h2>
+        <div class="services-grid">
+            <div class="service-card animate">
+                <div class="service-content">
+                    <div class="service-icon">📋</div>
+                    <h3 class="service-title">Acompañamiento en Proceso de Habilitación para IPS y para Profesionales Independientes</h3>
+                    <p>Consultorías individuales con Profesionales para evaluar, gestionar y acompañar el proceso de habilitacion ante los entes reguladores, con el cumplimiento de los requisitos segun la normatividad vigente para Colombia.</p>
+                </div>
+            </div>
+            <div class="service-card animate">
+                <div class="service-content">
+                    <div class="service-icon">📋</div>
+                    <h3 class="service-title">Capacitaciones Permanentes</h3>
+                    <p>Programamos capacitaciones periodicas y personalizadas, en las diferentes areas de la salud, para crear cultura de atencion segura. Adaptamos la capacitacion a los requerimientos propios de la entidad/profesional indemeondiente y sus colaboradores</p>
+                </div>
+            </div>
+            <div class="service-card animate">
+                <div class="service-content">
+                    <div class="service-icon">📋</div>
+                    <h3 class="service-title">Acompañamiento Permanente</h3>
+                    <p>Asesoramiento y acompañamiento Permanente, en las gestiones mensuales en pro del cumplimiento de las condiciones de Habilitacion y Atencion con Calidad.</p>
+                </div>
+            </div>
+            <div class="service-card animate">
+                <div class="service-content">
+                    <div class="service-icon">📋</div>
+                    <h3 class="service-title">Auditorias Programadas</h3>
+                    <p>Organización de Auditorias, recordatorios y seguimiento de consultas con relacion a los requistos de Habilitación.</p>
+                </div>
+            </div>
+            <div class="service-card animate">
+                <div class="service-content">
+                    <div class="service-icon">📋</div>
+                    <h3 class="service-title">Reportes Periodicos Obligatorios</h3>
+                    <p>Acompañamiento en la gestion de los repotes periodicos obligatorios a los entes de control.</p>
+                </div>
+            </div>
+            <div class="service-card animate">
+                <div class="service-content">
+                    <div class="service-icon">📋</div>
+                    <h3 class="service-title">Aplicativos a Medida</h3>
+                    <p>Creacion de Aplicaciones a medida que le ayudan a gestionar el proceso de cumplimientos de habilitacion y seguuimiento de calidad en la prestacion del servicio.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Acerca de Nosotros -->
+    <section class="section" id="nosotros">
+        <h2 class="section-title">Quiénes Somos</h2>
+        <div class="about-content">
+            <div class="about-image animate">
+                <img src="LOGO.PNG" alt="logo" />
+            </div>
+            <div class="about-text animate">
+                <h3>Expertos en asesoría de salud</h3>
+                <p>En SSH -  Excelencia en Salud, contamos con un equipo de profesionales con amplia experiencia en diferentes areas.</p> 
+<p> Nuestra misión es proporcionar orientación clara y personalizada para ayudarte a tomar decisiones informadas sobre los procesos,  y procesos de cumplimiento de requisitos de habilitacion, y registro ante las entidades Reguladores.</p>
+                <p>Trabajamos con una red de Profesionales certificados, lo que nos permite ofrecer asesoramiento preciso y actualizado en diversas áreas .</p>
+                <p>Nuestro compromiso es brindarte un servicio de calidad, con atención personalizada y respuestas rápidas a todas tus consultas .</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Testimonios -->
+    <section class="section" id="testimonios">
+        <h2 class="section-title">Testimonios</h2>
+        <div class="testimonials">
+            <div class="testimonial-container">
+                <div class="testimonial-slide active">
+                    <p class="testimonial-text">"Gracias a la asesoría de SSH - Excelencia en salud, y a su acompañamiento, el proceso de cumplimiento de requisitos, los tramites y gestiones para el registro ante los entes de control, fueron dinamicos y sin inconvneientes, Muchas Gracias."</p>
+                    <p class="testimonial-author">Profesional Independiente</p>
+                </div>
+                <div class="testimonial-slide">
+                    <p class="testimonial-text">"Recomendamos ampliamente a SSH Excelencia en salud por su impecable servicio en asesorías para habilitación! Todo su equipo es profesional, atento y siempre está dispuesto a resolver dudas con claridad y a la mayor brevedad. La comunicación siempre fue directa y oportuna, Gracias a su apoyo, el proceso de nuestra habilitación  fue rápido y sin contratiempos. ¡Una gran opción para quienes buscan orientación en habilitación y demás !."</p>
+                    <p class="testimonial-author">RADIANTEZ IPS</p>
+                </div>
+                <div class="testimonial-slide">
+                    <p class="testimonial-text">"El servicio de asesoría para elegir un seguro médico fue excepcional. Me ayudaron a entender las coberturas y a seleccionar el plan que mejor se adapta a las necesidades de mi familia."</p>
+                    <p class="testimonial-author">Ana Martínez</p>
+                </div>
+            </div>
+            <div class="testimonial-nav">
+                <button class="testimonial-btn prev-btn">❮</button>
+                <button class="testimonial-btn next-btn">❯</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Contacto -->
+    <section class="section" id="contacto">
+        <h2 class="section-title">Contáctanos</h2>
+        <div class="contact-info animate">
+            <h3>Información de contacto</h3>
+            <div class="contact-details">
+                <div class="contact-item">
+                    <span class="contact-icon">📞</span>
+                    <span>+57 315 000 0000</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">✉️</span>
+                    <span>sshexcelenciaensalud@gmail.com</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">📍</span>
+                    <span>San Juan de Pato, Nariño</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">🕒</span>
+                    <span>Lun-Vie: 9AM-6PM</span>
+                </div>
+            </div>
+        </div>
+        <div class="contact-form animate">
+            <h3>Envíanos un mensaje</h3>
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="name">Nombre completo</label>
+                    <input type="text" id="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Correo electrónico</label>
+                    <input type="email" id="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Teléfono</label>
+                    <input type="tel" id="phone" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="service">Servicio que te interesa</label>
+                    <select id="service" class="form-control">
+                        <option value="">Seleccionar servicio</option>
+                        <option value="asesoria">Acompañamiento en Proceso de Habilitación para IPS y para Profesionales Independientes</option>
+                        <option value="segunda-opinion">Capacitaciones Permanentes</option>
+                        <option value="seguros">Acompañamiento Permanente</option>
+                        <option value="citas">Auditorias Programadas</option>
+                        <option value="telemedicina">Reportes Periodicos Obligatorios</option>
+                        <option value="prevencion">Aplicativos a Medida</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="message">Mensaje</label>
+                    <textarea id="message" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="btn">Enviar mensaje</button>
+                <div class="loader" id="loader"></div>
+                <div class="success-message" id="successMessage">
+                    ¡Mensaje enviado con éxito! Nos pondremos en contacto contigo pronto.
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Pie de página -->
+    <footer>
+        <div class="footer-content">
+            <div class="logo">
+                <span class="logo-icon">❤️</span> SSH - Excelencia en Salud
+            </div>
+            <div class="social-links">
+                <a href="#" class="social-icon">f</a>
+                <a href="#" class="social-icon">t</a>
+                <a href="#" class="social-icon">in</a>
+                <a href="#" class="social-icon">ig</a>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 - SSH Excelencia en Salud. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Menú móvil
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('menuToggle');
+            const navLinks = document.getElementById('navLinks');
+            
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function() {
+                    navLinks.classList.toggle('active');
+                });
+            }
+            
+            // Cerrar menú al hacer clic en un enlace
+            const navItems = document.querySelectorAll('.nav-links a');
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    navLinks.classList.remove('active');
+                });
+            });
+            
+            // Testimonios
+            let currentSlide = 0;
+            const slides = document.querySelectorAll('.testimonial-slide');
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+            
+            function showSlide(index) {
+                slides.forEach(slide => slide.classList.remove('active'));
+                
+                if (index >= slides.length) {
+                    currentSlide = 0;
+                } else if (index < 0) {
+                    currentSlide = slides.length - 1;
+                } else {
+                    currentSlide = index;
+                }
+                
+                slides[currentSlide].classList.add('active');
+            }
+            
+            if (prevBtn && nextBtn) {
+                prevBtn.addEventListener('click', () => showSlide(currentSlide - 1));
+                nextBtn.addEventListener('click', () => showSlide(currentSlide + 1));
+                
+                // Cambiar testimonios automáticamente cada 10 segundos
+                setInterval(() => {
+                    showSlide(currentSlide + 1);
+                }, 10000);
+            }
+            
+            // Formulario de contacto
+            const contactForm = document.getElementById('contactForm');
+            const loader = document.getElementById('loader');
+            const successMessage = document.getElementById('successMessage');
+            
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    // Mostrar loader
+                    loader.style.display = 'block';
+                    
+                    // Simular envío de formulario
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+                        successMessage.style.display = 'block';
+                        contactForm.reset();
+                        
+                        // Ocultar mensaje de éxito después de 5 segundos
+                        setTimeout(() => {
+                            successMessage.style.display = 'none';
+                        }, 5000);
+                    }, 1500);
+                });
+            }
+            
+            // Animación al hacer scroll
+            const animatedElements = document.querySelectorAll('.animate');
+            
+            function checkScroll() {
+                const triggerBottom = window.innerHeight * 0.8;
+                
+                animatedElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+                    
+                    if (elementTop < triggerBottom) {
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    }
+                });
+            }
+            
+            // Inicialmente establecer elementos como invisibles
+            animatedElements.forEach(element => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                element.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            });
+            
+            // Comprobar en carga inicial
+            checkScroll();
+            
+            // Comprobar al hacer scroll
+            window.addEventListener('scroll', checkScroll);
+            
+            // Smooth scroll para enlaces internos
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 70,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
