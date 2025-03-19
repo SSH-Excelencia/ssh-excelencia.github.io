@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SSH - Excelencia en Salud</title>
+    <link rel="icon" type="image/png" href="logo1.png" >
     <style>
         * {
             margin: 0;
@@ -547,7 +548,8 @@
         <h2 class="section-title">Quiénes Somos</h2>
         <div class="about-content">
             <div class="about-image animate">
-            <img src="logo3.png" alt="Logo Empresa" />
+              <!-- <img src="D:\Fernando T\Documentos\SSH-LF\LOGO SSH.PNG" alt="Equipo médico" /> -->
+ <img src="LOGO3.PNG" alt="Logo Empresa" />
                         
 </div>
             <div class="about-text animate">
@@ -641,7 +643,10 @@
                     <textarea id="message" class="form-control" required></textarea>
                 </div>
                 <button type="submit" class="btn">Enviar mensaje</button>
-                <div class="loader" id="loader"></div>
+
+		
+                
+		<div class="loader" id="loader"></div>
                 <div class="success-message" id="successMessage">
                     ¡Mensaje enviado con éxito! Nos pondremos en contacto contigo pronto.
                 </div>
@@ -734,7 +739,9 @@
                     // Simular envío de formulario
                     setTimeout(() => {
                         loader.style.display = 'none';
-                        successMessage.style.display = 'block';
+                       
+			
+			successMessage.style.display = 'block';
                         contactForm.reset();
                         
                         // Ocultar mensaje de éxito después de 5 segundos
