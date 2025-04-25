@@ -668,6 +668,22 @@
                 <a href="#" class="social-icon">in</a>
                 <a href="#" class="social-icon">ig</a>
             </div>
+	<div>
+		<h1>Bienvenido a mi página web</h1>
+  <p>Esta página ha sido visitada <span id="contador">...</span> veces.</p>
+
+  <script>
+    fetch('contador.php')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('contador').textContent = data;
+      })
+      .catch(error => console.error('Error al obtener el contador:', error));
+  </script>
+	</div>
+
+
+		
             <div class="copyright">
                 <p>&copy; 2025 - SSH Excelencia en Salud. Todos los derechos reservados.</p>
             </div>
