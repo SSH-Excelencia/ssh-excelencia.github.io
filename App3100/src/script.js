@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
   bloque2.style.pointerEvents = "none"; // no interactúa
   selectTablas.disabled = true;
   btnExportWord.disabled = true;
-  btnExportPdf.disabled = true;
+  //btnExportPdf.disabled = true;
 
   cargarTextoEjemplo("/mensaje-ejemplo.txt");
 
