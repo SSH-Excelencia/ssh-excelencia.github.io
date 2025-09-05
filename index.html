@@ -459,6 +459,62 @@
             margin-top: 1rem;
         }
 
+
+/* ==== SUBMENÚ ==== */
+.dropdown {
+  position: relative;
+}
+
+.dropdown > a {
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  min-width: 180px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  border-radius: 6px;
+  z-index: 200;
+}
+
+.dropdown-menu li {
+  list-style: none;
+}
+
+.dropdown-menu li a {
+  display: block;
+  padding: 10px 15px;
+  color: var(--dark-color);
+  text-decoration: none;
+  transition: background 0.3s;
+}
+
+.dropdown-menu li a:hover {
+  background: var(--light-color);
+}
+
+/* Mostrar submenú en hover en escritorio */
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+/* Versión móvil: submenú desplegable dentro del panel */
+@media (max-width: 768px) {
+  .dropdown-menu {
+    position: static;
+    box-shadow: none;
+    border-radius: 0;
+    background: white;
+  }
+}
+
+
+
+
     </style>
 </head>
 <body>
@@ -469,13 +525,30 @@
                 <span class="logo-icon"> <img src="logo3.png" height="50"> </span> SSH - Excelencia en Salud
             </div>
             <button class="menu-toggle" id="menuToggle">☰</button>
-            <div class="nav-links" id="navLinks">
+           
+	    <div class="nav-links" id="navLinks">
                 <a href="#inicio">Inicio</a>
                 <a href="#servicios">Servicios</a>
                 <a href="#nosotros">Nosotros</a>
                 <a href="#testimonios">Testimonios</a>
-				<a href="#contacto">Contacto</a>
+                <a href="#contacto">Contacto</a>
 		<a href="#Eventos">Eventos</a>
+
+<!-- Nuevo menú con submenús -->
+  <div class="dropdown">
+    <a href="#">Herramientas ▾</a>
+    <ul class="dropdown-menu">
+      <li><a href="pagina1.html">Resolucion 3100</a></li>
+      <li><a href="pagina2.html">Auditoria Historia Clinica</a></li>
+      <li><a href="pagina3.html">Historia Clinica Digital</a></li>
+    </ul>
+  </div>
+</div>
+
+
+
+
+
             </div>
         </nav>
     </header>
@@ -601,7 +674,7 @@
             <div class="contact-details">
                 <div class="contact-item">
                     <span class="contact-icon">📞</span>
-                    <a href="https://wa.me/573181602212?text=Hola,%20quiero%20saber%20mas%20sobre%20sus%20servicios" target="_blank" <span>+57 318 160 2212</span> </a>
+                    <a href="https://wa.me/573181602212?text=Hola,%20quiero%20saber%20mas%20sobre%20sus%20servicios" target="_blank" <span>318 160 2212</span> </a>
                 </div>
                 <div class="contact-item">
                     <span class="contact-icon">✉️</span>
@@ -675,7 +748,7 @@
                 <a href="#" class="social-icon">ig</a>
         </div>
   <p>Visitante No <span id="contador">...</span> </p>
-<!--
+
   <script>
     fetch('contador.php')
       .then(response => response.text())
@@ -684,7 +757,7 @@
       })
       .catch(error => console.error('Error al obtener el contador:', error));
   </script>
--->		    
+		    
 	    
 	
 			
@@ -822,4 +895,3 @@
     </script>
 </body>
 </html>
-
