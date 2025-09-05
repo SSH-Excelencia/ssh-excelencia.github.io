@@ -7,5 +7,6 @@
   <li>Completa los criterios usando las listas y observaciones.</li>
   <li>Puedes exportar los resultados a Word o PDF.</li>
 </ul>
-<img src="/image/logo1.png" alt="Logo de la empresa" style="display:block; margin: 20px auto; width: 150px;">
+<img src="Image/logo1.png" alt="Logo de la empresa" style="display:block; margin: 20px auto; width: 150px;">
+
 <p style="text-align:center; font-style: italic; color: #7f8c8d;">
