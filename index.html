@@ -239,20 +239,7 @@
                 <a href="#" class="social-icon">in</a>
                 <a href="#" class="social-icon">ig</a>
         </div>
-  <p>Visitante No <span id="contador">...</span> </p>
-
-  <script>
-    fetch('contador.php')
-      .then(response => response.text())
-      .then(data => {
-        document.getElementById('contador').textContent = data;
-      })
-      .catch(error => console.error('Error al obtener el contador:', error));
-  </script>
-		    
-	    
-	
-			
+  		
             <div class="copyright">
                 <p>&copy; 2025 - SSH Excelencia en Salud. Todos los derechos reservados.</p>
             </div>
@@ -304,10 +291,10 @@
                 prevBtn.addEventListener('click', () => showSlide(currentSlide - 1));
                 nextBtn.addEventListener('click', () => showSlide(currentSlide + 1));
                 
-                // Cambiar testimonios automáticamente cada 10 segundos
+                // Cambiar testimonios automáticamente cada 15 segundos
                 setInterval(() => {
                     showSlide(currentSlide + 1);
-                }, 10000);
+                }, 15000);
             }
             
             // Formulario de contacto
