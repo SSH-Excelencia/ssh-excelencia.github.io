@@ -494,15 +494,54 @@
   display: block;
 }
 
-/* Versión móvil: submenú desplegable dentro del panel */
+/* Versión móvil: menú principal y submenú desplegable dentro del panel */
 @media (max-width: 768px) {
+  .nav-links {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    background-color: white;
+    width: 100%;
+    flex-direction: column;
+    gap: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    z-index: 100;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Cuando está activo: ocupa casi toda la pantalla y permite scroll */
+  .nav-links.active {
+    max-height: 90vh;     /* hasta el 90% de la pantalla */
+    overflow-y: auto;     /* scroll interno si se pasa del alto */
+  }
+
+  .nav-links a,
+  .dropdown > a {
+    display: block;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid #eee;
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Submenú en móvil */
   .dropdown-menu {
-    position: static;
+    position: static;     /* se integra al flujo normal */
     box-shadow: none;
     border-radius: 0;
     background: white;
+    width: 100%;
+  }
+
+  .dropdown-menu li a {
+    padding: 0.8rem 2rem;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.95rem;
   }
 }
+
 
 .marquesina {
   overflow: hidden;
@@ -540,3 +579,4 @@
   from { transform: translateX(-50%); }
   to   { transform: translateX(0); }
 }
+
