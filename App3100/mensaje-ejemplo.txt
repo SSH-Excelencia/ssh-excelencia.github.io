@@ -1,13 +1,19 @@
-<h2 style="color: #2c3e50;">Bienvenido a nuestra herramienta de evaluación</h2>
-<p style="font-size: 16px; color: #34495e;">
-  Aquí puedes agregar instrucciones, información comercial o cualquier mensaje de bienvenida.
+
+<!-- <div class="marquesina">
+//  <p>Bienvenido a nuestra herramienta de evaluación</p>
+</div> -->
+<div class="marquesina">
+  <span>Bienvenido a nuestra herramienta de evaluación</span>
+</div>
+
+<p>
 </p>
 <ul style="text-align: left; max-width: 600px; margin: 0 auto; color: #34495e;">
   <li>Explora las tablas disponibles en el menú desplegable.</li>
   <li>Completa los criterios usando las listas y observaciones.</li>
-  <li>Puedes exportar los resultados a Word o PDF.</li>
+  <li>Puedes exportar los resultados a Word.</li>
 </ul>
-<img src="assets/logo1-C5bSBTpI.png" alt="Logo de la empresa" style="display:block; margin: 20px auto; width: 150px;">
-
+<p>
+</p>
+<img src="Image/logo1.png" alt="Logo de la empresa" style="display:block; margin: 0 auto; width: 150px;">
 <p style="text-align:center; font-style: italic; color: #7f8c8d;">
-
