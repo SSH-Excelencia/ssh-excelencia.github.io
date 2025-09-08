@@ -15,6 +15,7 @@
 </ul>
 <p>
 </p>
-<img src="assets/logo1.png" alt="Logo de la empresa" style="display:block; margin: 0 auto; width: 150px;">
+<img src="assets/logo1-C5bSBTpI.png" alt="Logo de la empresa" style="display:block; margin: 0 auto; width: 150px;">
 
 <p style="text-align:center; font-style: italic; color: #7f8c8d;">
+
