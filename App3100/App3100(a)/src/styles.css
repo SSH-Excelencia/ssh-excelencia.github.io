@@ -1,0 +1,23 @@
+.campo.acciones .fila {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-danger {
+  background-color: #e63946;
+  color: white;
+  border: none;
+}
+
+.btn-danger:hover {
+  background-color: #d62828;
+}
+
