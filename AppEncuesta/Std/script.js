@@ -119,10 +119,3 @@ async function consolidarArchivos() {
   }
 }
 document.addEventListener("DOMContentLoaded", cargarNombreEmpresa);
-
-window.onload = function () {
-    // fuerza recarga sin usar caché
-    window.location.reload(true);
-  };
-
-
