@@ -109,8 +109,8 @@ async function consolidarArchivos() {
 
  async function cargarNombreEmpresa() {
   try {
-    //const respuesta = await fetch("empresa.txt");   // lee el txt
-    const respuesta = await fetch("empresa.txt?nocache=" + new Date().getTime());
+    const respuesta = await fetch("empresa.txt");   // lee el txt
+    //const respuesta = await fetch("empresa.txt?nocache=" + new Date().getTime());
     const texto = await respuesta.text();           // convierte en string
     document.getElementById("empresa").textContent = texto.trim(); // asigna
   } catch (error) {
@@ -124,4 +124,5 @@ window.onload = function () {
     // fuerza recarga sin usar caché
     window.location.reload(true);
   };
+
 
