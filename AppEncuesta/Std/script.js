@@ -41,7 +41,9 @@ function mostrarGracias() {
   }, 5000); // 5 segundos
 }
 
-function guardarCSVHorizontal() {
+
+
+async function guardarCSVHorizontal() {
   const { p1, p2, p3 } = respuestas;
   const p4 = document.getElementById("respuesta4").value.trim();
 
@@ -57,17 +59,32 @@ function guardarCSVHorizontal() {
 
   const fila = [fechaTexto, p1, p2, p3, p4].join(",") + "\n";
   const blob = new Blob([fila], { type: "text/csv;charset=utf-8;" });
-
   const nombreArchivo = `${mes}_respuestas.csv`;
 
+  // Descargar copia local
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = nombreArchivo;
   link.click();
 
+  // ---- Enviar a Google Sheets ----
+  try {
+    const url = "https://script.google.com/macros/s/AKfycbz-IPzkEpvO8XpNkejpsRUjLToNMFlTZawAbeN0G1udb6YOGoQxTutVGCnDxEZwubJx/exec"; // tu URL
+    await fetch(url, {
+      method: "POST",
+      body: JSON.stringify({ p1, p2, p3, p4 }),
+      headers: { "Content-Type": "application/json" }
+    });
+    console.log("Guardado en Sheets ✅");
+  } catch (err) {
+    console.error("Error guardando en Sheets:", err);
+  }
+
   limpiarRespuestas();
   mostrarGracias();
 }
+
+
 
 async function consolidarArchivos() {
   try {
