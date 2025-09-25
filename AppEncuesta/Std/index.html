@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Encuesta</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script defer src="script.js">
+  </script>
+  
+</head>
+<body>
+
+<header>
+  <div class="logo-contenedor">
+    <img src="Image/logo1.png" alt="Logo">
+  </div>
+  <span class="titulo-header" id="empresa"></span>
+  <div class="menu">
+    <button onclick="toggleMenu()">☰</button>
+    <div class="menu-content" id="menu">
+      <a onclick="mostrarEncuesta()">Encuesta</a>
+      <a onclick="consolidarArchivos()">Consolidado</a>
+      <a onclick="mostrarInfo()">Información de la App</a>
+    </div>
+  </div>
+</header>
+
+<!-- Preguntas en 2x2 -->
+<div class="grid" id="encuesta">
+  <div class="pregunta">
+    <h3>¿Cómo calificaría su experiencia global respecto a los servicios de salud que ha recibido a través de su IPS?</h3>
+    <div class="opciones">
+      <button onclick="seleccionar(this, 'p1', 1)">Muy Buena</button>
+      <button onclick="seleccionar(this, 'p1', 2)">Buena</button>
+      <button onclick="seleccionar(this, 'p1', 3)">Regular</button>
+      <button onclick="seleccionar(this, 'p1', 4)">Mala</button>
+      <button onclick="seleccionar(this, 'p1', 5)">Muy Mala</button>
+    </div>
+  </div>
+  <div class="pregunta">
+    <h3>¿Recomendaría a sus familiares y amigos esta IPS?</h3>
+    <div class="opciones">
+      <button onclick="seleccionar(this, 'p2', 1)">Definitivamente si</button>
+      <button onclick="seleccionar(this, 'p2', 2)">Probablemente si</button>
+      <button onclick="seleccionar(this, 'p2', 3)">Definitivamente no</button>
+      <button onclick="seleccionar(this, 'p2', 4)">Probablemente no</button>
+    </div>
+  </div>
+  <div class="pregunta">
+    <h3>Adquirio Productos en la IPS</h3>
+    <div class="opciones">
+      <button onclick="seleccionar(this, 'p3', 'Si')">Sí</button>
+      <button onclick="seleccionar(this, 'p3', 'No')">No</button>
+      <button onclick="seleccionar(this, 'p3', 'No')">Aun no</button>
+    </div>
+  </div>
+  <div class="pregunta">
+    <h3>Dejenos su Opinión</h3>
+    <div class="opciones">
+      <input type="text" id="respuesta4" placeholder="Escribe tu respuesta (opcional)">
+    </div>
+  </div>
+</div>
+
+<button id="enviar" onclick="guardarCSVHorizontal()">ENVIAR RESPUESTAS</button>
+
+<!-- Modal Información -->
+<div id="infoModal">
+  <div class="contenido">
+    <h2>Información de la App</h2>
+    <p>Aplicación de encuesta desarrollada en HTML, CSS y JS.</p>
+    <button onclick="cerrarInfo()">Cerrar</button>
+  </div>
+</div>
+
+<!-- Overlay de agradecimiento -->
+<div id="graciasOverlay">
+  <div>¡Gracias por su tiempo!</div>
+</div>
+
+</body>
+</html>
