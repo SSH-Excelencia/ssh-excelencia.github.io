@@ -197,6 +197,19 @@ header img {
 
 .logo-contenedor img {
   height: 40px;
+}.logo-contenedor {
+  display: inline-block;
+  background-color: white;   /* Fondo blanco */
+  border-radius: 50%;        /* Contorno curvo */
+  padding: 8px;              /* Espacio alrededor del logo */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2); /* Sombra suave */
+}
+
+.logo-contenedor img {
+  display: block;
+  max-height: 50px;   /* Ajusta el tamaño máximo del logo */
+  height: auto;
+  width: auto;
 }
 
 .titulo-header {
