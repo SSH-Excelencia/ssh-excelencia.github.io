@@ -1,6 +1,6 @@
 <?php
 // Ruta donde guardar
-$carpeta = __DIR__ . "/data/";
+$carpeta = __DIR__ . "data/";
 
 if (!file_exists($carpeta)) {
     mkdir($carpeta, 0777, true);
@@ -22,3 +22,4 @@ if ($data && isset($data["nombre"]) && isset($data["contenido"])) {
     echo "Datos inválidos";
 }
 ?>
+
