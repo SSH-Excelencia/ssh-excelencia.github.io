@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (!hojaSeleccionada) {
           // Mostrar mensaje de ejemplo si se selecciona "Seleccione..."
-          cargarTextoEjemplo("mensaje-ejemplo.txt");
+          cargarTextoEjemplo("public/mensaje-ejemplo.txt");
           return;
         }
 
