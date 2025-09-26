@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Consolidar Archivos</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+  <h2>Consolidar Archivos Excel/CSV</h2>
+  
+  <input type="file" id="inputFiles" multiple />
+  <button onclick="consolidar()">Consolidar</button>
+
+  <script>
+    function consolidar() {
+      const input = document.getElementById("inputFiles");
+      const files = input.files;
+      if (!files.length) {
+        alert("Selecciona al menos un archivo");
+        return;
+      }
+
+      const wb = XLSX.utils.book_new();
+      const hojaFinal = [];
+      let procesados = 0;
+
+      Array.from(files).forEach((file, idx) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: "array" });
+          const sheet = workbook.Sheets[workbook.SheetNames[0]];
+          const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+          // Incluir encabezados solo del primer archivo
+          if (idx === 0) {
+            rows.forEach(r => hojaFinal.push(r));
+          } else {
+            rows.slice(1).forEach(r => hojaFinal.push(r));
+          }
+
+          procesados++;
+          if (procesados === files.length) {
+            // Todos los archivos listos → crear consolidado
+            const ws = XLSX.utils.aoa_to_sheet(hojaFinal);
+            XLSX.utils.book_append_sheet(wb, ws, "Consolidado");
+
+            // Nombre del archivo: Consolidado_dd-mm-aaaa.xlsx
+            const fecha = new Date();
+            const fechaStr = fecha.toLocaleDateString("es-CO").replace(/\//g, "-");
+            XLSX.writeFile(wb, `Consolidado_${fechaStr}.xlsx`);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      });
+    }
+  </script>
+</body>
+</html>
+
