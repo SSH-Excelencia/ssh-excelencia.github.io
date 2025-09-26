@@ -69,7 +69,7 @@ async function guardarCSVHorizontal() {
 
   // ---- Enviar a Google Sheets ----
   try {
-    const url = "https://script.google.com/macros/s/AKfycbz-IPzkEpvO8XpNkejpsRUjLToNMFlTZawAbeN0G1udb6YOGoQxTutVGCnDxEZwubJx/exec"; // tu URL
+    const url = "https://script.google.com/macros/s/AKfycby-YYsoRapQQFWxEViaVKfp7jwXT-JMZEXK4CUOzo_A8-49HZ4vWN8_QiA0MFau7ftyww/exec"; // tu URL
     await fetch(url, {
       method: "POST",
       body: JSON.stringify({ p1, p2, p3, p4 }),
@@ -136,5 +136,4 @@ async function consolidarArchivos() {
   }
 }
 document.addEventListener("DOMContentLoaded", cargarNombreEmpresa);
-
 
