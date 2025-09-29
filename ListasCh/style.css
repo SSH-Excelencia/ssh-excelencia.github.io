@@ -1,0 +1,391 @@
+/* ===== estilos generales =====  */
+
+:root {
+    --color-primario: #0b5cff;
+    --color-secundario: #000000;
+    --color-fondo: #f7f9fc;
+    --color-card: #ffffff;
+    --color-borde: #e5e7eb;
+    --radio: 12px;
+    --padding: 12px;
+    --font-size: 14px;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  padding:3px;
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column; /* Apila header, bloque2 y bloque3 */
+  overflow: hidden; /* 🚫 elimina scroll global */
+}
+body{
+  font-family: system-ui, Arial, sans-serif;
+  background: var(--color-fondo);
+  color:#111827;
+  font-size: var(--font-size);
+}
+
+
+/* ===== Header ===== */
+
+header{
+  background: var(--color-primario);
+  color:white;
+  align-items: center;
+  padding: 12px 16px;
+  height: 70px;          /* ajusta a tu header real */
+  display: flex;
+  flex-shrink: 0;         /* no se achica */
+  border-bottom: 1px solid rgba(255,255,255,.2);
+}
+
+header h1{margin:0;font-size: clamp(18px,3vw,24px)}
+header small{opacity:.9}
+
+.sticky{
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+#panel-inicial.sticky{ top: 72px; } /* debajo del header */
+#form-inicial.sticky{ top: 36px; }  /* aparecer sobre panel si no se oculta */
+
+
+header.sticky {
+  display: flex;               /* convierte header en flex */
+  align-items: center;         /* centra verticalmente h1 y botones */
+  justify-content: space-between; /* h1 a la izquierda, botones a la derecha */
+  gap: 20px;                   /* espacio entre elementos */
+  padding: 12px 20px;          /* opcional: relleno del header */
+  flex-wrap: nowrap;            /* todo en la misma línea */
+}
+
+header.sticky h1 {
+  margin: 0;                  /* eliminar margen por defecto */
+}
+
+.acciones-header {
+  display: flex;
+  gap: 10px;                  /* separación entre botones */
+}
+/* Imagen dentro del header */
+.header-logo {
+  height: 50px;      /* ajusta según tu diseño */
+  width: auto;       /* mantiene proporción */
+}
+
+
+
+
+.bloque{
+  margin: 16px;
+  padding: var(--padding);
+  background: var(--color-card);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  box-shadow: 0 1px 2px rgba(0,0,0,.04);
+}
+
+#panel-inicial{
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+  gap: 12px;
+  align-items: start;
+}
+
+.campo{
+  background: #fff;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: var(--padding);
+}
+.campo h3{margin:0 0 8px 0;font-size: 16px}
+
+.lista-metrica{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+.lista-metrica li{display:flex;justify-content:space-between;border:1px dashed var(--color-borde);border-radius:8px;padding:6px 8px;background:#fafafa}
+
+/* ===== Configuracion Botones =====  */
+.btn{
+  color:white;
+  border:none;
+  border-radius:10px;
+  padding:5px 18px;
+  cursor:pointer;
+}
+.btn.primario{
+  background: var(--color-primario)
+}
+.btn.secundario{
+  background: var(--color-secundario)
+}
+.btn:hover{
+  opacity:.75
+}
+.btn.danger {
+  background-color: #e63946;
+  color: white;
+  border: none; 
+}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:12px}
+.grid2 input,.grid3 input, select, textarea{
+  width:100%;
+  border:1px solid var(--color-borde);
+  border-radius:10px;
+  padding:8px;
+  background:white;
+}
+
+.acciones .fila{display:flex;gap:8px;flex-wrap:wrap}
+.nota-archivo{font-size:12px;color:#6b7280;margin-top:6px}
+
+/* Tabla Excel editable */
+#tabla-excel table{width:100%;border-collapse:collapse;table-layout:fixed}
+#tabla-excel th,#tabla-excel td{border:1px solid var(--color-borde);padding:8px;vertical-align:middle;word-wrap:break-word}
+#tabla-excel th{background:#f3f4f6}
+.col-criterio{width:45%}
+.col-respuesta{width:15%; text-align:center}
+.col-observacion{width:40%}
+.titulo-fila{background:#eef2ff;font-weight:600}
+textarea{min-height:60px;resize:vertical}
+
+/* Responsive */
+@media (max-width: 960px){
+  #panel-inicial{grid-template-columns:1fr 1fr}
+}
+@media (max-width: 640px){
+  #panel-inicial{grid-template-columns:1fr}
+  .grid2{grid-template-columns:1fr}
+  .grid3{grid-template-columns:1fr}
+}
+.tabla-excel {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.tabla-excel th, .tabla-excel td {
+  border: 1px solid #ccc;
+  padding: 6px 8px;
+  text-align: left;
+}
+
+/* Congelar primera fila */
+.tabla-excel thead th {
+  position: sticky;
+  top: 0;
+  background-color: #f3f3f3;
+  z-index: 2;
+}
+
+    /* ===== Barra de progreso ===== */
+.progreso-contenedor {
+  width: 100%;
+  height: 20px;
+  background-color: #e5e7eb;  /* gris claro */
+  border-radius: 10px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+#barra-progreso {
+  height: 100%;
+  width: 0%; /* empieza vacía */
+  background-color: var(--color-primario);
+  border-radius: 10px;
+  transition: width 0.4s ease; /* animación suave */
+  display: flex;              /* Para alinear el texto */
+  align-items: center;        /* Centrado vertical */
+  justify-content: center;    /* Centrado horizontal */
+  color: #fff;                /* Texto blanco */
+  font-weight: bold;
+}
+ 
+/* ===== Bloque 1 ===== */
+.contacto-boton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 0px; /* ajusta este valor según lo necesites */
+
+}
+/* ===== Bloque 2: Panel inicial ===== */
+ #panel-inicial {
+  display: flex;
+  gap: 16px;
+  flex-wrap: nowrap; /* evitar que se rompan las columnas */
+  background: #fff;   /* 👈 fondo para que no se mezcle al hacer scroll */
+  padding: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* opcional */
+  flex-shrink: 0;         /* ocupa solo su alto natural */
+  height: 250px;
+}
+
+  /* Campos por defecto */
+  #panel-inicial .campo {
+    flex: 1; /* ancho por defecto */
+    box-sizing: border-box;
+  }
+
+  /* Campo 1: Menú + Resumen */
+  #panel-inicial .campo.menu-resumen {
+    flex: 0 0 29%; /* ancho fijo 30% */
+  }
+
+    /* Campo 4: Acciones */
+  #panel-inicial .campo.acciones-horizontal {
+    flex: 0 0 14%; /* ancho fijo 15% */
+    display: flex;
+    flex-direction: column; /* vertical */
+    justify-content: flex-start;
+    width: 100%;
+  height: 100%;
+  }
+
+  /* Botones verticales alineados a la izquierda */
+  #panel-inicial .campo.acciones-horizontal .fila {
+    display: flex;
+    flex-direction: column; /* vertical */
+    align-items: flex-start; /* izquierda */
+    gap: 10px;
+  }
+
+  /* Ajuste adicional para la fila de acciones (si hay otros estilos) */
+  .campo.acciones .fila {
+    margin-top: 10px;
+  }
+
+  /* ===== Bloque 3: Tabla Excel ===== */
+#tabla-excel {
+  flex: 1;                /* ocupa todo el espacio sobrante */
+  overflow-y: auto;        /* scroll solo aquí */
+  padding: 8px;
+  margin: 0;              /* 👈 elimina margen superior/inferior */
+  background: #fafafa;
+  vertical-align: middle;
+  margin-top: 0;     /* sin margen arriba */
+  padding-top: 0;    /* sin padding arriba */
+}
+
+/* Bloque 1: reducir margen/padding interno */
+#form-inicial {
+  margin-top: 5px;      /* menos espacio desde arriba */
+  padding-top: 5px;     /* menos espacio interno */
+}
+
+/* Título del bloque */
+#form-inicial h2 {
+  margin-top: 0;       /* elimina margen superior del h2 */
+  margin-bottom: 8px;  /* opcional, separa un poco del contenido */
+}
+/* Labels dentro del bloque */
+#form-inicial label {
+  display: block;
+  margin-bottom: 0px;   /* espacio entre campos */
+}
+
+/* Campo 3: Gráficas */
+#panel-inicial .campo.graficos {
+  flex: 0 0 55%;        /* ancho fijo 55% */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%; 
+
+}
+
+canvas {
+  width: 75% !important;   /* ocupa todo el ancho disponible */
+  height: 75% !important;  /* mantiene proporción */
+  margin-bottom: 20px;
+
+}
+
+.contenedor-graficas {
+  display: flex;
+  justify-content: space-between; 
+  gap: 20px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.grafica {
+  flex: 1;           
+  max-width: 50%;    /* 50% para cada una */
+  max-height: 300px;   /* 👈 límite de alto */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+.contenedor-circular {
+  width: 60px;        /* ancho */
+  height: 100%; /*60px;       /* alto */
+  border-radius: 50%;  /* hace el círculo */
+  /*overflow: hidden;    /* recorta la imagen */
+  object-fit: contain;
+  box-shadow: 0 20px 15px rgba(0,0,0,0.3); /* sombra */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #faf6cd;    /* opcional, fondo blanco */
+}
+
+.contenedor-circular img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;  /* mantiene proporción y recorta */
+}
+
+.marquesina {
+  width: 70%;
+  margin: 0 auto; /* esto lo centra en el contenedor principal*/
+  overflow: hidden;
+  background: #ebeaea;
+  padding: 2px;
+  border-radius: 15px; /* opcional, esquinas redondeadas */
+  text-align: center;
+  
+}
+
+.marquesina p {
+  display: inline-block;
+  white-space: nowrap;
+  animation: deslizar 15s linear infinite;
+  color: #2c3e50;
+  font-size: 36px;
+  font-weight: bold;
+  margin: 0 auto;
+}
+
+@keyframes deslizar {
+  0%   { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.marquesina span {
+  display: inline-block;
+  white-space: nowrap;
+  color: #2c3e50;
+  font-size: 36px;
+  font-weight: bold;
+  margin: 0;
+  line-height: 1.2;
+
+  /* animación rebote */
+  animation: rebotar 5s ease-in-out infinite alternate;
+}
+
+@keyframes rebotar {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(10%); }
+}
+
+
