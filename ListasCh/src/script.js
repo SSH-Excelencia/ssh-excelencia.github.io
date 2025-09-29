@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // --- Mostrar opción inicial y cargar mensaje desde txt ---
     selectTablas.innerHTML = '<option value="" selected>Seleccione...</option>';
-    //cargarTextoEjemplo("mensaje-ejemplo.txt");
+    //cargarTextoEjemplo("public/mensaje-ejemplo.txt");
   });
 
   // --- BOTÓN REINICIAR ---
