@@ -93,8 +93,8 @@ header img {
 .grid {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
   gap: 20px;
   padding: 20px;
   box-sizing: border-box;
@@ -115,6 +115,19 @@ header img {
   height: 100%;     /* ocupa todo el espacio que le da la cuadricula */
   overflow: hidden; /* evita que el contenido haga crecer el div */
 
+  /* 📄 Contenedor de íconos */
+#previewArchivos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.icono-archivo {
+  width: 50px;
+  height: 50px;
+}
  
   
 }
@@ -137,12 +150,11 @@ header img {
  <div class="pregunta">
     <h3>Seleccione los archivos a consolidar</h3>
     
-  
-
-
-
   <input type="file" id="inputFiles" multiple accept=".csv"/>
-  </div>
+  
+  <div id="previewArchivos"></div>
+
+</div>
 </div>
   <button id="enviar" onclick="consolidar()">Consolidar</button>
 
@@ -185,6 +197,20 @@ header img {
       }
     }
 
+// 📄 Muestra una imagen por cada archivo cargado
+function mostrarArchivos() {
+  const input = document.getElementById("inputFiles");
+  const contenedor = document.getElementById("previewArchivos");
+  contenedor.innerHTML = "";
+
+  for (let file of input.files) {
+    const img = document.createElement("img");
+    img.src = "https://cdn-icons-png.flaticon.com/512/337/337946.png"; // ícono de documento
+    img.alt = "Archivo";
+    img.classList.add("icono-archivo");
+    contenedor.appendChild(img);
+  }
+}
     
   </script>
 </body>
