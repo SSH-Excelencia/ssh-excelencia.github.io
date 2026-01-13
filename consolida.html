@@ -271,20 +271,6 @@ header img {
       }
     }
 
-// 📄 Muestra una imagen por cada archivo cargado
-function mostrarArchivos() {
-  const input = document.getElementById("inputFiles");
-  const contenedor = document.getElementById("previewArchivos");
-  contenedor.innerHTML = "";
-
-  for (let file of input.files) {
-    const img = document.createElement("img");
-    img.src = "https://cdn-icons-png.flaticon.com/512/337/337946.png"; // ícono de documento
-    img.alt = "Archivo";
-    img.classList.add("icono-archivo");
-    contenedor.appendChild(img);
-  }
-}
 
 const inputFiles = document.getElementById("inputFiles");
 const preview = document.getElementById("previewArchivos");
@@ -307,7 +293,7 @@ inputFiles.addEventListener("change", () => {
     chip.classList.add("file-chip");
 
     const icon = document.createElement("img");
-    icon.src = "https://cdn-icons-png.flaticon.com/512/337/337946.png"; // ícono de documento
+    icon.src = "https://cdn-icons-png.flaticon.com/128/8242/8242984.png"; // ícono de documento
     icon.alt = "Archivo";
 
     const nombre = document.createElement("span");
@@ -324,6 +310,7 @@ inputFiles.addEventListener("change", () => {
   </script>
 </body>
 </html>
+
 
 
 
