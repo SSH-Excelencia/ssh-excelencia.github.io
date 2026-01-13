@@ -20,11 +20,12 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background-color: var(--color-secundario);
-  color: var(--color-texto);
-  height: 100vh;
+  background: var(--color-secundario);
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  padding: 5px;
+  
 }
 
 header {
@@ -34,7 +35,9 @@ header {
   justify-content: space-between; /* logo izquierda, menú derecha */
   background-color: var(--color-header);
   color: white;
-  padding: 10px 20px;
+  padding: 5px;
+  border-radius: 10px;
+
 }
 
 header img {
@@ -64,18 +67,6 @@ header img {
   font-weight: bold;
 }
 
-#enviar {
-  width: 100%;
-  padding: 25px;
-  background-color: var(--color-primario);
-  color: white;
-  border: none;
-  border-radius: 0;
-  cursor: pointer;
-  font-size: 22px;
-  font-weight: bold;
-}
-
 .btn-salir {
   background-color: #e53935; /* rojo */
   color: white;
@@ -90,47 +81,122 @@ header img {
   background-color: #b71c1c; /* rojo más oscuro */
 }
 
+
+
 .grid {
   flex: 1;
   display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 1fr;
-  gap: 20px;
-  padding: 20px;
+  grid-template-rows: auto 1fr auto;
+  gap: 10px;
+  padding: 5px;
+  height: calc(100vh - 60px);
   box-sizing: border-box;
-}
-.pregunta {
-  display: flex;
-  /*flex-direction: column;*/
-  justify-content: space-between;
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-
   text-align: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+}
 
-  box-sizing: border-box;
-  /* 🔹 Esta es la clave */
-  height: 100%;     /* ocupa todo el espacio que le da la cuadricula */
-  overflow: hidden; /* evita que el contenido haga crecer el div */
+.pregunta {
+  display: grid;
+  grid-template-columns: auto auto; /* izquierda flexible, derecha ajustada al contenido */
+  gap: 15px;
+  align-items: center; /* centra verticalmente */
+  background: white;
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 
-  /* 📄 Contenedor de íconos */
+  height: auto;   /* crece según contenido */
+  min-height: 0;  /* evita que Grid lo expanda más de lo necesario */
+}
+
+.pregunta .cuadro {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+      border: 1px dotted #000;
+      border-radius: 6px;
+  
+      align-items: center;
+      justify-content: center;
+      
+      position: relative;
+      height: 100%;
+      overflow-y: auto;
+      width: 100%;
+      overflow: hidden;
+      flex-wrap: wrap;
+    }
+
+    .cuadro input[type="file"] {
+  display: none; /* ocultamos el input real */
+}
+
+.btn-file {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: var(--color-primario);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.3s ease;
+}
+
+.btn-file:hover {
+  background-color: #075a0f; /* color más oscuro al pasar el mouse */
+}
+
 #previewArchivos {
+  border: 1px solid #ccc;
+  background: #fafafa;
+  border-radius: 6px;
+  padding: 10px;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
   gap: 10px;
-  margin-top: 15px;
+  align-items: center;
+  min-height: 50px;
+  font-family: Arial, sans-serif;
 }
+
+.file-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: #e0f2e9;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 14px;
+}
+
+.file-chip img {
+  width: 20px;
+  height: 20px;
+}
+
 
 .icono-archivo {
   width: 50px;
   height: 50px;
 }
- 
-  
+
+
+#enviar {
+  width: 100%;
+  padding: 25px;
+  background-color: var(--color-primario);
+  color: white;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  font-size: 22px;
+  font-weight: bold;
 }
+
+  
+
 
 </style>
 
@@ -138,7 +204,7 @@ header img {
 <body>
  <header>
   <div class="logo-contenedor">
-    <img src="https://ssh-excelencia.github.io/AppEncuesta/Std/Image/logo1.png" alt="Logo">
+    <img src="Image/logo1.png" alt="Logo">
   </div>
   <span class="titulo-header">Consolidación de Respuestas</span>
   <!-- Botón salir -->
@@ -146,17 +212,25 @@ header img {
 
 </header>
   
-  <div class="grid">
- <div class="pregunta">
-    <h3>Seleccione los archivos a consolidar</h3>
-    
-  <input type="file" id="inputFiles" multiple accept=".csv"/>
-  
-  <div id="previewArchivos"></div>
+<div class="grid">
+  <div class="pregunta">
+    <div class="cuadro">
+      <h3 style="margin:0;">Seleccione los archivos a consolidar</h3>
+    </div>
+    <div class="cuadro">
+      <input type="file" id="inputFiles" multiple accept=".csv">
+      <label for="inputFiles" class="btn-file">Abrir Ubicación</label>
+    </div>
 
-</div>
-</div>
+  </div>
+
+  <div id="previewArchivos">
+    Aquí van las imágenes o vistas previas
+  </div>
+
+
   <button id="enviar" onclick="consolidar()">Consolidar</button>
+</div>
 
 
 
@@ -211,9 +285,43 @@ function mostrarArchivos() {
     contenedor.appendChild(img);
   }
 }
+
+const inputFiles = document.getElementById("inputFiles");
+const preview = document.getElementById("previewArchivos");
+
+inputFiles.addEventListener("change", () => {
+  const files = inputFiles.files;
+  preview.innerHTML = ""; // limpia el preview
+
+  // Texto con total archivos
+  const totalText = document.createElement("div");
+  totalText.textContent = `Total archivos seleccionados: ${files.length}`;
+  totalText.style.width = "100%";
+  totalText.style.fontWeight = "bold";
+  totalText.style.marginBottom = "5px";
+  preview.appendChild(totalText);
+
+  // Iconos para cada archivo
+  for (let file of files) {
+    const chip = document.createElement("div");
+    chip.classList.add("file-chip");
+
+    const icon = document.createElement("img");
+    icon.src = "https://cdn-icons-png.flaticon.com/512/337/337946.png"; // ícono de documento
+    icon.alt = "Archivo";
+
+    const nombre = document.createElement("span");
+    nombre.textContent = file.name;
+
+    chip.appendChild(icon);
+    chip.appendChild(nombre);
+
+    preview.appendChild(chip);
+  }
+});
+
     
   </script>
 </body>
 </html>
-
 
