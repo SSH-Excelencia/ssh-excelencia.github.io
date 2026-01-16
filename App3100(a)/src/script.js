@@ -96,13 +96,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Cargar Excel solo una vez
     if (!bloque2.dataset.loaded) {
-      cargarExcel("public/lista-chequeo.xlsx");
+      cargarExcel("lista-chequeo.xlsx");
       bloque2.dataset.loaded = "true";
     }
 
     // --- Mostrar opción inicial y cargar mensaje desde txt ---
     selectTablas.innerHTML = '<option value="" selected>Seleccione...</option>';
-    //cargarTextoEjemplo("public/mensaje-ejemplo.txt");
+    //cargarTextoEjemplo("mensaje-ejemplo.txt");
   });
 
   // --- BOTÓN REINICIAR ---
@@ -142,7 +142,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (!hojaSeleccionada) {
           // Mostrar mensaje de ejemplo si se selecciona "Seleccione..."
-          cargarTextoEjemplo("public/mensaje-ejemplo.txt");
+          cargarTextoEjemplo("mensaje-ejemplo.txt");
           return;
         }
 
@@ -167,7 +167,7 @@ function mostrarTabla(workbook, hoja) {
   const table = document.createElement("table");
   table.classList.add("tabla-excel");
 
-  const anchos = ["55%", "21%", "24%"];
+  const anchos = ["55%", "15%", "25%"];
   const thead = document.createElement("thead");
   const tbody = document.createElement("tbody");
 
@@ -249,6 +249,11 @@ for (let i = 1; i < jsonData.length; i++) {
           const opciones = ["Cumple", "No Cumple", "No Aplica"];
           const contenedorRadios = document.createElement("div");
           contenedorRadios.classList.add("opciones-radios");
+          contenedorRadios.style.display = "flex";
+          contenedorRadios.style.flexDirection = "column";  // << importante
+          contenedorRadios.style.gap = "4px"; 
+          contenedorRadios.style.alignItems = "flex-start";
+
           opciones.forEach(opcion => {
             const label = document.createElement("label");
             label.style.marginRight = "10px";
@@ -611,7 +616,7 @@ function celda(parrafos, opts = {}) {
 
 // --- Construye la tabla DOCX preservando estructura y alineaciones ---
 function construirTablaDocx(headers, filas) {
-  const anchoCols = [50, 24, 24]; // % como en el frontend
+  const anchoCols = [60, 15, 20]; // % como en el frontend
 
   // Fila de encabezado
   const rowHeader = new TableRow({
