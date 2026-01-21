@@ -113,8 +113,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Cargar Excel solo una vez
     if (!bloque2.dataset.loaded) {
-      //cargarExcel("lista-chequeo.xlsx");  //local
-      cargarExcel("public/lista-chequeo.xlsx");  //web
+      cargarExcel("lista-chequeo.xlsx");  //local
+      //cargarExcel("public/lista-chequeo.xlsx");  //web
       bloque2.dataset.loaded = "true";
     }
 
@@ -213,29 +213,44 @@ document.addEventListener("DOMContentLoaded", async () => {
       const fila = jsonData[i];
       const tr = document.createElement("tr");
 
-      const esTitulo = fila[0]?.toString().startsWith("TT-");
-      const esSubtitulo = fila[0]?.toString().startsWith("T-");
+      const textoCelda = fila[0]?.toString() || "";
 
-      if (esTitulo) {
-        // === FILA DE TÍTULO PRINCIPAL ===
-        const td = document.createElement("td");
-        td.colSpan = 3;
-        td.innerHTML = `<strong>${fila[0].toString().replace(/^TT-/, "")}</strong>`;
-        td.style.textAlign = "center";
-        tr.appendChild(td);
+      const esTTT = textoCelda.startsWith("TTT-");
+      const esTitulo = textoCelda.startsWith("TT-");
+      const esSubtitulo = textoCelda.startsWith("T-");
 
-      } else if (esSubtitulo) {
-        // === FILA DE SUBTÍTULO (sin radios, combinando col1+col2) ===
-        const td = document.createElement("td");
-        td.colSpan = 2;
-        td.innerHTML = `<em>${fila[0].toString().replace(/^T-/, "")}</em>`;
-        td.style.textAlign = "justify";
-        td.style.verticalAlign = "middle"
-        tr.appendChild(td);
 
-        // === Columna 3: Observación con textarea ===
-        const tdObs = document.createElement("td");
-        tdObs.style.verticalAlign = "middle";
+      if (esTTT) {
+  // === FILA TTT (negrilla + justificado, ocupa 3 columnas) ===
+  const td = document.createElement("td");
+  td.colSpan = 3;
+  td.innerHTML = `<strong>${textoCelda.replace(/^TTT-/, "")}</strong>`;
+  td.style.textAlign = "justify";
+  td.style.verticalAlign = "middle";
+  tr.appendChild(td);
+
+} else if (esTitulo) {
+  // === FILA TT (título principal centrado) ===
+  const td = document.createElement("td");
+  td.colSpan = 3;
+  td.innerHTML = `<strong>${textoCelda.replace(/^TT-/, "")}</strong>`;
+  td.style.textAlign = "center";
+  td.style.verticalAlign = "middle";
+  tr.appendChild(td);
+
+} else if (esSubtitulo) {
+  // === FILA T (subtítulo, col1 + col2) ===
+  const td = document.createElement("td");
+  td.colSpan = 2;
+  td.innerHTML = `<em>${textoCelda.replace(/^T-/, "")}</em>`;
+  td.style.textAlign = "justify";
+  td.style.verticalAlign = "middle";
+  tr.appendChild(td);
+
+  // === Columna observación ===
+  const tdObs = document.createElement("td");
+  tdObs.style.verticalAlign = "middle";
+  tr.appendChild(tdObs);
 
 
 
