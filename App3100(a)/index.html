@@ -87,9 +87,10 @@
   <div class="campo acciones acciones-horizontal">
     <h3 class="titulo-derecha">Exportar</h3>
     <!-- Botones apilados verticales -->
-    <div class="fila">
-      <button id="btn-export-word" class="btn secundario" disabled aria-label="Exportar a Word">Exportar Word</button>
-      <!--<button id="btn-export-todo" class="btn secundario" aria-label="Exportar Todo">Exportar Todo</button>-->
+    <div style="display:flex; justify-content:center; align-items:center; gap:10px;">
+      <button id="btn-export-word" class="btn secundario" aria-label="Exportar a Word">Exportar Word</button>
+      <button id="btn-export-todo" class="btn secundario" aria-label="Exportar Todo">Exportar Todo</button>
+      
     </div>
     <div class="fila"></div>
     <!-- Nota sobre el nombre del archivo -->
@@ -109,6 +110,15 @@
     <!-- Se carga dinámicamente -->
   </section>
 </main>
+
+<div id="overlay" class="oculto">
+  <div id="overlay-contenido">
+    <p id="overlay-texto"></p>
+    <button id="overlay-continuar" style="display:none;">Continuar</button>
+  </div>
+</div>
+
+
   <!-- Librerías -->
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
