@@ -4,6 +4,7 @@
 const XLSX = window.XLSX || window.xlsx;
 
 let logoBuffer = null; // variable global para el logo
+let overlayTimer = null;
 
 async function cargarImagenComoArrayBuffer(url) {
   const response = await fetch(url);
@@ -33,6 +34,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const btnExportPdf = document.getElementById("btn-export-pdf");
   const btnReiniciar = document.getElementById("btnReiniciar");
   const imgHeader = document.getElementById("logo-header");
+
+  const btntestOv = document.getElementById("btn-testOv");
 
 
   try {
@@ -73,29 +76,52 @@ document.addEventListener("DOMContentLoaded", async () => {
     const correoElectronico = document.getElementById("correoElectronico").value.trim();
 
     if (!nombreIps || !numeroContacto || !correoElectronico) {
-      mostrarOverlay("⚠️ Por favor ingresa todos los datos del evaluador.", true);
+      mostrarOverlay({
+        mensaje: "⚠️ Por favor ingresa todos los datos del evaluador.",
+        aceptar: false,
+        cancelar: false,
+        temporal: true,
+        autoCerrar: true,
+        tiempo: 3000,
+        textoAceptar: "Aceptar",
+        textoCancelar: "Cancelar"
+      });
+
       //alert("⚠️ Por favor ingresa todos los datos del evaluador.");
-       setTimeout(() => {
-      ocultarOverlay();
-    }, 3000);
+
       return;
     }
 
     if (!/^\d+$/.test(numeroContacto)) {
-      mostrarOverlay("⚠️ El número de contacto debe contener solo números.");
+      mostrarOverlay({
+        mensaje: "⚠️ El número de contacto debe contener solo números.",
+        aceptar: false,
+        cancelar: false,
+        temporal: true,
+        autoCerrar: true,
+        tiempo: 3000,
+        textoAceptar: "Aceptar",
+        textoCancelar: "Cancelar"
+      });
+
       //alert("⚠️ El número de contacto debe contener solo números.");
-       setTimeout(() => {
-      ocultarOverlay();
-    }, 3000);
+
       return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correoElectronico)) {
-      mostrarOverlay("⚠️ Ingresa un correo electrónico válido.");
+      mostrarOverlay({
+        mensaje: "⚠️ Ingresa un correo electrónico válido.",
+        aceptar: false,
+        cancelar: false,
+        temporal: true,
+        autoCerrar: true,
+        tiempo: 3000,
+        textoAceptar: "Aceptar",
+        textoCancelar: "Cancelar"
+      });
       //alert("⚠️ Ingresa un correo electrónico válido.");
-       setTimeout(() => {
-      ocultarOverlay();
-    }, 3000);
+
       return;
     }
 
@@ -135,6 +161,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.location.href = "https://ssh-excelencia.github.io/";
   });
 
+
+
   // --- FUNCIONES PARA EXCEL ---
   async function cargarExcel(ruta) {
     try {
@@ -152,7 +180,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         opt.value = nombreHoja;
         opt.textContent = nombreHoja;
 
-         // si ya había sido evaluada, marcar de nuevo
+        // si ya había sido evaluada, marcar de nuevo
         if (hojasEvaluadas.has(nombreHoja)) {
           opt.classList.add("hoja-evaluada");
         }
@@ -161,6 +189,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       // Evento change para cargar tabla al seleccionar hoja
+      selectTablas.onchange = null;
       selectTablas.addEventListener("change", (e) => {
         const hojaSeleccionada = e.target.value;
 
@@ -221,36 +250,36 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
       if (esTTT) {
-  // === FILA TTT (negrilla + justificado, ocupa 3 columnas) ===
-  const td = document.createElement("td");
-  td.colSpan = 3;
-  td.innerHTML = `<strong>${textoCelda.replace(/^TTT-/, "")}</strong>`;
-  td.style.textAlign = "justify";
-  td.style.verticalAlign = "middle";
-  tr.appendChild(td);
+        // === FILA TTT (negrilla + justificado, ocupa 3 columnas) ===
+        const td = document.createElement("td");
+        td.colSpan = 3;
+        td.innerHTML = `<strong>${textoCelda.replace(/^TTT-/, "")}</strong>`;
+        td.style.textAlign = "justify";
+        td.style.verticalAlign = "middle";
+        tr.appendChild(td);
 
-} else if (esTitulo) {
-  // === FILA TT (título principal centrado) ===
-  const td = document.createElement("td");
-  td.colSpan = 3;
-  td.innerHTML = `<strong>${textoCelda.replace(/^TT-/, "")}</strong>`;
-  td.style.textAlign = "center";
-  td.style.verticalAlign = "middle";
-  tr.appendChild(td);
+      } else if (esTitulo) {
+        // === FILA TT (título principal centrado) ===
+        const td = document.createElement("td");
+        td.colSpan = 3;
+        td.innerHTML = `<strong>${textoCelda.replace(/^TT-/, "")}</strong>`;
+        td.style.textAlign = "center";
+        td.style.verticalAlign = "middle";
+        tr.appendChild(td);
 
-} else if (esSubtitulo) {
-  // === FILA T (subtítulo, col1 + col2) ===
-  const td = document.createElement("td");
-  td.colSpan = 2;
-  td.innerHTML = `<em>${textoCelda.replace(/^T-/, "")}</em>`;
-  td.style.textAlign = "justify";
-  td.style.verticalAlign = "middle";
-  tr.appendChild(td);
+      } else if (esSubtitulo) {
+        // === FILA T (subtítulo, col1 + col2) ===
+        const td = document.createElement("td");
+        td.colSpan = 2;
+        td.innerHTML = `<em>${textoCelda.replace(/^T-/, "")}</em>`;
+        td.style.textAlign = "justify";
+        td.style.verticalAlign = "middle";
+        tr.appendChild(td);
 
-  // === Columna observación ===
-  const tdObs = document.createElement("td");
-  tdObs.style.verticalAlign = "middle";
-  tr.appendChild(tdObs);
+        // === Columna observación ===
+        const tdObs = document.createElement("td");
+        tdObs.style.verticalAlign = "middle";
+        tr.appendChild(tdObs);
 
 
 
@@ -298,21 +327,45 @@ document.addEventListener("DOMContentLoaded", async () => {
               const label = document.createElement("label");
               label.style.marginRight = "10px";
               const input = document.createElement("input");
+              
               input.type = "radio";
               input.name = `opcion_${i}`;
               input.value = opcion;
+              
               // Restaurar radio si estaba guardado
               if (respuestasGuardadas.opcion === opcion) {
                 input.checked = true;
               }
               // Guardar al cambiar
-              input.addEventListener("change", () => {
-                if (!respuestasPorTabla[hoja]) respuestasPorTabla[hoja] = {};
-                if (!respuestasPorTabla[hoja][i]) respuestasPorTabla[hoja][i] = {};
-                respuestasPorTabla[hoja][i].opcion = opcion;
-                registrarHojaEvaluada(hoja);
+
+
+              let estabaMarcado = false;
+
+              input.addEventListener("mousedown", () => {
+                estabaMarcado = input.checked;
+              });
+
+              input.addEventListener("click", () => {
+                if (estabaMarcado) {
+                  // 🔁 DESMARCAR
+                  input.checked = false;
+
+                  if (respuestasPorTabla[hoja]?.[i]) {
+                    delete respuestasPorTabla[hoja][i].opcion;
+                  }
+                } else {
+                  // ✅ MARCAR NORMAL
+                  if (!respuestasPorTabla[hoja]) respuestasPorTabla[hoja] = {};
+                  if (!respuestasPorTabla[hoja][i]) respuestasPorTabla[hoja][i] = {};
+                  respuestasPorTabla[hoja][i].opcion = opcion;
+
+                  registrarHojaEvaluada(hoja);
+                }
+
                 actualizarContadoresCol2();
               });
+
+
               label.appendChild(input);
               label.appendChild(document.createTextNode(" " + opcion));
               contenedorRadios.appendChild(label);
@@ -368,15 +421,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
   function registrarHojaEvaluada(hoja) {
-  hojasEvaluadas.add(hoja);
+    hojasEvaluadas.add(hoja);
 
-  const select = document.getElementById("menu-tablas");
-  const opt = select.querySelector(`option[value="${hoja}"]`);
+    const select = document.getElementById("menu-tablas");
+    const opt = select.querySelector(`option[value="${hoja}"]`);
 
-  if (opt) {
-    opt.classList.add("hoja-evaluada");
+    if (opt) {
+      opt.classList.add("hoja-evaluada");
+    }
   }
-}
 
 
   // --- FUNCION ACTUALIZAR CONTADORES COLUMNA 2 ---
@@ -430,97 +483,97 @@ document.addEventListener("DOMContentLoaded", async () => {
     const colores = ["#4CAF50", "#F44336", "#FFC107"]; // verde, rojo, amarillo
 
     // --- Gráfica Torta ---
-if (graficaTorta) graficaTorta.destroy();
-graficaTorta = new Chart(document.getElementById("graficaTorta"), {
-  type: "pie",
-  data: {
-    labels: etiquetas,
-    datasets: [{
-      data: datos,
-      backgroundColor: colores,
-      borderColor: "#fff",
-      borderWidth: 2
-    }]
-  },
-  options: {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-        position: "top",
-        labels: {
-          padding: 15,
-          font: { size: 12 }
+    if (graficaTorta) graficaTorta.destroy();
+    graficaTorta = new Chart(document.getElementById("graficaTorta"), {
+      type: "pie",
+      data: {
+        labels: etiquetas,
+        datasets: [{
+          data: datos,
+          backgroundColor: colores,
+          borderColor: "#fff",
+          borderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false,
+            position: "top",
+            labels: {
+              padding: 15,
+              font: { size: 12 }
+            }
+          },
+          datalabels: {
+            formatter: (value, ctx) => {
+              const total = datos.reduce((a, b) => a + b, 0);
+              if (total === 0) return "0%";
+              return ((value / total) * 100).toFixed(1) + "%";
+            },
+            color: "#fff",
+            font: {
+              weight: "bold",
+              size: 10
+            }
+          }
         }
       },
-      datalabels: {
-        formatter: (value, ctx) => {
-          const total = datos.reduce((a,b)=>a+b,0);
-          if (total === 0) return "0%";
-          return ((value / total) * 100).toFixed(1) + "%";
-        },
-        color: "#fff",
-        font: {
-          weight: "bold",
-          size: 10
-        }
-      }
-    }
-  },
-  plugins: [ChartDataLabels]
-});
+      plugins: [ChartDataLabels]
+    });
 
 
     // --- Gráfica Barras ---
-   if (graficaBarras) graficaBarras.destroy();
-graficaBarras = new Chart(document.getElementById("graficaBarras"), {
-  type: "bar",
-  data: {
-    labels: etiquetas,
-    datasets: [{
-      label: "Cantidad",
-      data: datos,
-      backgroundColor: colores,
-      borderColor: "#333",
-      borderWidth: 1,
-      hoverBackgroundColor: colores.map(c => c + "cc")
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false, 
-    plugins: {
-      legend: { display: false },
-      datalabels: {
-        anchor: "end",
-        align: "top",
-        color: "#000",
-        font: { size: 10, weight: "bold" },
-        formatter: v => v,
-        offset: 2
-      }
-    },
-    layout: {
-    padding: {
-      left: 10,
-      right: 10,
-      top: 20,
-      bottom: 5
-    }
-  },
-    scales: {
-      y: {
-        beginAtZero: true,
-        precision: 0,
-        suggestedMax: Math.max(...datos) + 1,
-        ticks: {
-          stepSize: 1
+    if (graficaBarras) graficaBarras.destroy();
+    graficaBarras = new Chart(document.getElementById("graficaBarras"), {
+      type: "bar",
+      data: {
+        labels: etiquetas,
+        datasets: [{
+          label: "Cantidad",
+          data: datos,
+          backgroundColor: colores,
+          borderColor: "#333",
+          borderWidth: 1,
+          hoverBackgroundColor: colores.map(c => c + "cc")
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          datalabels: {
+            anchor: "end",
+            align: "top",
+            color: "#000",
+            font: { size: 10, weight: "bold" },
+            formatter: v => v,
+            offset: 2
+          }
+        },
+        layout: {
+          padding: {
+            left: 10,
+            right: 10,
+            top: 20,
+            bottom: 5
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            precision: 0,
+            suggestedMax: Math.max(...datos) + 1,
+            ticks: {
+              stepSize: 1
+            }
+          }
         }
-      }
-    }
-  },
-  plugins: [ChartDataLabels]
-});
+      },
+      plugins: [ChartDataLabels]
+    });
 
 
     // === CALCULAR PORCENTAJES ===
@@ -537,8 +590,8 @@ graficaBarras = new Chart(document.getElementById("graficaBarras"), {
     setPorcentaje("p-nocumple", noCumple);
     setPorcentaje("p-noaplica", noAplica);
 
-    
   }
+
 
 
   // --- FUNCION CARGAR TEXTO DESDE ARCHIVO ---
@@ -905,22 +958,46 @@ graficaBarras = new Chart(document.getElementById("graficaBarras"), {
     const { headers, filas } = leerTablaDesdeDOM();
     if (!headers.length || !filas.length) {
       if (!nombreTabla) {
-         mostrarOverlay("Selecciona una tabla antes de exportar.");
-      //alert("Selecciona una tabla antes de exportar.");
-       setTimeout(() => {
-      ocultarOverlay();
-    }, 3000);
+        mostrarOverlay({
+          mensaje: "Selecciona una tabla antes de exportar.",
+          aceptar: false,
+          cancelar: false,
+          temporal: true,
+          autoCerrar: true,
+          tiempo: 3000,
+          textoAceptar: "Aceptar",
+          textoCancelar: "Cancelar"
+        });
+        //alert("Selecciona una tabla antes de exportar.");
+
         return;
       }
     }
     if (!logoBuffer) {
-      mostrarOverlay("No se cargó el logo, se exportará sin imagen.");
+      mostrarOverlay({
+        mensaje: "No se cargó el logo, se exportará sin imagen.",
+        aceptar: false,
+        cancelar: false,
+        temporal: true,
+        autoCerrar: true,
+        tiempo: 3000,
+        textoAceptar: "Aceptar",
+        textoCancelar: "Cancelar"
+      });
       //alert("No se cargó el logo, se exportará sin imagen.");
-       setTimeout(() => {
-      ocultarOverlay();
-    }, 3000);
+
     }
-    mostrarOverlay("Generando archivo Word...");
+    mostrarOverlay({
+      mensaje: "Generando archivo Word...",
+      aceptar: false,
+      cancelar: false,
+      temporal: true,
+      autoCerrar: false,
+      tiempo: 3000,
+      textoAceptar: "Aceptar",
+      textoCancelar: "Cancelar"
+    });
+
     // Construir documento
     const doc = new Document({
       styles: {
@@ -1036,7 +1113,7 @@ graficaBarras = new Chart(document.getElementById("graficaBarras"), {
         }
       ]
     });
-    
+
 
     // Descargar
     const blob = await Packer.toBlob(doc);
@@ -1045,193 +1122,333 @@ graficaBarras = new Chart(document.getElementById("graficaBarras"), {
     setTimeout(() => {
       ocultarOverlay();
     }, 3000);
-    
+
   });
 
 
-async function exportarTodo() {
+  async function exportarTodo() {
 
-  if (!workbook) {
-    mostrarOverlay("⚠️ Primero carga el Excel antes de exportar.");
+    if (!workbook) {
+      mostrarOverlay({
+        mensaje: "⚠️ Primero carga el Excel antes de exportar.",
+        aceptar: false,
+        cancelar: false,
+        temporal: true,
+        autoCerrar: true,
+        tiempo: 3000,
+        textoAceptar: "Aceptar",
+        textoCancelar: "Cancelar"
+      });
+
       // alert("⚠️ Primero carga el Excel antes de exportar.");
-       setTimeout(() => {
-      ocultarOverlay();
-    }, 3000);
-    return;
-  }
 
-  const hojas = workbook.SheetNames.filter(
-    nombre => nombre.toLowerCase() !== "tabla de contenido"
-  );
-
-  const secciones = [];
-  const hojasSeleccionadas = [];
-  const menuTablas = document.getElementById("menu-tablas");
-
-
-  mostrarOverlay("Recopilando Información.");
-  for (const hoja of hojas) {
-
-    // fuerza visualización para que leerTablaDesdeDOM lea correctamente
-    mostrarTabla(workbook, hoja);
-    menuTablas.value = hoja;
-    // Generar gráficas para esta hoja
-    actualizarContadoresCol2();
-    await new Promise(r => setTimeout(r, 300));
-
-    // verificar criterios evaluados
-    const radios = bloque3.querySelectorAll("input[type='radio']:checked");
-
-    if (radios.length === 0) {
-      console.log(`⏭ Hoja "${hoja}" ignorada (sin criterios calificados)`);
-      continue;
-    }
-    hojasSeleccionadas.push(hoja);
-
-    console.log(`✔ Hoja "${hoja}" incluida (${radios.length} criterios).`);
-
-    const { headers, filas } = leerTablaDesdeDOM();
-
-    if (!headers.length || !filas.length) {
-      console.log(`⏭ Hoja "${hoja}" no tiene datos visibles`);
-      continue;
+      return;
     }
 
-    const section = construirSeccionWord({
-      nombreTabla: hoja,
-      headers,
-      filas
+    const hojas = workbook.SheetNames.filter(
+      nombre => nombre.toLowerCase() !== "tabla de contenido"
+    );
+
+    const secciones = [];
+    const hojasSeleccionadas = [];
+    const menuTablas = document.getElementById("menu-tablas");
+
+    mostrarOverlay({
+      mensaje: "Recopilando Información.",
+      aceptar: false,
+      cancelar: false,
+      temporal: true,
+      autoCerrar: false,
+      tiempo: 3000,
+      textoAceptar: "Aceptar",
+      textoCancelar: "Cancelar"
     });
 
-    secciones.push(section);
+    for (const hoja of hojas) {
+
+      // fuerza visualización para que leerTablaDesdeDOM lea correctamente
+      mostrarTabla(workbook, hoja);
+      menuTablas.value = hoja;
+      // Generar gráficas para esta hoja
+      actualizarContadoresCol2();
+      await new Promise(r => setTimeout(r, 300));
+
+      // verificar criterios evaluados
+      const radios = bloque3.querySelectorAll("input[type='radio']:checked");
+
+      if (radios.length === 0) {
+        console.log(`⏭ Hoja "${hoja}" ignorada (sin criterios calificados)`);
+        continue;
+      }
+      hojasSeleccionadas.push(hoja);
+
+      console.log(`✔ Hoja "${hoja}" incluida (${radios.length} criterios).`);
+
+      const { headers, filas } = leerTablaDesdeDOM();
+
+      if (!headers.length || !filas.length) {
+        console.log(`⏭ Hoja "${hoja}" no tiene datos visibles`);
+        continue;
+      }
+
+      const section = construirSeccionWord({
+        nombreTabla: hoja,
+        headers,
+        filas
+      });
+
+      secciones.push(section);
+    }
+
+    ocultarOverlay();
+
+    if (secciones.length === 0) {
+      mostrarOverlay({
+        mensaje: "⚠️ No hay hojas con criterios evaluados para exportar.",
+        aceptar: false,
+        cancelar: false,
+        temporal: true,
+        autoCerrar: true,
+        tiempo: 3000,
+        textoAceptar: "Aceptar",
+        textoCancelar: "Cancelar"
+      });
+
+      //alert("⚠️ No hay hojas con criterios evaluados para exportar.");
+      return;
+    }
+
+    const documento = new Document({
+      styles: {
+        default: {
+          document: {
+            run: { font: "Arial", size: 22 }
+          },
+          paragraph: {
+            spacing: { after: 120 }
+          }
+        }
+      },
+      sections: secciones
+    });
+
+    if (hojasSeleccionadas.length === 0) {
+      mostrarOverlay({
+        mensaje: "⚠️ No hay hojas con criterios evaluados para exportar.",
+        aceptar: false,
+        cancelar: false,
+        temporal: true,
+        autoCerrar: true,
+        tiempo: 3000,
+        textoAceptar: "Aceptar",
+        textoCancelar: "Cancelar"
+      });
+
+
+      //alert("⚠️ No hay hojas con criterios evaluados para exportar.");
+      return;
+      cargarTextoEjemplo("mensaje-ejemplo.txt");
+    }
+
+    const mensajeHTML = `
+    <strong>📄 Hojas a exportar:</strong><br><br>
+    <ul style="text-align:left; margin:0; padding-left:20px;">
+      ${hojasSeleccionadas.map(h => `<li>${h}</li>`).join("")}
+    </ul>
+  `;
+
+    const ok = await mostrarOverlay({
+      mensaje: mensajeHTML,
+      aceptar: true,
+      cancelar: true,
+      temporal: false,
+      autoCerrar: false,
+      tiempo: 3000,
+      textoAceptar: "Aceptar",
+      textoCancelar: "Cancelar"
+    });
+    alert(ok)
+    if (!ok) {
+      mostrarOverlay({
+        mensaje: "❌ Exportación Cancelada.",
+        aceptar: false,
+        cancelar: false,
+        temporal: true,
+        autoCerrar: true,
+        tiempo: 3000,
+        textoAceptar: "Aceptar",
+        textoCancelar: "Cancelar"
+      });
+      return;
+    }
+
+    //alert("📄 Hojas a exportar:\n\n" + hojasSeleccionadas.join("\n"));
+
+
+    const blob = await Packer.toBlob(documento);
+    saveAs(blob, `Evaluacion_Todas_${fechaISO()}.docx`);
+    ocultarOverlay();
+    mostrarOverlay({
+      mensaje: "✅ Exportación completada.",
+      aceptar: false,
+      cancelar: false,
+      temporal: true,
+      autoCerrar: true,
+      tiempo: 3000,
+      textoAceptar: "Aceptar",
+      textoCancelar: "Cancelar"
+    });
+
+    //alert("✅ Exportación completada.");
+    cargarTextoEjemplo("mensaje-ejemplo.txt");
   }
 
-  if (secciones.length === 0) {
-    mostrarOverlay("⚠️ No hay hojas con criterios evaluados para exportar.");
-    setTimeout(() => {
-      ocultarOverlay();
-    }, 3000);
-    //alert("⚠️ No hay hojas con criterios evaluados para exportar.");
-    return;
+  function construirSeccionWord({ nombreTabla, headers, filas }) {
+
+    return {
+      headers: {
+        default: new Header({
+          children: [
+            new Paragraph({
+              children: [
+                new TextRun({ text: "Resultados Criterios de Evaluación", bold: true }),
+                new TextRun("\t"),
+                ...(logoBuffer ? [
+                  new ImageRun({
+                    data: logoBuffer,
+                    transformation: { width: 80, height: 40 }
+                  })
+                ] : [])
+              ],
+              tabStops: [{ type: "right", position: 9000 }]
+            })
+          ]
+        })
+      },
+      children: [
+        new Paragraph({
+          children: [new TextRun({ text: `Tabla: ${nombreTabla}`, bold: true })],
+          alignment: AlignmentType.CENTER
+        }),
+
+        new Paragraph({ text: "" }),
+
+        construirTablaResumenDocx(),
+        new Paragraph({ text: "" }),
+
+        construirTablaGraficasDocx(),
+        new Paragraph({ text: "" }),
+
+        construirTablaDocx(headers, filas),
+
+        new Paragraph({ text: "" }),
+        new Paragraph({ text: "" })
+      ]
+    };
   }
-  mostrarOverlay("✅ Exportación completada.");
-  const documento = new Document({
-    styles: {
-      default: {
-        document: {
-          run: { font: "Arial", size: 22 }
-        },
-        paragraph: {
-          spacing: { after: 120 }
-        }
-      }
-    },
-    sections: secciones
+
+
+
+  btnExportTodo.addEventListener("click", () => {
+    exportarTodo();
   });
 
-  if (hojasSeleccionadas.length === 0) {
-  mostrarOverlay("⚠️ No hay hojas con criterios evaluados para exportar.");
-    setTimeout(() => {
-      ocultarOverlay();
-    }, 3000);
-    //alert("⚠️ No hay hojas con criterios evaluados para exportar.");
-    return;
-    cargarTextoEjemplo("mensaje-ejemplo.txt");
-}
-  mostrarOverlay("📄 Hojas a exportar:\n\n" + hojasSeleccionadas.join("\n"), true);
-  
-  //alert("📄 Hojas a exportar:\n\n" + hojasSeleccionadas.join("\n"));
-
-
-  const blob = await Packer.toBlob(documento);
-  saveAs(blob, `Evaluacion_Todas_${fechaISO()}.docx`);
-  mostrarOverlay("✅ Exportación completada.");
-  setTimeout(() => {
-      ocultarOverlay();
-    }, 3000);
-  //alert("✅ Exportación completada.");
-  cargarTextoEjemplo("mensaje-ejemplo.txt");
-}
-
-function construirSeccionWord({ nombreTabla, headers, filas }) {
-
-  return {
-    headers: {
-      default: new Header({
-        children: [
-          new Paragraph({
-            children: [
-              new TextRun({ text: "Resultados Criterios de Evaluación", bold: true }),
-              new TextRun("\t"),
-              ...(logoBuffer ? [
-                new ImageRun({
-                  data: logoBuffer,
-                  transformation: { width: 80, height: 40 }
-                })
-              ] : [])
-            ],
-            tabStops: [{ type: "right", position: 9000 }]
-          })
-        ]
-      })
-    },
-    children: [
-      new Paragraph({
-        children: [ new TextRun({ text: `Tabla: ${nombreTabla}`, bold: true }) ],
-        alignment: AlignmentType.CENTER
-      }),
-
-      new Paragraph({ text: "" }),
-
-      construirTablaResumenDocx(),
-      new Paragraph({ text: "" }),
-
-      construirTablaGraficasDocx(),
-      new Paragraph({ text: "" }),
-
-      construirTablaDocx(headers, filas),
-
-      new Paragraph({ text: "" }),
-      new Paragraph({ text: "" })
-    ]
-  };
-}
 
 
 
-btnExportTodo.addEventListener("click", () => {
-  exportarTodo();
-});
+  // --- BOTÓN TEST OVER ---
+  btntestOv.addEventListener("click", () => {
+    mostrarOverlay({
+      mensaje: "Overlay temporal OK",
+      aceptar: true,
+      cancelar: true,
+      temporal: true,
+      autoCerrar: true,
+      tiempo: 3000,
+      textoAceptar: "Aceptar",
+      textoCancelar: "Cancelar"
+    });
 
 
 
+  });
 
-});
 
-// mostrarOverlay(mensaje, conBoton = false, callback = null)
+  let overlayTimer = null;
 
-function mostrarOverlay(mensaje, conBoton = false, callback = null) {
-  const overlay = document.getElementById("overlay");
-  const overlayTexto = document.getElementById("overlay-texto");
-  const overlayBtn = document.getElementById("overlay-continuar");
+  function mostrarOverlay({
+    mensaje,
+    aceptar = false,
+    cancelar = false,
+    temporal = false,
+    autoCerrar = true,
+    tiempo = 3000,
+    textoAceptar = "Aceptar",
+    textoCancelar = "Cancelar"
+  }) {
+    const overlay = document.getElementById("overlay");
+    const texto = document.getElementById("overlay-texto");
+    const btnOk = document.getElementById("overlay-continuar");
+    const btnCancel = document.getElementById("overlay-cancelar");
 
-  overlayTexto.textContent = mensaje;
-  overlay.classList.remove("oculto");
+    // limpiar timer previo
+    if (overlayTimer) {
+      clearTimeout(overlayTimer);
+      overlayTimer = null;
+    }
 
-  if (conBoton) {
-    overlayBtn.style.display = "block";
-    overlayBtn.onclick = () => {
-      overlayBtn.style.display = "none";
-      overlay.classList.add("oculto");
-      if (callback) callback();
-    };
-  } else {
-    overlayBtn.style.display = "none";
+    texto.innerHTML = mensaje;
+    overlay.classList.remove("oculto");
+
+    btnOk.style.display = aceptar ? "inline-block" : "none";
+    btnCancel.style.display = cancelar ? "inline-block" : "none";
+
+    btnOk.textContent = textoAceptar;
+    btnCancel.textContent = textoCancelar;
+
+    // ⏱️ autocierre
+    if (temporal && autoCerrar) {
+      overlayTimer = setTimeout(() => {
+        ocultarOverlay();
+      }, tiempo);
+    }
+
+    // 🔑 SI NO HAY BOTONES → NO PROMISE
+    if (!aceptar && !cancelar) return;
+
+    // 🔐 PROMISE PARA ESPERAR DECISIÓN
+    return new Promise(resolve => {
+
+      const aceptarHandler = () => {
+        limpiar();
+        resolve(true);
+      };
+
+      const cancelarHandler = () => {
+        limpiar();
+        resolve(false);
+      };
+
+      function limpiar() {
+        btnOk.removeEventListener("click", aceptarHandler);
+        btnCancel.removeEventListener("click", cancelarHandler);
+        ocultarOverlay();
+      }
+
+      btnOk.addEventListener("click", aceptarHandler);
+      btnCancel.addEventListener("click", cancelarHandler);
+    });
   }
-}
 
 
-function ocultarOverlay() {
-  const overlay = document.getElementById("overlay");
-  overlay.classList.add("oculto");
-}
+
+  function ocultarOverlay() {
+    const overlay = document.getElementById("overlay");
+    if (overlayTimer) {
+      clearTimeout(overlayTimer);
+      overlayTimer = null;
+    }
+    overlay.classList.add("oculto");
+  }
+
+});
