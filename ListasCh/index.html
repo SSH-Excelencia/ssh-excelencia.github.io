@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Listas Chequeo</title>
-  <link rel="icon" type="image/png" href="Image/logo1fav.png" >
-  <link rel="stylesheet" href="style.css" /> 
+  <link rel="icon" type="image/png" href="Image/logo1fav.png">
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 
 
 <body>
   <header class="sticky">
-    
+
     <img id="logo-header" src="Image/logo1.png" alt="Logo o Banner" class="contenedor-circular" />
-    <h1>Listas de Chequeo - Criterios Habilitación</h1>
-    
+    <h1>Listas de Chequeo condiciones de Habilitación</h1>
+
     <!-- Botones de acciones ahora en el header -->
     <div class="acciones-header">
       <button id="btnReiniciar" class="btn danger" aria-label="Reinciar la aplicación">🔄 Reiniciar Evaluación</button>
-     <button id="btn-export-pdf" class="btn secundario" aria-label="Salir de la aplicación">Salir</button>
+      <button id="btn-export-pdf" class="btn secundario" aria-label="Salir de la aplicación">Salir</button>
+      <!-- <button id="btn-testOv" class="btn secundario" aria-label="Test overlay">Test overlay</button> -->
     </div>
   </header>
 
@@ -33,90 +35,104 @@
         <input type="text" id="nombreIps" placeholder="Ingrese nombre" />
       </label>
       <!-- Número de contacto + botón en la misma línea -->
-      <label>
+      <label style="text-align: center;">
         Datos de contacto
         <div class="contacto-boton">
-          <input type="text" id="numeroContacto" placeholder="Número contacto"  />
+          <input type="text" id="numeroContacto" placeholder="Número contacto" />
           <input type="email" id="correoElectronico" placeholder="Ingrese correo electrónico" />
           <button id="btnContinuar" class="btn primario" aria-label="Opción de continuar">Continuar</button>
         </div>
       </label>
     </div>
   </section>
+  <main>
+    <!-- Bloque 2: Panel inicial -->
+    <section id="panel-inicial" class="bloque sticky" style="visibility: hidden;">
+      <!-- style="opacity:0.5; pointer-events:none;"> -->
 
-  <!-- Bloque 2: Panel inicial -->
-  <section id="panel-inicial" class="bloque sticky" style="visibility: hidden;"> <!-- style="opacity:0.5; pointer-events:none;"> -->
+      <!-- Campo 1: Menú + Resumen -->
+      <div class="campo menu-resumen">
+        <!-- Menú de selección -->
+        <label for="menu-tablas"><strong>Selecciona Tabla</strong></label>
+        <select id="menu-tablas">
+          <option value="" selected>Seleccione...</option>
+        </select>
 
-  <!-- Campo 1: Menú + Resumen -->
-  <div class="campo menu-resumen">
-    <!-- Menú de selección -->
-    <label for="menu-tablas"><strong>Selecciona Tabla</strong></label>
-    <select id="menu-tablas">
-      <option value="" selected>Seleccione...</option>
-    </select>
+        <!-- Resumen de la tabla -->
+        <h3>Resumen</h3>
+        <div style="display:flex">
+          <ul class="lista-metrica" style="width: 85%">
+            <li><span>Cumple</span><strong id="num-cumple">0</strong></li>
+            <li><span>No cumple</span><strong id="num-nocumple">0</strong></li>
+            <li><span>No aplica</span><strong id="num-noaplica">0</strong></li>
+          </ul>
+          <ul class="lista-metrica" style="width: 10%">
+            <li><span></span><strong id="p-cumple">0</strong></li>
+            <li><span></span><strong id="p-nocumple">0</strong></li>
+            <li><span></span><strong id="p-noaplica">0</strong></li>
+          </ul>
+        </div>
+      </div>
 
-    <!-- Resumen de la tabla -->
-    <h3>Resumen</h3>
-    <div style="display:flex">
-    <ul class="lista-metrica" style="width: 85%">
-      <li><span>Cumple</span><strong id="num-cumple">0</strong></li>
-      <li><span>No cumple</span><strong id="num-nocumple">0</strong></li>
-      <li><span>No aplica</span><strong id="num-noaplica">0</strong></li>
-    </ul>
-    <ul class="lista-metrica" style="width: 10%">
-      <li><span></span><strong id="p-cumple">0</strong></li>
-      <li><span></span><strong id="p-nocumple">0</strong></li>
-      <li><span></span><strong id="p-noaplica">0</strong></li>
-    </ul>
+      <!-- Campo 3: Gráficas -->
+      <div class="campo graficos">
+        <div class="contenedor-graficas">
+          <div class="grafica">
+            <canvas id="graficaBarras"></canvas>
+          </div>
+          <div class="grafica">
+            <canvas id="graficaTorta"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campo 4: Acciones -->
+      <div class="campo acciones acciones-horizontal">
+        <h3 class="titulo-derecha">Exportar</h3>
+        <!-- Botones apilados verticales -->
+        <div style="display:flex; justify-content:center; align-items:center; gap:10px;">
+          <button id="btn-export-word" class="btn secundario" aria-label="Exportar a Word">Exportar Word</button>
+          <button id="btn-export-todo" class="btn secundario" aria-label="Exportar Todo">Exportar Todo</button>
+
+        </div>
+        <div class="fila"></div>
+        <!-- Nota sobre el nombre del archivo -->
+        <ul class="lista-metrica">
+          <li><span>Total criterios</span><strong id="num-criterios">0</strong></li>
+          <li><span>Pendientes</span><strong id="num-ptes">0</strong></li>
+        </ul>
+        <div class="progreso-contenedor">
+          <div id="barra-progreso"></div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Bloque 3: Contenedor tabla Excel -->
+    <section id="tabla-excel" class="bloque sticky">
+      <!-- Se carga dinámicamente -->
+    </section>
+  </main>
+
+  <div id="overlay" class="oculto">
+    <div id="overlay-contenido">
+      <p id="overlay-texto"></p>
+      <button id="overlay-continuar" class="boton-overlay">Continuar</button>
+      <button id="overlay-cancelar" class="boton-overlay">Cancelar</button>
+
     </div>
   </div>
 
-  <!-- Campo 3: Gráficas -->
-<div class="campo graficos">
-  <div class="contenedor-graficas">
-    <div class="grafica">
-      <canvas id="graficaBarras"></canvas>
-    </div>
-    <div class="grafica">
-      <canvas id="graficaTorta"></canvas>
-    </div>
-  </div>
-</div>
-
-  <!-- Campo 4: Acciones -->
-  <div class="campo acciones acciones-horizontal">
-    <h3 class="titulo-derecha">Exportar</h3>
-    <!-- Botones apilados verticales -->
-    <div class="fila">
-      <button id="btn-export-word" class="btn secundario" disabled aria-label="Exportar a Word">Exportar Word</button>
-      <!--<button id="btn-export-todo" class="btn secundario" aria-label="Exportar Todo">Exportar Todo</button>-->
-    </div>
-    <div class="fila"></div>
-    <!-- Nota sobre el nombre del archivo -->
-    <ul class="lista-metrica"> 
-      <li><span>Total criterios</span><strong id="num-criterios">0</strong></li>
-      <li><span>Pendientes</span><strong id="num-ptes">0</strong></li>
-    </ul>
-    <div class="progreso-contenedor">
-  <div id="barra-progreso"></div>
-</div>
-  </div>
-
-</section>
-
-  <!-- Bloque 3: Contenedor tabla Excel -->
-  <section id="tabla-excel" class="bloque sticky"> 
-    <!-- Se carga dinámicamente -->
-  </section>
 
   <!-- Librerías -->
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 
   <!-- Script app -->
   <script type="module" src="src/script.js"></script>
 </body>
+
 </html>
