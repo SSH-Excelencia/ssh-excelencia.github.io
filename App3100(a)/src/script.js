@@ -150,8 +150,15 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   // --- BOTÓN REINICIAR ---
-  btnReiniciar.addEventListener("click", () => {
-    if (confirm("⚠️ Todos los datos se eliminarán. ¿Deseas reiniciar la evaluación?")) {
+  btnReiniciar.addEventListener("click", async () => {
+    const ok1 = await mostrarOverlay({
+      mensaje: "⚠️ <strong>Todos los datos se eliminarán.</strong><br><br>¿Deseas reiniciar la evaluación?",
+      aceptar: true,
+      cancelar: true,
+      textoAceptar: "Sí, reiniciar",
+      textoCancelar: "Cancelar"
+    });
+    if (ok) {
       location.reload();
     }
   });
@@ -1267,7 +1274,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       textoAceptar: "Aceptar",
       textoCancelar: "Cancelar"
     });
-    alert(ok)
+    //alert(ok)
     if (!ok) {
       mostrarOverlay({
         mensaje: "❌ Exportación Cancelada.",
