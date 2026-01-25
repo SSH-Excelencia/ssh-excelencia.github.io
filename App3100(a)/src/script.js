@@ -4,7 +4,7 @@
 const XLSX = window.XLSX || window.xlsx;
 
 let logoBuffer = null; // variable global para el logo
-
+let overlayTimer = null;
 
 async function cargarImagenComoArrayBuffer(url) {
   const response = await fetch(url);
@@ -1368,13 +1368,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       textoAceptar: "Aceptar",
       textoCancelar: "Cancelar"
     });
-
-
-
   });
-
-
-  let overlayTimer = null;
 
   function mostrarOverlay({
     mensaje,
