@@ -1357,11 +1357,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
   // --- BOTÓN TEST OVER ---
-  btntestOv.addEventListener("click", () => {
+  /*btntestOv.addEventListener("click", () => {
     mostrarOverlay({
-      mensaje: "Overlay temporal OK",
-      aceptar: true,
-      cancelar: true,
+    mensaje: "Overlay temporal OK",
+    aceptar: true,
+    cancelar: true,
       temporal: true,
       autoCerrar: true,
       tiempo: 3000,
@@ -1369,7 +1369,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       textoCancelar: "Cancelar"
     });
   });
-
+*/
   function mostrarOverlay({
     mensaje,
     aceptar = false,
