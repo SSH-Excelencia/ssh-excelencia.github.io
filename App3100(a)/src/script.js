@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // --- Mostrar opción inicial y cargar mensaje desde txt ---
     selectTablas.innerHTML = '<option value="" selected>Seleccione...</option>';
-    //cargarTextoEjemplo("mensaje-ejemplo.txt");
+    //cargarTextoEjemplo("public/mensaje-ejemplo.txt");
   });
 
   // --- BOTÓN REINICIAR ---
@@ -202,7 +202,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (!hojaSeleccionada) {
           // Mostrar mensaje de ejemplo si se selecciona "Seleccione..."
-          cargarTextoEjemplo("mensaje-ejemplo.txt");
+          cargarTextoEjemplo("public/mensaje-ejemplo.txt");
           return;
         }
 
@@ -1254,7 +1254,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       //alert("⚠️ No hay hojas con criterios evaluados para exportar.");
       return;
-      cargarTextoEjemplo("mensaje-ejemplo.txt");
+      cargarTextoEjemplo("public/mensaje-ejemplo.txt");
     }
 
     const mensajeHTML = `
@@ -1307,7 +1307,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     //alert("✅ Exportación completada.");
-    cargarTextoEjemplo("mensaje-ejemplo.txt");
+    cargarTextoEjemplo("public/mensaje-ejemplo.txt");
   }
 
   function construirSeccionWord({ nombreTabla, headers, filas }) {
