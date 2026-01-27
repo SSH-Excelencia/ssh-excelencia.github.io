@@ -367,10 +367,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .animate {
-            animation: fadeIn 0.6s ease-out forwards;
-        }
-
         .testimonials {
             margin-top: 3rem;
         }
@@ -471,6 +467,10 @@
   box-shadow: 0 5px 15px rgba(0,0,0,0.1);
   border-radius: 6px;
   z-index: 200;
+}
+
+.dropdown-menu.active {
+  display: block;
 }
 
 .dropdown-menu li {
@@ -579,3 +579,4 @@
   from { transform: translateX(-50%); }
   to   { transform: translateX(0); }
 }
+
