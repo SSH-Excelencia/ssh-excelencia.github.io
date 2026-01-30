@@ -2,6 +2,7 @@
 //import * as XLSX from "xlsx";
 
 const XLSX = window.XLSX || window.xlsx;
+const { jsPDF } = window.jspdf;
 
 let logoBuffer = null; // variable global para el logo
 let overlayTimer = null;
@@ -139,14 +140,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Cargar Excel solo una vez
     if (!bloque2.dataset.loaded) {
-      //cargarExcel("lista-chequeo.xlsx");  //local
-      cargarExcel("public/lista-chequeo.xlsx");  //web
+      cargarExcel("lista-chequeo.xlsx");  //local
+      //cargarExcel("public/lista-chequeo.xlsx");  //web
       bloque2.dataset.loaded = "true";
     }
 
     // --- Mostrar opción inicial y cargar mensaje desde txt ---
     selectTablas.innerHTML = '<option value="" selected>Seleccione...</option>';
-    //cargarTextoEjemplo("public/mensaje-ejemplo.txt");
+    //cargarTextoEjemplo("mensaje-ejemplo.txt");
   });
 
   // --- BOTÓN REINICIAR ---
@@ -158,6 +159,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       textoAceptar: "Sí, reiniciar",
       textoCancelar: "Cancelar"
     });
+
     if (ok) {
       location.reload();
     }
@@ -202,7 +204,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (!hojaSeleccionada) {
           // Mostrar mensaje de ejemplo si se selecciona "Seleccione..."
-          cargarTextoEjemplo("public/mensaje-ejemplo.txt");
+          cargarTextoEjemplo("mensaje-ejemplo.txt");
           return;
         }
 
@@ -334,11 +336,11 @@ document.addEventListener("DOMContentLoaded", async () => {
               const label = document.createElement("label");
               label.style.marginRight = "10px";
               const input = document.createElement("input");
-              
+
               input.type = "radio";
               input.name = `opcion_${i}`;
               input.value = opcion;
-              
+
               // Restaurar radio si estaba guardado
               if (respuestasGuardadas.opcion === opcion) {
                 input.checked = true;
@@ -613,10 +615,6 @@ document.addEventListener("DOMContentLoaded", async () => {
         graficaBarras.destroy();
         graficaBarras = null;
       }
-
-
-
-
       const response = await fetch(rutaTxt);
       if (!response.ok) throw new Error("No se pudo cargar el archivo de texto.");
       const texto = await response.text();
@@ -639,16 +637,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         barra.style.width = "0%";
         barra.textContent = "0%";
       }
-
-
     } catch (err) {
       console.error("Error cargando texto de ejemplo:", err);
       bloque3.innerHTML = `<p style="color:red;">No se pudo cargar el mensaje de ejemplo.</p>`;
     }
   }
-
-
-
 
   // === EXPORTAR WORD ===
 
@@ -954,8 +947,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // === Reemplaza el placeholder del botón Exportar Word ===
-  btnExportWord.addEventListener("click", async () => {
+
+  async function exportarHojaWord() {
     // Validaciones básicas
     const nombreIps = document.getElementById("nombreIps")?.value?.trim() || "";
     const numeroContacto = document.getElementById("numeroContacto")?.value?.trim() || "";
@@ -1130,10 +1123,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       ocultarOverlay();
     }, 3000);
 
-  });
+  };
 
 
-  async function exportarTodo() {
+  async function exportarTodoWord() {
 
     if (!workbook) {
       mostrarOverlay({
@@ -1254,7 +1247,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       //alert("⚠️ No hay hojas con criterios evaluados para exportar.");
       return;
-      cargarTextoEjemplo("public/mensaje-ejemplo.txt");
+      cargarTextoEjemplo("mensaje-ejemplo.txt");
     }
 
     const mensajeHTML = `
@@ -1307,7 +1300,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     //alert("✅ Exportación completada.");
-    cargarTextoEjemplo("public/mensaje-ejemplo.txt");
+    cargarTextoEjemplo("mensaje-ejemplo.txt");
   }
 
   function construirSeccionWord({ nombreTabla, headers, filas }) {
@@ -1355,28 +1348,50 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
 
-
+  //boton para exportar todo la evaluacion
   btnExportTodo.addEventListener("click", () => {
-    exportarTodo();
+    const tipo = obtenerTipoExportacion();
+    if (tipo === "pdf") {
+      alert("Exportando Todo Como PDF  en implementación");
+      //exportarTodoPdf();
+    } else {
+      //alert("Exportando Todo Como Word");
+      exportarTodoWord();
+    }
   });
 
+  // === //boton para exportar la hoja ===
+  btnExportWord.addEventListener("click", async () => {
+    const tipo = obtenerTipoExportacion();
 
+    if (tipo === "pdf") {
+      alert("exportar Hoja a PDF en implementación");
+      //await exportarHojaPDF(); 
+    } else {
+      //alert("exportar Hoja a Word");
+      await exportarHojaWord();
+    }
+  });
 
 
   // --- BOTÓN TEST OVER ---
-  /*btntestOv.addEventListener("click", () => {
-    mostrarOverlay({
-    mensaje: "Overlay temporal OK",
-    aceptar: true,
-    cancelar: true,
-      temporal: true,
-      autoCerrar: true,
-      tiempo: 3000,
-      textoAceptar: "Aceptar",
-      textoCancelar: "Cancelar"
-    });
-  });
-*/
+  /*  btntestOv.addEventListener("click", () => {
+      mostrarOverlay({
+        mensaje: "Overlay temporal OK",
+        aceptar: true,
+        cancelar: true,
+        temporal: true,
+        autoCerrar: true,
+        tiempo: 3000,
+        textoAceptar: "Aceptar",
+        textoCancelar: "Cancelar"
+      });
+  
+  
+  
+    }); 
+    */
+
   function mostrarOverlay({
     mensaje,
     aceptar = false,
@@ -1452,4 +1467,178 @@ document.addEventListener("DOMContentLoaded", async () => {
     overlay.classList.add("oculto");
   }
 
+  function obtenerTipoExportacion() {
+    const esWord = document.getElementById("tipo-exportacion").checked;
+    return esWord ? "word" : "pdf";
+  }
+
+  // funciones para exportar a PDF
+
+function encabezadoPDF(doc, titulo) {
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(12);
+  doc.text(titulo, 14, 15);
+
+  if (logoBuffer) {
+    const img = "data:image/png;base64," + btoa(
+      String.fromCharCode(...new Uint8Array(logoBuffer))
+    );
+    doc.addImage(img, "PNG", 160, 8, 30, 15);
+  }
+
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+}
+
+async function exportarHojaPDF() {
+
+  const nombreIps = document.getElementById("nombreIps")?.value?.trim() || "";
+  const nombreTabla = selectTablas?.value || "";
+
+  const { headers, filas } = leerTablaDesdeDOM();
+
+  if (!headers.length || !filas.length) {
+    mostrarOverlay({
+      mensaje: "Selecciona una tabla con información antes de exportar.",
+      temporal: true
+    });
+    return;
+  }
+
+  mostrarOverlay({
+    mensaje: "Generando PDF...",
+    temporal: true,
+    autoCerrar: false
+  });
+
+  const doc = new jsPDF("p", "mm", "a4");
+  let y = 25;
+
+  encabezadoPDF(doc, "Resultados Criterios de Evaluación");
+
+  doc.setFontSize(10);
+  doc.text(`IPS / Profesional: ${nombreIps}`, 14, y); y += 6;
+  doc.text(`Tabla evaluada: ${nombreTabla}`, 14, y); y += 8;
+
+  // ===== CONSTRUIR BODY SEGURO PARA autoTable =====
+  const body = [];
+
+  filas.forEach(f => {
+    if (f.tipo === "seccion") {
+      body.push([
+        { content: f.titulo, colSpan: 3, styles: { halign: "center", fontStyle: "bold" } }
+      ]);
+    } 
+    else if (f.tipo === "subtitulo") {
+      body.push([
+        { content: f.subtitulo, colSpan: 2, styles: { fontStyle: "italic" } },
+        f.observaciones || ""
+      ]);
+    } 
+    else if (f.tipo === "criterio") {
+      body.push([
+        f.criterio || "",
+        f.evaluacion || "",
+        f.observaciones || ""
+      ]);
+    }
+  });
+
+  doc.autoTable({
+    startY: y,
+    head: [headers],
+    body,
+    styles: { fontSize: 8, valign: "middle" },
+    headStyles: { fillColor: [230, 230, 230] },
+    columnStyles: {
+      0: { cellWidth: 90 },
+      1: { cellWidth: 30, halign: "center" },
+      2: { cellWidth: 60 }
+    }
+  });
+
+  doc.save(`Evaluacion_${sanitizeFileName(nombreTabla)}_${fechaISO()}.pdf`);
+  ocultarOverlay();
+}
+
+async function exportarTodoPdf() {
+
+  if (!workbook) {
+    mostrarOverlay({ mensaje: "Primero carga el Excel.", temporal: true });
+    return;
+  }
+
+  const doc = new jsPDF("p", "mm", "a4");
+
+  const hojas = workbook.SheetNames.filter(
+    h => h.toLowerCase() !== "tabla de contenido"
+  );
+
+  let exportoAlguna = false;
+
+  mostrarOverlay({
+    mensaje: "Generando PDF completo...",
+    temporal: true,
+    autoCerrar: false
+  });
+
+  for (const hoja of hojas) {
+
+    mostrarTabla(workbook, hoja);
+    actualizarContadoresCol2();
+    await new Promise(r => setTimeout(r, 250));
+
+    const radios = bloque3.querySelectorAll("input[type='radio']:checked");
+    if (!radios.length) continue; // 👈 respetamos tu regla
+
+    if (exportoAlguna) doc.addPage();
+    encabezadoPDF(doc, `Tabla: ${hoja}`);
+    exportoAlguna = true;
+
+    const { headers, filas } = leerTablaDesdeDOM();
+
+    const body = [];
+
+    filas.forEach(f => {
+      if (f.tipo === "seccion") {
+        body.push([
+          { content: f.titulo, colSpan: 3, styles: { halign: "center", fontStyle: "bold" } }
+        ]);
+      } 
+      else if (f.tipo === "subtitulo") {
+        body.push([
+          { content: f.subtitulo, colSpan: 2, styles: { fontStyle: "italic" } },
+          f.observaciones || ""
+        ]);
+      } 
+      else if (f.tipo === "criterio") {
+        body.push([
+          f.criterio || "",
+          f.evaluacion || "",
+          f.observaciones || ""
+        ]);
+      }
+    });
+
+    doc.autoTable({
+      startY: 25,
+      head: [headers],
+      body,
+      styles: { fontSize: 8 },
+      headStyles: { fillColor: [230, 230, 230] }
+    });
+  }
+
+  if (!exportoAlguna) {
+    ocultarOverlay();
+    mostrarOverlay({
+      mensaje: "No hay hojas con criterios evaluados para exportar.",
+      temporal: true
+    });
+    return;
+  }
+
+  doc.save(`Evaluacion_Completa_${fechaISO()}.pdf`);
+  ocultarOverlay();
+}
 });
