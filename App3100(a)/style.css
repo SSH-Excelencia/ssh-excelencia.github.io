@@ -187,6 +187,8 @@ main {
   flex: 1;
   /* ancho por defecto */
   box-sizing: border-box;
+  flex: 0 0 auto;   /* ✅ solo lo que mida su contenido */
+  height: auto;
 }
 
 /* Campo 1 y 2: Menú + Resumen */
@@ -202,8 +204,8 @@ main {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: auto;
-  padding: 5px;
+  height: 200px;
+  padding: var(--padding);
 }
 
 canvas {
@@ -246,7 +248,9 @@ canvas {
   /* vertical */
   justify-content: flex-start;
   width: auto;
-  height: 100%;
+  height: auto;
+  flex: 0 0 auto;   /* ✅ solo lo que mida su contenido */
+  height: auto;
 }
 
 /* Botones verticales alineados a la izquierda */
@@ -295,8 +299,96 @@ canvas {
   font-weight: bold;
 }
 
+.export-toggle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
 
+.toggle-label {
+  font-size: 14px;
+  font-weight: 600;
+}
 
+/* Switch */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 26px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #ccc;
+  transition: 0.3s;
+  border-radius: 26px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.3s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #4CAF50;
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+.exportar-header {
+  display: inline-flex;
+  justify-content: space-between;
+  align-items: center;
+  width: auto;
+  gap: 10px;
+  margin: 0 0 8px 0;
+  padding: var(--padding);
+  line-height: 1;
+  
+}
+
+.export-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.titulo-derecha {
+  margin: 0;
+}
+
+/* Tamaño un poco más compacto para el header */
+.toggle-label {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.exportar-header h3 {
+  margin: 0;                /* 👈 elimina el alto fantasma */
+  padding: 0;
+  line-height: 1.2;         /* compacto */
+  font-size: 1.1rem;        /* opcional */
+}
 
 .bloque {
   margin: 5px;
@@ -442,7 +534,7 @@ canvas {
 #tabla-excel th,
 #tabla-excel td {
   border: 1px solid var(--color-borde);
-  padding: 8px;
+  padding: var(--padding);
   vertical-align: middle;
   word-wrap: break-word
 }
