@@ -140,8 +140,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Cargar Excel solo una vez
     if (!bloque2.dataset.loaded) {
-      cargarExcel("lista-chequeo.xlsx");  //local
-      //cargarExcel("public/lista-chequeo.xlsx");  //web
+      //cargarExcel("lista-chequeo.xlsx");  //local
+      cargarExcel("public/lista-chequeo.xlsx");  //web
       bloque2.dataset.loaded = "true";
     }
 
