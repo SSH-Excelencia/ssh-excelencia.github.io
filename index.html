@@ -2,151 +2,431 @@
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Listas Chequeo</title>
-  <link rel="icon" type="image/png" href="Image/logo1fav.png">
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSH - Excelencia en Salud</title>
+    <link rel="icon" type="image/png" href="logo1.png">
+    <link rel="stylesheet" href="style.css" />
+
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
+
 </head>
 
-
-
 <body>
-  <header class="sticky">
+    <!-- Encabezado -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <span class="logo-icon"> <img src="logo3.png" height="50"> </span> SSH - Excelencia en Salud
+            </div>
+            <button class="menu-toggle" id="menuToggle">☰</button>
 
-    <img id="logo-header" src="Image/logo1.png" alt="Logo o Banner" class="contenedor-circular" />
-    <h1>Listas de Chequeo condiciones de Habilitación</h1>
+            <div class="nav-links" id="navLinks">
+                <a href="#inicio">Inicio</a>
+                <a href="#servicios">Servicios</a>
+                <a href="#nosotros">Nosotros</a>
+                <a href="#testimonios">Testimonios</a>
+                <a href="#contacto">Contacto</a>
+                <a href="Eventos.html">Eventos</a>
 
-    <!-- Botones de acciones ahora en el header -->
-    <div class="acciones-header">
-      <button id="btnReiniciar" class="btn danger" aria-label="Reinciar la aplicación">🔄 Reiniciar Evaluación</button>
-      <button id="btn-export-pdf" class="btn secundario" aria-label="Salir de la aplicación">Salir</button>
-      <!-- <button id="btn-testOv" class="btn secundario" aria-label="Test overlay">Test overlay</button> -->
-    </div>
-  </header>
+                <!-- Nuevo menú con submenús -->
+                <div class="dropdown">
+                    <a href="#">Herramientas ▾</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="App3100(a)/index.html" target="_blank">Resolucion 3100</a></li>
+                        <li><a href="ListasCh/index.html" target="_blank">Listas de Chequeo</a></li>
+                        <li><a href="https://script.google.com/macros/s/AKfycbzGV9p3Ok1itzpzZRyYuQYS7jfpZs86oqQ3gaZiuf1Xtx6xnu7sMHZ3CDn8S-V5IYKs/exec"
+                                target="_blank">Aplicativo Encuestas</a></li>
+                        <li><a href="https://www.google.com" target="_blank" rel="noopener">Historia Clinica Digital</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
 
-  <!-- Bloque 1: Datos del evaluador -->
-  <section id="form-inicial" class="bloque sticky">
-    <h2>Datos del Evaluador</h2>
-    <div class="grid2">
-      <!-- Nombre -->
-      <label>
-        Nombre IPS / Profesional Independiente
-        <input type="text" id="nombreIps" placeholder="Ingrese nombre" />
-      </label>
-      <!-- Número de contacto + botón en la misma línea -->
-      <label style="text-align: center;">
-        Datos de contacto
-        <div class="contacto-boton">
-          <input type="text" id="numeroContacto" placeholder="Número contacto" />
-          <input type="email" id="correoElectronico" placeholder="Ingrese correo electrónico" />
-          <button id="btnContinuar" class="btn primario" aria-label="Opción de continuar">Continuar</button>
+
+
+
+
+            </div>
+        </nav>
+    </header>
+
+    <!-- Sección Hero -->
+    <section class="hero" id="inicio">
+        <div class="hero-content animate">
+            <h2>Asesoría Profesional en el Cumplimiento de Requisitos de Habilitación y Capacitación </h2>
+            <p>Te acompañamos con expertos en los procesos de cumplimiento de requisitos de habilitación según la
+                normatividad Vigente. </p>
+            <p>Capacitacion continua para la atención segura y de Calidad.</p>
+            <a href="#contacto" class="btn">Solicitar asesoría</a>
+            <a href="#servicios" class="btn btn-secondary">Nuestros servicios</a>
         </div>
-      </label>
-    </div>
-  </section>
-  <main>
-    <!-- Bloque 2: Panel inicial -->
-    <section id="panel-inicial" class="bloque sticky" style="visibility: hidden;">
-      <!-- style="opacity:0.5; pointer-events:none;"> -->
-
-      <!-- Campo 1: Menú + Resumen -->
-      <div class="campo menu-resumen">
-        <!-- Menú de selección -->
-        <label for="menu-tablas"><strong>Selecciona Tabla</strong></label>
-        <select id="menu-tablas">
-          <option value="" selected>Seleccione...</option>
-        </select>
-
-        <!-- Resumen de la tabla -->
-        <h3>Resumen</h3>
-        <div style="display:flex">
-          <ul class="lista-metrica" style="width: 85%">
-            <li><span>Cumple</span><strong id="num-cumple">0</strong></li>
-            <li><span>No cumple</span><strong id="num-nocumple">0</strong></li>
-            <li><span>No aplica</span><strong id="num-noaplica">0</strong></li>
-          </ul>
-          <ul class="lista-metrica" style="width: 10%">
-            <li><span></span><strong id="p-cumple">0</strong></li>
-            <li><span></span><strong id="p-nocumple">0</strong></li>
-            <li><span></span><strong id="p-noaplica">0</strong></li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Campo 3: Gráficas -->
-      <div class="campo graficos">
-        <div class="contenedor-graficas">
-          <div class="grafica">
-            <canvas id="graficaBarras"></canvas>
-          </div>
-          <div class="grafica">
-            <canvas id="graficaTorta"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- Campo 4: Acciones -->
-      <div class="campo acciones acciones-horizontal">
-        <div class="exportar-header">
-          <h3 class="titulo-derecha">Exportar</h3>
-          <!-- Selector PDF / Word -->
-          <div class="export-toggle">
-            <span class="toggle-label">PDF</span>
-            <label class="switch">
-              <input type="checkbox" id="tipo-exportacion">
-              <span class="slider"></span>
-            </label>
-            <span class="toggle-label">Word</span>
-          </div>
-        </div>
-        <!-- Botones apilados verticales -->
-        <div style="display:flex; justify-content:center; align-items:center; gap:10px;">
-          <button id="btn-export-word" class="btn secundario" aria-label="Exportar Hoja">Exportar Hoja</button>
-          <button id="btn-export-todo" class="btn secundario" aria-label="Exportar Todo">Exportar Todo</button>
-        </div>
-      </div>
-        <div class="fila"></div>
-        <!-- Nota sobre el nombre del archivo -->
-        <ul class="lista-metrica">
-          <li><span>Total criterios</span><strong id="num-criterios">0</strong></li>
-          <li><span>Pendientes</span><strong id="num-ptes">0</strong></li>
-        </ul>
-        <div class="progreso-contenedor">
-          <div id="barra-progreso"></div>
-        </div>
-      </div>
-
     </section>
 
-    <!-- Bloque 3: Contenedor tabla Excel -->
-    <section id="tabla-excel" class="bloque sticky">
-      <!-- Se carga dinámicamente -->
+    <!-- Sección de Servicios -->
+    <section class="section" id="servicios">
+        <h2 class="section-title">Nuestros Servicios</h2>
+        <div class="services-grid">
+            <div class="service-card animate">
+                <div class="service-content">
+                    <div class="service-icon">📋</div>
+                    <h3 class="service-title" style="text-align: center;">Acompañamiento en Proceso de Habilitación para
+                        IPS y para Profesionales Independientes</h3>
+                    <p class="justificado">Consultorías individuales con Profesionales para evaluar, gestionar y
+                        acompañar el proceso de habilitación ante los entes reguladores, con el cumplimiento de los
+                        requisitos según la normatividad vigente para Colombia.</p>
+                </div>
+            </div>
+            <div class="service-card animate">
+                <div class="service-content">
+                    <div class="service-icon">📋</div>
+                    <h3 class="service-title" style="text-align: center;">Capacitaciones Permanentes</h3>
+                    <p class="justificado">Programamos capacitaciones periódicas y personalizadas, en las diferentes
+                        áreas de la salud, para crear cultura de atención segura. Adaptamos la capacitación a los
+                        requerimientos propios de la entidad/profesional independiente y sus colaboradores</p>
+                </div>
+            </div>
+            <div class="service-card animate">
+                <div class="service-content">
+                    <div class="service-icon">📋</div>
+                    <h3 class="service-title" style="text-align: center;">Acompañamiento Permanente</h3>
+                    <p class="justificado">AAsesoramiento y acompañamiento Permanente, en las gestiones mensuales en pro
+                        del cumplimiento de las condiciones de Habilitación y Atención con Calidad.</p>
+                </div>
+            </div>
+            <div class="service-card animate">
+                <div class="service-content">
+                    <div class="service-icon">📋</div>
+                    <h3 class="service-title" style="text-align: center;">Auditorias Programadas</h3>
+                    <p class="justificado">Organización de Auditorias, recordatorios y seguimiento de consultas con
+                        relación a los requisitos de Habilitación.</p>
+                </div>
+            </div>
+            <div class="service-card animate">
+                <div class="service-content">
+                    <div class="service-icon">📋</div>
+                    <h3 class="service-title" style="text-align: center;">Reportes Periodicos Obligatorios</h3>
+                    <p class="justificado">Acompañamiento en la gestión de los reportes periódicos obligatorios a los
+                        entes de control.</p>
+                </div>
+            </div>
+            <div class="service-card animate">
+                <div class="service-content">
+                    <div class="service-icon">📋</div>
+                    <h3 class="service-title" style="text-align: center;">Aplicativos a Medida</h3>
+                    <p class="justificado">Creación de Aplicaciones a medida que le ayudan a gestionar el proceso de
+                        cumplimientos de habilitación y seguimiento de calidad en la prestación del servicio.</p>
+                </div>
+            </div>
+
+            <div class="service-card animate">
+                <div class="service-content">
+                    <div class="service-icon">📋</div>
+                    <h3 class="service-title" style="text-align: center;">Tramites de Registro y Creación</h3>
+                    <p class="justificado">Asesoramos, acompañamos y gestionamos los tramites de constitución y registro
+                        ante los entes de control en todo el departamento de Nariño</p>
+                </div>
+            </div>
+
+        </div>
     </section>
-  </main>
 
-  <div id="overlay" class="oculto">
-    <div id="overlay-contenido">
-      <p id="overlay-texto"></p>
-      <button id="overlay-continuar" class="boton-overlay">Continuar</button>
-      <button id="overlay-cancelar" class="boton-overlay">Cancelar</button>
+    <!-- Sección Acerca de Nosotros -->
+    <section class="section" id="nosotros">
+        <h2 class="section-title">Quiénes Somos</h2>
+        <div class="about-content">
+            <div class="about-image animate">
+                <!-- <img src="D:\Fernando T\Documentos\SSH-LF\LOGO SSH.PNG" alt="Equipo médico" /> -->
+                <img src="logo3.png" alt="Logo Empresa" />
 
-    </div>
-  </div>
+            </div>
+            <div class="about-text animate">
+                <h3 style="text-align: center;">Expertos en Asesoría de Salud</h3>
+                <p class="justificado">En SSH - Excelencia en Salud, contamos con un equipo de profesionales con amplia
+                    experiencia en diferentes areas.</p> <br>
+                <p class="justificado"> Nuestra misión es proporcionar orientación clara y personalizada para ayudarte a
+                    tomar decisiones informadas sobre los procesos, y procesos de cumplimiento de requisitos de
+                    habilitacion, y registro ante las entidades Reguladores.</p> <br>
+                <p class="justificado">Trabajamos con una red de Profesionales certificados, lo que nos permite ofrecer
+                    asesoramiento preciso y actualizado en diversas áreas .</p> <br>
+                <p class="justificado">Nuestro compromiso es brindarte un servicio de calidad, con atención
+                    personalizada y respuestas rápidas a todas tus consultas .</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Testimonios -->
+    <section class="section" id="testimonios">
+        <h2 class="section-title">Testimonios</h2>
+        <div class="testimonials">
+            <div class="testimonial-container">
+                <div class="testimonial-slide active">
+                    <p class="testimonial-text">"Gracias a la asesoría de SSH - Excelencia en salud, y a su
+                        acompañamiento, el proceso de cumplimiento de requisitos, los tramites y gestiones para el
+                        registro ante los entes de control, fueron dinamicos y sin inconvneientes, Muchas Gracias."</p>
+                    <p class="testimonial-author">Profesional Independiente</p>
+                </div>
+                <div class="testimonial-slide">
+                    <p class="testimonial-text">"Recomendamos ampliamente a SSH Excelencia en salud por su impecable
+                        servicio en asesorías para habilitación! Todo su equipo es profesional, atento y siempre está
+                        dispuesto a resolver dudas con claridad y a la mayor brevedad. La comunicación siempre fue
+                        directa y oportuna, Gracias a su apoyo, el proceso de nuestra habilitación fue rápido y sin
+                        contratiempos. ¡Una gran opción para quienes buscan orientación en habilitación y demás !."</p>
+                    <p class="testimonial-author">RADIANTEZ IPS</p>
+                </div>
+                <div class="testimonial-slide">
+                    <p class="testimonial-text">"El servicio de asesoría fue excepcional. Me ayudaron a realizar el
+                        proceso de habilitacion, sin inconvenientes, cumpliendo con todos los requisitos normativos
+                        vigentes en el momento, Muchas Gracias"</p>
+                    <p class="testimonial-author">Ana Martínez</p>
+                </div>
+            </div>
+            <div class="testimonial-nav">
+                <button class="testimonial-btn prev-btn">❮</button>
+                <button class="testimonial-btn next-btn">❯</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de Contacto -->
+    <section class="section" id="contacto">
+        <h2 class="section-title">Contáctanos</h2>
+        <div class="contact-info animate">
+            <h3>Información de contacto</h3>
+            <div class="contact-details">
+                <div class="contact-item">
+                    <span class="contact-icon">📞</span>
+                    <a href="https://wa.me/573181602212?text=Hola,%20quiero%20saber%20mas%20sobre%20sus%20servicios"
+                        target="_blank">
+                        <span>318 160 2212</span>
+                    </a>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">✉️</span>
+                    <a
+                        href="mailto:sshexcelenciaensalud@gmail.com?Subject=Interesado%20en%20ampliar%20información"><span>sshexcelenciaensalud@gmail.com</span></a>
+
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">📍</span>
+                    <span>San Juan de Pato, Nariño</span>
+                </div>
+                <div class="contact-item">
+                    <span class="contact-icon">🕒</span>
+                    <span>Lun-Vie: 9AM-6PM</span>
+                </div>
+            </div>
+        </div>
+        <div class="contact-form animate">
+            <h3>Envíanos un mensaje</h3>
+            <form id="contactForm">
+                <div class="form-group">
+                    <label for="name">Nombre completo</label>
+                    <input type="text" id="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Correo electrónico</label>
+                    <input type="email" id="email" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Teléfono</label>
+                    <input type="tel" id="phone" class="form-control" pattern="[0-9]{7,10}>
+                </div>
+                <div class=" form-group">
+                    <label for="service">Servicio que te interesa</label>
+                    <select id="service" class="form-control">
+                        <option value="">Seleccionar servicio</option>
+                        <option value="asesoria">Acompañamiento en Proceso de Habilitación para IPS y para Profesionales
+                            Independientes</option>
+                        <option value="segunda-opinion">Capacitaciones Permanentes</option>
+                        <option value="seguros">Acompañamiento Permanente</option>
+                        <option value="citas">Auditorias Programadas</option>
+                        <option value="telemedicina">Reportes Periodicos Obligatorios</option>
+                        <option value="prevencion">Aplicativos a Medida</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="message">Mensaje</label>
+                    <textarea id="message" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="btn">Enviar mensaje</button>
 
 
-  <!-- Librerías -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+                <div class="loader" id="loader"></div>
+                <div class="success-message" id="successMessage">
+                    ¡Mensaje enviado con éxito! Nos pondremos en contacto contigo pronto.
+                </div>
+            </form>
+        </div>
+    </section>
 
-  <!-- Script app -->
-  <script type="module" src="src/script.js"></script>
+    <!-- Pie de página -->
+    <footer>
+        <div class="footer-content">
+            <div class="logo">
+                <span class="logo-icon"> <img src="logo1.png" height="50"> </span> SSH - Excelencia en Salud
+
+            </div>
+            <div class="social-links">
+                <a href="https://www.facebook.com/" target="_blank" class="social-icon"><img src="face.png"
+                        height="40"></a>
+                <a href="#" class="social-icon">t</a>
+                <a href="#" class="social-icon">in</a>
+                <a href="#" class="social-icon">ig</a>
+            </div>
+
+            <div class="copyright">
+                <p>&copy; 2025 - SSH Excelencia en Salud. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Menú móvil
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.getElementById('navLinks');
+            const menuToggle = document.getElementById('menuToggle');
+            const dropdownToggle = document.querySelector('.dropdown > a');
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+
+            // Botón hamburguesa
+            menuToggle.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+            });
+
+            // SOLO para Herramientas (móvil)
+            dropdownToggle.addEventListener('click', function (e) {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault(); // evita cerrar menú
+                    dropdownMenu.classList.toggle('active');
+                }
+            });
+
+            // Cerrar menú SOLO al hacer click en enlaces normales
+            document.querySelectorAll('.nav-links > a').forEach(link => {
+                link.addEventListener('click', () => {
+                    navLinks.classList.remove('active');
+                });
+            });
+
+            // Testimonios
+            let currentSlide = 0;
+            const slides = document.querySelectorAll('.testimonial-slide');
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+
+            function showSlide(index) {
+                slides.forEach(slide => slide.classList.remove('active'));
+
+                if (index >= slides.length) {
+                    currentSlide = 0;
+                } else if (index < 0) {
+                    currentSlide = slides.length - 1;
+                } else {
+                    currentSlide = index;
+                }
+
+                slides[currentSlide].classList.add('active');
+            }
+
+            if (prevBtn && nextBtn) {
+                prevBtn.addEventListener('click', () => showSlide(currentSlide - 1));
+                nextBtn.addEventListener('click', () => showSlide(currentSlide + 1));
+
+                // Cambiar testimonios automáticamente cada 15 segundos
+                setInterval(() => {
+                    showSlide(currentSlide + 1);
+                }, 15000);
+            }
+
+            // Formulario de contacto
+            const contactForm = document.getElementById('contactForm');
+            const loader = document.getElementById('loader');
+            const successMessage = document.getElementById('successMessage');
+
+            if (contactForm) {
+                contactForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    // Mostrar loader
+                    loader.style.display = 'block';
+
+                    // Simular envío de formulario
+                    setTimeout(() => {
+                        loader.style.display = 'none';
+
+
+                        successMessage.style.display = 'block';
+                        contactForm.reset();
+
+                        // Ocultar mensaje de éxito después de 5 segundos
+                        setTimeout(() => {
+                            successMessage.style.display = 'none';
+                        }, 5000);
+                    }, 1500);
+                });
+            }
+
+            // Animación al hacer scroll
+            const animatedElements = document.querySelectorAll('.animate');
+
+            function checkScroll() {
+                const triggerBottom = window.innerHeight * 0.8;
+
+                animatedElements.forEach(element => {
+                    const elementTop = element.getBoundingClientRect().top;
+
+                    if (elementTop < triggerBottom) {
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    }
+                });
+            }
+
+            // Inicialmente establecer elementos como invisibles
+            animatedElements.forEach(element => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                element.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
+            });
+
+            // Comprobar en carga inicial
+            checkScroll();
+
+            // Comprobar al hacer scroll
+            window.addEventListener('scroll', checkScroll);
+
+            // Smooth scroll para enlaces internos
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 70,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        document.querySelector('.dropdown > a').addEventListener('click', function (e) {
+            if (window.innerWidth <= 768) {
+                e.preventDefault();
+                this.nextElementSibling.classList.toggle('active');
+            }
+        });
+
+    </script>
 </body>
 
 </html>
