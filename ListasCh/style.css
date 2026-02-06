@@ -569,6 +569,25 @@ body.sin-header header {
   display: none;
 }
 
+/* =========================================
+   Ocultar header SOLO en mobile y tablet
+   cuando la app está en estado "sin-header"
+   ========================================= */
+
+/* Mobile + Tablet */
+@media (max-width: 1023px) {
+  body.sin-header header {
+    display: none;
+  }
+}
+
+/* Desktop: nunca se oculta */
+@media (min-width: 1024px) {
+  body.sin-header header {
+    display: flex;
+  }
+}
+
 
 
 
