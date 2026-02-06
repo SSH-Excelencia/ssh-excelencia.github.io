@@ -492,11 +492,7 @@ input:checked + .slider:before {
 /* ========================= */
 @media (max-width: 767px) {
 
-  /* 🔥 OCULTAR HEADER (clave) */
-  header,
-  header.sticky {
-    display: none !important;
-  }
+  
 
   body {
     padding: 6px;
