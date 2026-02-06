@@ -487,6 +487,88 @@ input:checked + .slider:before {
   }
 }
 
+/* ========================= */
+/* 📱 MOBILE */
+/* ========================= */
+@media (max-width: 767px) {
+
+  /* 🔥 OCULTAR HEADER (clave) */
+  header,
+  header.sticky {
+    display: none !important;
+  }
+
+  body {
+    padding: 6px;
+  }
+
+  /* 🔒 MANTENER COLUMNAS */
+  main {
+    flex-direction: row;   /* 👈 NO CAMBIA */
+    gap: 6px;
+  }
+
+  /* Panel inicial más compacto */
+  #panel-inicial {
+    flex: 0 0 38%;         /* 👈 proporción */
+    max-width: 38%;
+    overflow-y: auto;
+  }
+
+  /* Tabla más grande */
+  #tabla-excel {
+    flex: 1;
+    max-width: 62%;
+    overflow-y: auto;
+  }
+
+  /* Inputs en una sola columna */
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Gráficas una debajo de otra */
+  .contenedor-graficas {
+    flex-direction: column;
+  }
+
+  .grafica {
+    max-width: 100%;
+  }
+
+  /* Botones más táctiles */
+  .btn {
+    width: 100%;
+  }
+}
+
+
+/* ========================= */
+/* 📲 TABLET */
+/* ========================= */
+@media (min-width: 768px) and (max-width: 1023px) {
+
+  /* Header visible */
+  header.sticky {
+    display: flex;
+  }
+
+  /* Columnas siempre */
+  main {
+    flex-direction: row;
+  }
+
+  #panel-inicial {
+    flex: 0 0 32%;
+    max-width: 32%;
+  }
+
+  #tabla-excel {
+    flex: 1;
+    max-width: 68%;
+  }
+}
+
 
 
 
