@@ -15,7 +15,7 @@
   <header class="sticky">
 
     <img id="logo-header" src="Image/logo1.png" alt="Logo o Banner" class="contenedor-circular" />
-    <h1>Listas de Chequeo condiciones de Habilitación</h1>
+    <h1>Listas de Chequeo Auditorias</h1>
 
     <!-- Botones de acciones ahora en el header -->
     <div class="acciones-header">
@@ -88,13 +88,24 @@
 
       <!-- Campo 4: Acciones -->
       <div class="campo acciones acciones-horizontal">
-        <h3 class="titulo-derecha">Exportar</h3>
+        <div class="exportar-header">
+          <h3 class="titulo-derecha">Exportar</h3>
+          <!-- Selector PDF / Word -->
+          <div class="export-toggle">
+            <span class="toggle-label">PDF</span>
+            <label class="switch">
+              <input type="checkbox" id="tipo-exportacion">
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Word</span>
+          </div>
+        </div>
         <!-- Botones apilados verticales -->
         <div style="display:flex; justify-content:center; align-items:center; gap:10px;">
-          <button id="btn-export-word" class="btn secundario" aria-label="Exportar a Word">Exportar Word</button>
+          <button id="btn-export-word" class="btn secundario" aria-label="Exportar Hoja">Exportar Hoja</button>
           <button id="btn-export-todo" class="btn secundario" aria-label="Exportar Todo">Exportar Todo</button>
-
         </div>
+      </div>
         <div class="fila"></div>
         <!-- Nota sobre el nombre del archivo -->
         <ul class="lista-metrica">
@@ -130,6 +141,12 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
+  
 
   <!-- Script app -->
   <script type="module" src="src/script.js"></script>
