@@ -2,6 +2,15 @@
 //import * as XLSX from "xlsx";
 
 const XLSX = window.XLSX || window.xlsx;
+const { jsPDF } = window.jspdf;
+
+// ================= CONFIGURACIÓN DE ARCHIVOS =================
+const RUTAS_ARCHIVOS = {
+  MensajeEjemplo: "public/mensaje-ejemplo.txt",
+  correosAutorizados: "public/data.b64",
+  TablaExcel: "public/lista-chequeo.xlsx"
+};
+
 
 let logoBuffer = null; // variable global para el logo
 let overlayTimer = null;
@@ -65,7 +74,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   btnExportWord.disabled = true;
   //btnExportPdf.disabled = true;
 
-  cargarTextoEjemplo("public/mensaje-ejemplo.txt");
+  cargarTextoEjemplo(RUTAS_ARCHIVOS.MensajeEjemplo);
 
 
 
@@ -139,29 +148,28 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Cargar Excel solo una vez
     if (!bloque2.dataset.loaded) {
-      //cargarExcel("lista-chequeo.xlsx");  //local
-      cargarExcel("public/lista-chequeo.xlsx");  //web
+      cargarExcel(RUTAS_ARCHIVOS.TablaExcel);  
       bloque2.dataset.loaded = "true";
     }
 
     // --- Mostrar opción inicial y cargar mensaje desde txt ---
     selectTablas.innerHTML = '<option value="" selected>Seleccione...</option>';
-    //cargarTextoEjemplo("mensaje-ejemplo.txt");
+    //cargarTextoEjemplo(RUTAS_ARCHIVOS.MensajeEjemplo);
   });
 
   // --- BOTÓN REINICIAR ---
   btnReiniciar.addEventListener("click", async () => {
     const ok = await mostrarOverlay({
-    mensaje: "⚠️ <strong>Todos los datos se eliminarán.</strong><br><br>¿Deseas reiniciar la evaluación?",
-    aceptar: true,
-    cancelar: true,
-    textoAceptar: "Sí, reiniciar",
-    textoCancelar: "Cancelar"
-  });
+      mensaje: "⚠️ <strong>Todos los datos se eliminarán.</strong><br><br>¿Deseas reiniciar la evaluación?",
+      aceptar: true,
+      cancelar: true,
+      textoAceptar: "Sí, reiniciar",
+      textoCancelar: "Cancelar"
+    });
 
-  if (ok) {
-    location.reload();
-  }
+    if (ok) {
+      location.reload();
+    }
   });
 
   // --- BOTÓN SALIR ---
@@ -203,7 +211,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (!hojaSeleccionada) {
           // Mostrar mensaje de ejemplo si se selecciona "Seleccione..."
-          cargarTextoEjemplo("mensaje-ejemplo.txt");
+          cargarTextoEjemplo(RUTAS_ARCHIVOS.MensajeEjemplo);
           return;
         }
 
@@ -335,11 +343,11 @@ document.addEventListener("DOMContentLoaded", async () => {
               const label = document.createElement("label");
               label.style.marginRight = "10px";
               const input = document.createElement("input");
-              
+
               input.type = "radio";
               input.name = `opcion_${i}`;
               input.value = opcion;
-              
+
               // Restaurar radio si estaba guardado
               if (respuestasGuardadas.opcion === opcion) {
                 input.checked = true;
@@ -614,15 +622,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         graficaBarras.destroy();
         graficaBarras = null;
       }
-
-
-
-
       const response = await fetch(rutaTxt);
       if (!response.ok) throw new Error("No se pudo cargar el archivo de texto.");
       const texto = await response.text();
       bloque3.innerHTML = `<div style="padding: 20px; text-align: center;">${texto}</div>`;
       bloque3.classList.remove("oculto");
+
+      // 🔹 Resetear select a "Seleccione..."
+      const selectTablas = document.getElementById("menu-tablas");
+      if (selectTablas) {
+        selectTablas.value = "";
+      }
+
 
       // Resetear contadores columna 2
       document.getElementById("num-criterios").textContent = "0";
@@ -640,16 +651,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         barra.style.width = "0%";
         barra.textContent = "0%";
       }
-
-
     } catch (err) {
       console.error("Error cargando texto de ejemplo:", err);
       bloque3.innerHTML = `<p style="color:red;">No se pudo cargar el mensaje de ejemplo.</p>`;
     }
   }
-
-
-
 
   // === EXPORTAR WORD ===
 
@@ -955,8 +961,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
-  // === Reemplaza el placeholder del botón Exportar Word ===
-  btnExportWord.addEventListener("click", async () => {
+
+  async function exportarHojaWord() {
     // Validaciones básicas
     const nombreIps = document.getElementById("nombreIps")?.value?.trim() || "";
     const numeroContacto = document.getElementById("numeroContacto")?.value?.trim() || "";
@@ -1131,73 +1137,111 @@ document.addEventListener("DOMContentLoaded", async () => {
       ocultarOverlay();
     }, 3000);
 
-  });
+  };
 
+  async function obtenerHojasExportables(workbook) {
+    const hojas = workbook.SheetNames.filter(
+      h => h.toLowerCase() !== "tabla de contenido"
+    );
 
-  async function exportarTodo() {
+    const menuTablas = document.getElementById("menu-tablas");
+    const exportables = [];
+
+    for (const hoja of hojas) {
+      mostrarTabla(workbook, hoja);
+      menuTablas.value = hoja;
+
+      // ⏳ dar un frame al DOM para reflejar radios
+      await new Promise(r => requestAnimationFrame(r));
+
+      const radiosMarcados = bloque3.querySelectorAll(
+        "input[type='radio']:checked"
+      );
+
+      if (radiosMarcados.length > 0) {
+        exportables.push(hoja);
+      }
+    }
+
+    return exportables;
+  }
+
+  async function exportarTodoWord() {
 
     if (!workbook) {
       mostrarOverlay({
         mensaje: "⚠️ Primero carga el Excel antes de exportar.",
-        aceptar: false,
-        cancelar: false,
-        temporal: true,
-        autoCerrar: true,
-        tiempo: 3000,
-        textoAceptar: "Aceptar",
-        textoCancelar: "Cancelar"
+        temporal: true
       });
-
-      // alert("⚠️ Primero carga el Excel antes de exportar.");
-
       return;
     }
 
-    const hojas = workbook.SheetNames.filter(
-      nombre => nombre.toLowerCase() !== "tabla de contenido"
-    );
+    mostrarOverlay({
+      mensaje: "🔎 Analizando hojas...",
+      autoCerrar: false
+    });
+
+    const hojasSeleccionadas = await obtenerHojasExportables(workbook);
+
+    ocultarOverlay();
+
+    if (hojasSeleccionadas.length === 0) {
+      mostrarOverlay({
+        mensaje: "⚠️ No hay hojas con criterios evaluados.",
+        temporal: true
+      });
+      return;
+    }
+
+    // 🧾 Confirmación del usuario
+    const mensajeHTML = `
+    <strong>📄 Hojas a exportar:</strong><br><br>
+    <ul style="text-align:left; padding-left:20px;">
+      ${hojasSeleccionadas.map(h => `<li>${h}</li>`).join("")}
+    </ul>
+  `;
+
+    const ok = await mostrarOverlay({
+      mensaje: mensajeHTML,
+      aceptar: true,
+      cancelar: true,
+      autoCerrar: false
+    });
+
+    if (!ok) {
+      mostrarOverlay({
+        mensaje: "❌ Exportación cancelada.",
+        temporal: true
+      });
+      return;
+    }
+
+    // 🚀 SOLO AQUÍ empieza el trabajo pesado
+    await generarWordDesdeHojas(hojasSeleccionadas);
+  }
+
+  async function generarWordDesdeHojas(hojasSeleccionadas) {
 
     const secciones = [];
-    const hojasSeleccionadas = [];
     const menuTablas = document.getElementById("menu-tablas");
 
     mostrarOverlay({
-      mensaje: "Recopilando Información.",
-      aceptar: false,
-      cancelar: false,
-      temporal: true,
-      autoCerrar: false,
-      tiempo: 3000,
-      textoAceptar: "Aceptar",
-      textoCancelar: "Cancelar"
+      mensaje: "📄 Generando informe...",
+      autoCerrar: false
     });
 
-    for (const hoja of hojas) {
+    for (const hoja of hojasSeleccionadas) {
 
-      // fuerza visualización para que leerTablaDesdeDOM lea correctamente
       mostrarTabla(workbook, hoja);
       menuTablas.value = hoja;
-      // Generar gráficas para esta hoja
+
       actualizarContadoresCol2();
-      await new Promise(r => setTimeout(r, 300));
+      await new Promise(r => setTimeout(r, 800));
 
-      // verificar criterios evaluados
-      const radios = bloque3.querySelectorAll("input[type='radio']:checked");
-
-      if (radios.length === 0) {
-        console.log(`⏭ Hoja "${hoja}" ignorada (sin criterios calificados)`);
-        continue;
-      }
-      hojasSeleccionadas.push(hoja);
-
-      console.log(`✔ Hoja "${hoja}" incluida (${radios.length} criterios).`);
 
       const { headers, filas } = leerTablaDesdeDOM();
 
-      if (!headers.length || !filas.length) {
-        console.log(`⏭ Hoja "${hoja}" no tiene datos visibles`);
-        continue;
-      }
+      if (!headers.length || !filas.length) continue;
 
       const section = construirSeccionWord({
         nombreTabla: hoja,
@@ -1210,105 +1254,23 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     ocultarOverlay();
 
-    if (secciones.length === 0) {
-      mostrarOverlay({
-        mensaje: "⚠️ No hay hojas con criterios evaluados para exportar.",
-        aceptar: false,
-        cancelar: false,
-        temporal: true,
-        autoCerrar: true,
-        tiempo: 3000,
-        textoAceptar: "Aceptar",
-        textoCancelar: "Cancelar"
-      });
-
-      //alert("⚠️ No hay hojas con criterios evaluados para exportar.");
-      return;
-    }
-
     const documento = new Document({
       styles: {
         default: {
-          document: {
-            run: { font: "Arial", size: 22 }
-          },
-          paragraph: {
-            spacing: { after: 120 }
-          }
+          document: { run: { font: "Arial", size: 22 } }
         }
       },
       sections: secciones
     });
 
-    if (hojasSeleccionadas.length === 0) {
-      mostrarOverlay({
-        mensaje: "⚠️ No hay hojas con criterios evaluados para exportar.",
-        aceptar: false,
-        cancelar: false,
-        temporal: true,
-        autoCerrar: true,
-        tiempo: 3000,
-        textoAceptar: "Aceptar",
-        textoCancelar: "Cancelar"
-      });
-
-
-      //alert("⚠️ No hay hojas con criterios evaluados para exportar.");
-      return;
-      cargarTextoEjemplo("mensaje-ejemplo.txt");
-    }
-
-    const mensajeHTML = `
-    <strong>📄 Hojas a exportar:</strong><br><br>
-    <ul style="text-align:left; margin:0; padding-left:20px;">
-      ${hojasSeleccionadas.map(h => `<li>${h}</li>`).join("")}
-    </ul>
-  `;
-
-    const ok = await mostrarOverlay({
-      mensaje: mensajeHTML,
-      aceptar: true,
-      cancelar: true,
-      temporal: false,
-      autoCerrar: false,
-      tiempo: 3000,
-      textoAceptar: "Aceptar",
-      textoCancelar: "Cancelar"
-    });
-    //alert(ok)
-    if (!ok) {
-      mostrarOverlay({
-        mensaje: "❌ Exportación Cancelada.",
-        aceptar: false,
-        cancelar: false,
-        temporal: true,
-        autoCerrar: true,
-        tiempo: 3000,
-        textoAceptar: "Aceptar",
-        textoCancelar: "Cancelar"
-      });
-      return;
-    }
-
-    //alert("📄 Hojas a exportar:\n\n" + hojasSeleccionadas.join("\n"));
-
-
     const blob = await Packer.toBlob(documento);
     saveAs(blob, `Evaluacion_Todas_${fechaISO()}.docx`);
-    ocultarOverlay();
+
     mostrarOverlay({
       mensaje: "✅ Exportación completada.",
-      aceptar: false,
-      cancelar: false,
-      temporal: true,
-      autoCerrar: true,
-      tiempo: 3000,
-      textoAceptar: "Aceptar",
-      textoCancelar: "Cancelar"
+      temporal: true
     });
-
-    //alert("✅ Exportación completada.");
-    cargarTextoEjemplo("mensaje-ejemplo.txt");
+    cargarTextoEjemplo(RUTAS_ARCHIVOS.MensajeEjemplo);
   }
 
   function construirSeccionWord({ nombreTabla, headers, filas }) {
@@ -1356,30 +1318,49 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 
 
-
+  //boton para exportar todo la evaluacion
   btnExportTodo.addEventListener("click", () => {
-    exportarTodo();
+    const tipo = obtenerTipoExportacion();
+    if (tipo === "pdf") {
+      //alert("Exportando Todo Como PDF  en implementación");
+      exportarTodoPDF();
+    } else {
+      //alert("Exportando Todo Como Word");
+      exportarTodoWord();
+    }
   });
 
+  // === //boton para exportar la hoja ===
+  btnExportWord.addEventListener("click", async () => {
+    const tipo = obtenerTipoExportacion();
 
+    if (tipo === "pdf") {
+      //alert("exportar Hoja a PDF en implementación");
+      await exportarHojaPDF();
+    } else {
+      //alert("exportar Hoja a Word");
+      await exportarHojaWord();
+    }
+  });
 
 
   // --- BOTÓN TEST OVER ---
-  btntestOv.addEventListener("click", () => {
-    mostrarOverlay({
-      mensaje: "Overlay temporal OK",
-      aceptar: true,
-      cancelar: true,
-      temporal: true,
-      autoCerrar: true,
-      tiempo: 3000,
-      textoAceptar: "Aceptar",
-      textoCancelar: "Cancelar"
-    });
-
-
-
-  });
+  /*  btntestOv.addEventListener("click", () => {
+      mostrarOverlay({
+        mensaje: "Overlay temporal OK",
+        aceptar: true,
+        cancelar: true,
+        temporal: true,
+        autoCerrar: true,
+        tiempo: 3000,
+        textoAceptar: "Aceptar",
+        textoCancelar: "Cancelar"
+      });
+  
+  
+  
+    }); 
+    */
 
   function mostrarOverlay({
     mensaje,
@@ -1455,5 +1436,723 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     overlay.classList.add("oculto");
   }
+
+  function obtenerTipoExportacion() {
+    const esWord = document.getElementById("tipo-exportacion").checked;
+    return esWord ? "word" : "pdf";
+  }
+
+  // funciones para exportar a
+
+  const MARGEN_SUPERIOR = 800;
+  const MARGEN_INFERIOR = 100;
+  const LINE_HEIGHT = 12;
+
+  function dividirTextoEnLineas(texto, font, size, maxWidth) {
+    const palabras = texto.split(" ");
+    const lineas = [];
+    let linea = "";
+
+    for (const palabra of palabras) {
+      const test = linea ? linea + " " + palabra : palabra;
+      const ancho = font.widthOfTextAtSize(test, size);
+
+      if (ancho > maxWidth) {
+        lineas.push(linea);
+        linea = palabra;
+      } else {
+        linea = test;
+      }
+    }
+
+    if (linea) lineas.push(linea);
+    return lineas;
+  }
+
+
+  function descargarArchivo(bytes, nombre) {
+    const blob = new Blob([bytes], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = nombre;
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  async function insertarCanvasEnPDF({
+    canvasId,
+    titulo = "",
+    maxWidth = 480
+  }) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+
+    const dataUrl = canvas.toDataURL("image/png", 1.0);
+    const img = await pdfDoc.embedPng(dataUrl);
+
+    const scale = maxWidth / img.width;
+    const imgHeight = img.height * scale;
+
+    if (y - imgHeight < MARGEN_INFERIOR) {
+      page = pdfDoc.addPage([595, 842]);
+      y = MARGEN_SUPERIOR;
+    }
+
+    if (titulo) {
+      page.drawText(titulo, {
+        x: 50,
+        y,
+        size: 10,
+        font: fontBold
+      });
+      y -= 14;
+    }
+
+    page.drawImage(img, {
+      x: 50,
+      y: y - imgHeight,
+      width: maxWidth,
+      height: imgHeight
+    });
+
+    y -= imgHeight + 20;
+  }
+
+
+
+  async function exportarHojaPDF() {
+    const selectTablas = document.getElementById("menu-tablas");
+    const nombreTabla = selectTablas?.value?.trim();
+
+    if (!nombreTabla) {
+      mostrarOverlay({
+        mensaje: "⚠️ Debes seleccionar una hoja antes de exportar el PDF.",
+        temporal: true,
+        autoCerrar: true
+      });
+      return;
+    }
+
+    mostrarOverlay({
+      mensaje: "Generando PDF...",
+      temporal: true,
+      autoCerrar: false
+    });
+
+    try {
+      // ================= CONFIG =================
+      const { PDFDocument, StandardFonts } = PDFLib;
+
+
+      // ================= DATOS =================
+      const nombreIps = document.getElementById("nombreIps")?.value?.trim() || "";
+      const numeroContacto = document.getElementById("numeroContacto")?.value?.trim() || "";
+      const correoElectronico = document.getElementById("correoElectronico")?.value?.trim() || "";
+      const nombreTabla = selectTablas?.value || "Sin tabla";
+
+      const { filas } = leerTablaDesdeDOM();
+
+      // ================= PDF =================
+      const pdfDoc = await PDFDocument.create();
+      let page = pdfDoc.addPage([595, 842]);
+      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+      let y = MARGEN_SUPERIOR;
+
+      // ================= ENCABEZADO =================
+      page.drawText("Auditoría de Criterios de Habilitación – Resolución 3100", {
+        x: 50,
+        y,
+        size: 14,
+        font: fontBold
+      });
+
+      y -= 25;
+
+      [
+        `IPS / Profesional: ${nombreIps || "-"}`,
+        `Contacto: ${numeroContacto || "-"}`,
+        `Correo: ${correoElectronico || "-"}`,
+        `Tabla evaluada: ${nombreTabla || "-"}`
+      ].forEach(txt => {
+        page.drawText(txt, { x: 50, y, size: 10, font });
+        y -= 14;
+      });
+
+      y -= 20;
+
+      // ================= COLUMNAS =================
+      const colX = { criterio: 50, eval: 350, obs: 420 };
+      const colWidth = { criterio: 280, eval: 60, obs: 120 };
+
+      // ================= FUNCIONES =================
+      function dibujarEncabezadoTabla() {
+        page.drawText("CRITERIO", { x: colX.criterio, y, size: 9, font: fontBold });
+        page.drawText("EVAL.", { x: colX.eval, y, size: 9, font: fontBold });
+        page.drawText("OBSERVACIONES", { x: colX.obs, y, size: 9, font: fontBold });
+        y -= 8;
+
+        page.drawLine({
+          start: { x: 50, y },
+          end: { x: 545, y },
+          thickness: 1
+        });
+
+        y -= 10;
+      }
+
+      function dibujarTextoConSalto({ texto, x, maxWidth, size }) {
+        const lineas = dividirTextoEnLineas(texto, font, size, maxWidth);
+
+        for (const linea of lineas) {
+          if (y - LINE_HEIGHT < MARGEN_INFERIOR) {
+            page = pdfDoc.addPage([595, 842]);
+            y = MARGEN_SUPERIOR;
+            dibujarEncabezadoTabla();
+          }
+
+          page.drawText(linea, { x, y, size, font });
+          y -= LINE_HEIGHT;
+        }
+      }
+
+      async function insertarCanvasEnPDF({
+        canvasId,
+        titulo = "",
+        maxWidth = 300
+      }) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        const dataUrl = canvas.toDataURL("image/png", 1.0);
+        const img = await pdfDoc.embedPng(dataUrl);
+
+        const scale = maxWidth / img.width;
+        const imgHeight = img.height * scale;
+
+        if (y - imgHeight < MARGEN_INFERIOR) {
+          page = pdfDoc.addPage([595, 842]);
+          y = MARGEN_SUPERIOR;
+        }
+
+        if (titulo) {
+          page.drawText(titulo, {
+            x: 50,
+            y,
+            size: 10,
+            font: fontBold
+          });
+          y -= 14;
+        }
+
+        page.drawImage(img, {
+          x: 50,
+          y: y - imgHeight,
+          width: maxWidth,
+          height: imgHeight
+        });
+
+        y -= imgHeight + 20;
+      }
+
+      function insertarResumenEnPDF() {
+
+        const resumen = [
+          { label: "Cumple", valor: "num-cumple", porcentaje: "p-cumple" },
+          { label: "No cumple", valor: "num-nocumple", porcentaje: "p-nocumple" },
+          { label: "No aplica", valor: "num-noaplica", porcentaje: "p-noaplica" }
+        ];
+
+        const alturaNecesaria = resumen.length * 16 + 40;
+
+        if (y - alturaNecesaria < MARGEN_INFERIOR) {
+          page = pdfDoc.addPage([595, 842]);
+          y = MARGEN_SUPERIOR;
+        }
+
+        // Título
+        page.drawText("Resumen", {
+          x: 50,
+          y,
+          size: 12,
+          font: fontBold
+        });
+
+        y -= 20;
+
+        // Encabezados
+        page.drawText("Estado", { x: 50, y, size: 10, font: fontBold });
+        page.drawText("Cantidad", { x: 250, y, size: 10, font: fontBold });
+        page.drawText("Porcentaje", { x: 350, y, size: 10, font: fontBold });
+
+        y -= 8;
+
+        page.drawLine({
+          start: { x: 50, y },
+          end: { x: 500, y },
+          thickness: 1
+        });
+
+        y -= 12;
+
+        // Filas
+        resumen.forEach(r => {
+          const cantidad = document.getElementById(r.valor)?.innerText || "0";
+          const porcentaje = document.getElementById(r.porcentaje)?.innerText || "0";
+
+          page.drawText(r.label, { x: 50, y, size: 10, font });
+          page.drawText(cantidad, { x: 260, y, size: 10, font });
+          page.drawText(porcentaje, { x: 360, y, size: 10, font });
+
+          y -= 16;
+        });
+
+        y -= 10;
+      }
+
+      // ===== RESUMEN =====
+      insertarResumenEnPDF();
+
+      // ================= GRÁFICOS =================
+      page.drawText("Gráficos de Resultados", {
+        x: 50,
+        y,
+        size: 12,
+        font: fontBold
+      });
+
+      y -= 20;
+
+      await insertarCanvasEnPDF({
+        canvasId: "graficaBarras",
+        titulo: "Resultados por Criterio"
+      });
+
+      await insertarCanvasEnPDF({
+        canvasId: "graficaTorta",
+        titulo: "Distribución de Cumplimiento"
+      });
+      // ================= DETALLE =================
+      page.drawText("Detalle de Criterios", {
+        x: 50,
+        y,
+        size: 12,
+        font: fontBold
+      });
+
+      y -= 20;
+      dibujarEncabezadoTabla();
+
+      for (const f of filas) {
+
+        if (y < MARGEN_INFERIOR + 40) {
+          page = pdfDoc.addPage([595, 842]);
+          y = MARGEN_SUPERIOR;
+          dibujarEncabezadoTabla();
+        }
+
+        if (f.tipo === "seccion") {
+          page.drawText(f.titulo, { x: 50, y, size: 10, font: fontBold });
+          y -= 16;
+          continue;
+        }
+
+        if (f.tipo === "subtitulo") {
+          page.drawText(f.subtitulo, { x: 55, y, size: 9, font: fontBold });
+          y -= 14;
+          continue;
+        }
+
+        const yInicioFila = y;
+
+        dibujarTextoConSalto({
+          texto: f.criterio,
+          x: colX.criterio,
+          maxWidth: colWidth.criterio,
+          size: 9
+        });
+
+        page.drawText(f.evaluacion, {
+          x: colX.eval,
+          y: yInicioFila,
+          size: 9,
+          font
+        });
+
+        dibujarTextoConSalto({
+          texto: f.observaciones || "-",
+          x: colX.obs,
+          maxWidth: colWidth.obs,
+          size: 9
+        });
+
+        y -= 6;
+      }
+
+      // ================= GUARDAR =================
+      const pdfBytes = await pdfDoc.save();
+
+      descargarArchivo(
+        pdfBytes,
+        `Hoja_${sanitizeFileName(nombreTabla)}_${fechaISO()}.pdf`
+      );
+
+    } catch (error) {
+      console.error("Error al generar PDF:", error);
+      alert("Error al generar el PDF. Revisa la consola.");
+    } finally {
+      setTimeout(() => {
+        ocultarOverlay();
+      }, 3000);
+    }
+    cargarTextoEjemplo(RUTAS_ARCHIVOS.MensajeEjemplo);
+  }
+
+  //exportar todo a PDF
+
+  const colX = {
+    criterio: 50,
+    eval: 360,
+    obs: 420
+  };
+
+  const colWidth = {
+    criterio: 290,
+    eval: 50,
+    obs: 115
+  };
+
+
+  function cambiarHoja(valor) {
+    const select = document.getElementById("menu-tablas");
+    select.value = valor;
+    select.dispatchEvent(new Event("change"));
+  }
+
+  async function esperarTablaRenderizada(timeout = 2000) {
+    const inicio = Date.now();
+
+    while (Date.now() - inicio < timeout) {
+      const contenedor = document.getElementById("contenedor-tabla");
+      const radios = contenedor?.querySelectorAll('input[type="radio"]');
+
+      if (radios && radios.length > 0) return true;
+
+      await new Promise(r => setTimeout(r, 50));
+    }
+
+    return false;
+  }
+
+  function hojasConCriteriosEvaluados() {
+    return Object.entries(respuestasPorTabla)
+      .filter(([_, respuestas]) =>
+        Object.values(respuestas).some(r => r.opcion)
+      )
+      .map(([id]) => id);
+  }
+
+  function dividirTexto(texto, font, size, maxWidth) {
+    if (!texto) return ["-"];
+
+    const palabras = texto.split(" ");
+    const lineas = [];
+    let linea = "";
+
+    for (const palabra of palabras) {
+      const prueba = linea ? linea + " " + palabra : palabra;
+      const ancho = font.widthOfTextAtSize(prueba, size);
+
+      if (ancho <= maxWidth) {
+        linea = prueba;
+      } else {
+        lineas.push(linea);
+        linea = palabra;
+      }
+    }
+
+    if (linea) lineas.push(linea);
+    return lineas;
+  }
+
+  function tipoFila(texto) {
+    if (!texto) return "criterio";
+    if (texto.startsWith("TT-")) return "titulo";
+    if (texto.startsWith("T-")) return "subtitulo";
+    return "criterio";
+  }
+
+
+
+  async function exportarTodoPDF() {
+
+    const menu = document.getElementById("menu-tablas");
+
+    /* ===============================
+       1️⃣ Determinar hojas a exportar (DATOS)
+    =============================== */
+    const hojasAExportar = hojasConCriteriosEvaluados();
+
+    if (hojasAExportar.length === 0) {
+      mostrarOverlay({
+        mensaje: "⚠️ Ninguna hoja tiene criterios evaluados.",
+        aceptar: true
+      });
+      return;
+    }
+
+    /* ===============================
+       2️⃣ Obtener nombres visibles (UI)
+    =============================== */
+    const hojasSeleccionadas = hojasAExportar.map(id => {
+      const opt = [...menu.options].find(o => o.value === id);
+      return opt?.text || id;
+    });
+
+    /* ===============================
+       3️⃣ Overlay previo (IGUAL A WORD)
+    =============================== */
+    const mensajeHTML = `
+    <strong>📄 Hojas a exportar:</strong><br><br>
+    <ul style="text-align:left; margin:0; padding-left:20px;">
+      ${hojasSeleccionadas.map(h => `<li>${h}</li>`).join("")}
+    </ul>
+  `;
+
+    const ok = await mostrarOverlay({
+      mensaje: mensajeHTML,
+      aceptar: true,
+      cancelar: true,
+      autoCerrar: false,
+      textoAceptar: "Aceptar",
+      textoCancelar: "Cancelar"
+    });
+
+    if (!ok) return;
+
+    mostrarOverlay({
+      mensaje: "Generando PDF consolidado...",
+      temporal: true,
+      autoCerrar: false
+    });
+
+    try {
+      const { PDFDocument, StandardFonts } = PDFLib;
+
+      const pdfDoc = await PDFDocument.create();
+      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+      /* ===============================
+         4️⃣ Recorrer hojas y exportar
+      =============================== */
+      for (const hojaId of hojasAExportar) {
+
+        cambiarHoja(hojaId);
+        await esperarTablaRenderizada();
+
+        const { filas } = leerTablaDesdeDOM();
+
+        let page = pdfDoc.addPage([595, 842]);
+        let y = MARGEN_SUPERIOR;
+
+        const nombreHoja =
+          [...menu.options].find(o => o.value === hojaId)?.text || hojaId;
+
+        page.drawText(`Hoja: ${nombreHoja}`, {
+          x: 50,
+          y,
+          size: 14,
+          font: fontBold
+        });
+
+        y -= 25;
+
+        const colX = { criterio: 50, eval: 360, obs: 420 };
+
+        page.drawText("CRITERIO", { x: colX.criterio, y, size: 9, font: fontBold });
+        page.drawText("EVAL.", { x: colX.eval, y, size: 9, font: fontBold });
+        page.drawText("OBS.", { x: colX.obs, y, size: 9, font: fontBold });
+
+        y -= 8;
+
+        page.drawLine({
+          start: { x: 50, y },
+          end: { x: 545, y },
+          thickness: 1
+        });
+
+        y -= 12;
+
+        /* ===============================
+       6️⃣ Dibujar TODOS los criterios (con wrap)
+    =============================== */
+        for (const f of filas) {
+
+          const lineasCriterio = dividirTexto(
+            f.criterio || "-",
+            font,
+            9,
+            colWidth.criterio
+          );
+
+          const lineasObs = dividirTexto(
+            f.observaciones || "-",
+            font,
+            9,
+            colWidth.obs
+          );
+
+          const altoFila = Math.max(
+            lineasCriterio.length,
+            lineasObs.length,
+            1
+          ) * LINE_HEIGHT;
+
+          if (y - altoFila < MARGEN_INFERIOR + 40) {
+            page = pdfDoc.addPage([595, 842]);
+            y = MARGEN_SUPERIOR;
+          }
+
+          // CRITERIO (multilínea)
+          lineasCriterio.forEach((linea, i) => {
+            page.drawText(linea, {
+              x: colX.criterio,
+              y: y - i * LINE_HEIGHT,
+              size: 9,
+              font
+            });
+          });
+
+          // EVALUACIÓN (una línea, centrada visualmente)
+          page.drawText(f.evaluacion || "-", {
+            x: colX.eval,
+            y,
+            size: 9,
+            font
+          });
+
+          // OBSERVACIONES (multilínea)
+          lineasObs.forEach((linea, i) => {
+            page.drawText(linea, {
+              x: colX.obs,
+              y: y - i * LINE_HEIGHT,
+              size: 9,
+              font
+            });
+          });
+
+          y -= altoFila;
+        }
+
+
+      }
+
+      /* ===============================
+         5️⃣ Guardar PDF
+      =============================== */
+      const pdfBytes = await pdfDoc.save();
+
+      descargarArchivo(
+        pdfBytes,
+        `Auditoria_Consolidada_${fechaISO()}.pdf`
+      );
+
+    } catch (error) {
+      console.error("Error al generar PDF:", error);
+      mostrarOverlay({
+        mensaje: "❌ Error al generar el PDF.",
+        aceptar: true
+      });
+    } finally {
+      setTimeout(() => {
+        ocultarOverlay();
+      }, 3000);
+    }
+    cargarTextoEjemplo(RUTAS_ARCHIVOS.MensajeEjemplo);
+  }
+
+
+  /* ==== LICENCIA DE USO ======*/
+  let correosAutorizados = [];
+
+  async function cargarCorreosAutorizados() {
+    if (correosAutorizados.length > 0) return;
+
+    const res = await fetch(RUTAS_ARCHIVOS.correosAutorizados);
+    let base64 = await res.text();
+
+    // Limpieza crítica
+    base64 = base64
+      .replace(/\s+/g, "")
+      .trim();
+
+    // Decodificar base64 → texto
+    const texto = atob(base64);
+
+    correosAutorizados = texto
+      .split(/\r?\n/)
+      .map(linea => linea.trim())
+      .filter(linea => linea.length > 0)
+      .map(linea => {
+        // soporta TXT o CSV
+        return linea.split(/[;,]/)[0]
+          .toLowerCase()
+          .trim();
+      });
+  }
+
+
+
+  async function correoAutorizado(correo) {
+    if (!correo || !correo.includes("@")) return false;
+
+    await cargarCorreosAutorizados();
+    return correosAutorizados.includes(
+      correo.toLowerCase().trim()
+    );
+  }
+
+
+  document.getElementById("tipo-exportacion")
+  .addEventListener("change", async function () {
+
+    if (this.checked) { // Word
+      const correo = document.getElementById("correoElectronico")?.value || "";
+
+      const autorizado = await correoAutorizado(correo);
+
+      if (!autorizado) {
+
+        const irContacto = await mostrarOverlay({
+          mensaje: "La exportación a Word es una opción de pago",
+          aceptar: true,
+          cancelar: true,
+          textoAceptar: "Contactar",
+          textoCancelar: "Cerrar"
+        });
+
+        // 🔹 Si acepta → abrir página
+        if (irContacto) {
+          window.open(
+            "https://ssh-excelencia.github.io/#contacto", // 👈 cambia la URL
+            "_blank",
+            "noopener,noreferrer"
+          );
+        }
+
+        // 🔹 Volver a PDF
+        this.checked = false;
+      }
+    }
+  });
+
+
 
 });
