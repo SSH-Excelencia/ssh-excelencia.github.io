@@ -11,7 +11,7 @@
 <ul style="text-align: left; max-width: 600px; margin: 0 auto; color: #34495e;">
   <li>Explora las tablas disponibles en el menú desplegable.</li>
   <li>Completa los criterios usando las listas y observaciones.</li>
-  <li>Puedes exportar los resultados a Word.</li>
+  <li>Puedes exportar los resultados.</li>
 </ul>
 <p>
 </p>
