@@ -79,83 +79,69 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
   // --- BOTÓN CONTINUAR ---
-  btnContinuar.addEventListener("click", () => {
-    const nombreIps = document.getElementById("nombreIps").value.trim();
-    const numeroContacto = document.getElementById("numeroContacto").value.trim();
-    const correoElectronico = document.getElementById("correoElectronico").value.trim();
+btnContinuar.addEventListener("click", () => {
+  const nombreIps = document.getElementById("nombreIps").value.trim();
+  const numeroContacto = document.getElementById("numeroContacto").value.trim();
+  const correoElectronico = document.getElementById("correoElectronico").value.trim();
 
-    if (!nombreIps || !numeroContacto || !correoElectronico) {
-      mostrarOverlay({
-        mensaje: "⚠️ Por favor ingresa todos los datos del evaluador.",
-        aceptar: false,
-        cancelar: false,
-        temporal: true,
-        autoCerrar: true,
-        tiempo: 3000,
-        textoAceptar: "Aceptar",
-        textoCancelar: "Cancelar"
-      });
+  if (!nombreIps || !numeroContacto || !correoElectronico) {
+    mostrarOverlay({
+      mensaje: "⚠️ Por favor ingresa todos los datos del evaluador.",
+      temporal: true,
+      autoCerrar: true,
+      tiempo: 3000
+    });
+    return;
+  }
 
-      //alert("⚠️ Por favor ingresa todos los datos del evaluador.");
+  if (!/^\d+$/.test(numeroContacto)) {
+    mostrarOverlay({
+      mensaje: "⚠️ El número de contacto debe contener solo números.",
+      temporal: true,
+      autoCerrar: true,
+      tiempo: 3000
+    });
+    return;
+  }
 
-      return;
-    }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correoElectronico)) {
+    mostrarOverlay({
+      mensaje: "⚠️ Ingresa un correo electrónico válido.",
+      temporal: true,
+      autoCerrar: true,
+      tiempo: 3000
+    });
+    return;
+  }
 
-    if (!/^\d+$/.test(numeroContacto)) {
-      mostrarOverlay({
-        mensaje: "⚠️ El número de contacto debe contener solo números.",
-        aceptar: false,
-        cancelar: false,
-        temporal: true,
-        autoCerrar: true,
-        tiempo: 3000,
-        textoAceptar: "Aceptar",
-        textoCancelar: "Cancelar"
-      });
+  /* =====================================
+     ✅ AQUÍ ES DONDE SE OCULTA EL HEADER
+     ===================================== */
+  document.body.classList.add("sin-header");
 
-      //alert("⚠️ El número de contacto debe contener solo números.");
+  // Ocultar bloque 1
+  bloque1.style.display = "none";
 
-      return;
-    }
+  // Mostrar bloque 2
+  bloque2.style.visibility = "visible";
+  bloque2.style.position = "static";
+  bloque2.style.opacity = "1";
+  bloque2.style.pointerEvents = "auto";
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correoElectronico)) {
-      mostrarOverlay({
-        mensaje: "⚠️ Ingresa un correo electrónico válido.",
-        aceptar: false,
-        cancelar: false,
-        temporal: true,
-        autoCerrar: true,
-        tiempo: 3000,
-        textoAceptar: "Aceptar",
-        textoCancelar: "Cancelar"
-      });
-      //alert("⚠️ Ingresa un correo electrónico válido.");
+  selectTablas.disabled = false;
+  btnExportWord.disabled = false;
+  btnExportPdf.disabled = false;
 
-      return;
-    }
+  // Cargar Excel solo una vez
+  if (!bloque2.dataset.loaded) {
+    cargarExcel(RUTAS_ARCHIVOS.TablaExcel);
+    bloque2.dataset.loaded = "true";
+  }
 
-    // Mostrar bloque 2
-    bloque1.style.display = "none";
+  // Reset menú
+  selectTablas.innerHTML = '<option value="" selected>Seleccione...</option>';
+});
 
-    bloque2.style.visibility = "visible"; // ahora se ve
-    bloque2.style.position = "static";    // vuelve al flujo normal
-    bloque2.style.opacity = "1";          // opacidad total
-    bloque2.style.pointerEvents = "auto"; // interactivo
-
-    selectTablas.disabled = false;
-    btnExportWord.disabled = false;
-    btnExportPdf.disabled = false;
-
-    // Cargar Excel solo una vez
-    if (!bloque2.dataset.loaded) {
-      cargarExcel(RUTAS_ARCHIVOS.TablaExcel);  
-      bloque2.dataset.loaded = "true";
-    }
-
-    // --- Mostrar opción inicial y cargar mensaje desde txt ---
-    selectTablas.innerHTML = '<option value="" selected>Seleccione...</option>';
-    //cargarTextoEjemplo(RUTAS_ARCHIVOS.MensajeEjemplo);
-  });
 
   // --- BOTÓN REINICIAR ---
   btnReiniciar.addEventListener("click", async () => {
