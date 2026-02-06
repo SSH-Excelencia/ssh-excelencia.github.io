@@ -4,6 +4,14 @@
 const XLSX = window.XLSX || window.xlsx;
 const { jsPDF } = window.jspdf;
 
+// ================= CONFIGURACIÓN DE ARCHIVOS =================
+const RUTAS_ARCHIVOS = {
+  MensajeEjemplo: "public/mensaje-ejemplo.txt",
+  correosAutorizados: "public/data.b64",
+  TablaExcel: "public/lista-chequeo.xlsx"
+};
+
+
 let logoBuffer = null; // variable global para el logo
 let overlayTimer = null;
 
@@ -66,7 +74,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   btnExportWord.disabled = true;
   //btnExportPdf.disabled = true;
 
-  cargarTextoEjemplo("public/mensaje-ejemplo.txt");
+  cargarTextoEjemplo(RUTAS_ARCHIVOS.MensajeEjemplo);
 
 
 
@@ -140,14 +148,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Cargar Excel solo una vez
     if (!bloque2.dataset.loaded) {
-      //cargarExcel("lista-chequeo.xlsx");  //local
-      cargarExcel("public/lista-chequeo.xlsx");  //web
+      cargarExcel(RUTAS_ARCHIVOS.TablaExcel);  //local
+      //cargarExcel("public/lista-chequeo.xlsx");  //web
       bloque2.dataset.loaded = "true";
     }
 
     // --- Mostrar opción inicial y cargar mensaje desde txt ---
     selectTablas.innerHTML = '<option value="" selected>Seleccione...</option>';
-    //cargarTextoEjemplo("mensaje-ejemplo.txt");
+    //cargarTextoEjemplo(RUTAS_ARCHIVOS.MensajeEjemplo);
   });
 
   // --- BOTÓN REINICIAR ---
@@ -204,7 +212,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         if (!hojaSeleccionada) {
           // Mostrar mensaje de ejemplo si se selecciona "Seleccione..."
-          cargarTextoEjemplo("mensaje-ejemplo.txt");
+          cargarTextoEjemplo(RUTAS_ARCHIVOS.MensajeEjemplo);
           return;
         }
 
@@ -1247,7 +1255,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       //alert("⚠️ No hay hojas con criterios evaluados para exportar.");
       return;
-      cargarTextoEjemplo("mensaje-ejemplo.txt");
+      cargarTextoEjemplo(RUTAS_ARCHIVOS.MensajeEjemplo);
     }
 
     const mensajeHTML = `
@@ -1300,7 +1308,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     //alert("✅ Exportación completada.");
-    cargarTextoEjemplo("mensaje-ejemplo.txt");
+    cargarTextoEjemplo(RUTAS_ARCHIVOS.MensajeEjemplo);
   }
 
   function construirSeccionWord({ nombreTabla, headers, filas }) {
@@ -1352,7 +1360,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   btnExportTodo.addEventListener("click", () => {
     const tipo = obtenerTipoExportacion();
     if (tipo === "pdf") {
-      //alert("Exportando Todo Como PDF  en implementación");
+      alert("Exportando Todo Como PDF  en implementación");
       exportarTodoPDF();
     } else {
       //alert("Exportando Todo Como Word");
@@ -1365,7 +1373,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const tipo = obtenerTipoExportacion();
 
     if (tipo === "pdf") {
-      //alert("exportar Hoja a PDF en implementación");
+      alert("exportar Hoja a PDF en implementación");
       await exportarHojaPDF();
     } else {
       //alert("exportar Hoja a Word");
@@ -1518,39 +1526,39 @@ document.addEventListener("DOMContentLoaded", async () => {
     canvasId,
     titulo = "",
     maxWidth = 480
-    }) {
-      const canvas = document.getElementById(canvasId);
-      if (!canvas) return;
+  }) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
 
-      const dataUrl = canvas.toDataURL("image/png", 1.0);
-      const img = await pdfDoc.embedPng(dataUrl);
+    const dataUrl = canvas.toDataURL("image/png", 1.0);
+    const img = await pdfDoc.embedPng(dataUrl);
 
-      const scale = maxWidth / img.width;
-      const imgHeight = img.height * scale;
+    const scale = maxWidth / img.width;
+    const imgHeight = img.height * scale;
 
-      if (y - imgHeight < MARGEN_INFERIOR) {
-        page = pdfDoc.addPage([595, 842]);
-        y = MARGEN_SUPERIOR;
-      }
+    if (y - imgHeight < MARGEN_INFERIOR) {
+      page = pdfDoc.addPage([595, 842]);
+      y = MARGEN_SUPERIOR;
+    }
 
-      if (titulo) {
-        page.drawText(titulo, {
-          x: 50,
-          y,
-          size: 10,
-          font: fontBold
-        });
-        y -= 14;
-      }
-
-      page.drawImage(img, {
+    if (titulo) {
+      page.drawText(titulo, {
         x: 50,
-        y: y - imgHeight,
-        width: maxWidth,
-        height: imgHeight
+        y,
+        size: 10,
+        font: fontBold
       });
+      y -= 14;
+    }
 
-      y -= imgHeight + 20;
+    page.drawImage(img, {
+      x: 50,
+      y: y - imgHeight,
+      width: maxWidth,
+      height: imgHeight
+    });
+
+    y -= imgHeight + 20;
   }
 
 
@@ -1563,7 +1571,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       mostrarOverlay({
         mensaje: "⚠️ Debes seleccionar una hoja antes de exportar el PDF.",
         temporal: true,
-      autoCerrar: true
+        autoCerrar: true
       });
       return;
     }
@@ -1845,267 +1853,328 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   //exportar todo a PDF
 
-const colX = {
-  criterio: 50,
-  eval: 360,
-  obs: 420
-};
+  const colX = {
+    criterio: 50,
+    eval: 360,
+    obs: 420
+  };
 
-const colWidth = {
-  criterio: 290,
-  eval: 50,
-  obs: 115
-};
+  const colWidth = {
+    criterio: 290,
+    eval: 50,
+    obs: 115
+  };
 
 
-function cambiarHoja(valor) {
-  const select = document.getElementById("menu-tablas");
-  select.value = valor;
-  select.dispatchEvent(new Event("change"));
-}
-
-async function esperarTablaRenderizada(timeout = 2000) {
-  const inicio = Date.now();
-
-  while (Date.now() - inicio < timeout) {
-    const contenedor = document.getElementById("contenedor-tabla");
-    const radios = contenedor?.querySelectorAll('input[type="radio"]');
-
-    if (radios && radios.length > 0) return true;
-
-    await new Promise(r => setTimeout(r, 50));
+  function cambiarHoja(valor) {
+    const select = document.getElementById("menu-tablas");
+    select.value = valor;
+    select.dispatchEvent(new Event("change"));
   }
 
-  return false;
-}
+  async function esperarTablaRenderizada(timeout = 2000) {
+    const inicio = Date.now();
 
-function hojasConCriteriosEvaluados() {
-  return Object.entries(respuestasPorTabla)
-    .filter(([_, respuestas]) =>
-      Object.values(respuestas).some(r => r.opcion)
-    )
-    .map(([id]) => id);
-}
+    while (Date.now() - inicio < timeout) {
+      const contenedor = document.getElementById("contenedor-tabla");
+      const radios = contenedor?.querySelectorAll('input[type="radio"]');
 
-function dividirTexto(texto, font, size, maxWidth) {
-  if (!texto) return ["-"];
+      if (radios && radios.length > 0) return true;
 
-  const palabras = texto.split(" ");
-  const lineas = [];
-  let linea = "";
-
-  for (const palabra of palabras) {
-    const prueba = linea ? linea + " " + palabra : palabra;
-    const ancho = font.widthOfTextAtSize(prueba, size);
-
-    if (ancho <= maxWidth) {
-      linea = prueba;
-    } else {
-      lineas.push(linea);
-      linea = palabra;
+      await new Promise(r => setTimeout(r, 50));
     }
+
+    return false;
   }
 
-  if (linea) lineas.push(linea);
-  return lineas;
-}
+  function hojasConCriteriosEvaluados() {
+    return Object.entries(respuestasPorTabla)
+      .filter(([_, respuestas]) =>
+        Object.values(respuestas).some(r => r.opcion)
+      )
+      .map(([id]) => id);
+  }
 
-function tipoFila(texto) {
-  if (!texto) return "criterio";
-  if (texto.startsWith("TT-")) return "titulo";
-  if (texto.startsWith("T-")) return "subtitulo";
-  return "criterio";
-}
+  function dividirTexto(texto, font, size, maxWidth) {
+    if (!texto) return ["-"];
+
+    const palabras = texto.split(" ");
+    const lineas = [];
+    let linea = "";
+
+    for (const palabra of palabras) {
+      const prueba = linea ? linea + " " + palabra : palabra;
+      const ancho = font.widthOfTextAtSize(prueba, size);
+
+      if (ancho <= maxWidth) {
+        linea = prueba;
+      } else {
+        lineas.push(linea);
+        linea = palabra;
+      }
+    }
+
+    if (linea) lineas.push(linea);
+    return lineas;
+  }
+
+  function tipoFila(texto) {
+    if (!texto) return "criterio";
+    if (texto.startsWith("TT-")) return "titulo";
+    if (texto.startsWith("T-")) return "subtitulo";
+    return "criterio";
+  }
 
 
 
-async function exportarTodoPDF() {
+  async function exportarTodoPDF() {
 
-  const menu = document.getElementById("menu-tablas");
+    const menu = document.getElementById("menu-tablas");
 
-  /* ===============================
-     1️⃣ Determinar hojas a exportar (DATOS)
-  =============================== */
-  const hojasAExportar = hojasConCriteriosEvaluados();
+    /* ===============================
+       1️⃣ Determinar hojas a exportar (DATOS)
+    =============================== */
+    const hojasAExportar = hojasConCriteriosEvaluados();
 
-  if (hojasAExportar.length === 0) {
-    mostrarOverlay({
-      mensaje: "⚠️ Ninguna hoja tiene criterios evaluados.",
-      aceptar: true
+    if (hojasAExportar.length === 0) {
+      mostrarOverlay({
+        mensaje: "⚠️ Ninguna hoja tiene criterios evaluados.",
+        aceptar: true
+      });
+      return;
+    }
+
+    /* ===============================
+       2️⃣ Obtener nombres visibles (UI)
+    =============================== */
+    const hojasSeleccionadas = hojasAExportar.map(id => {
+      const opt = [...menu.options].find(o => o.value === id);
+      return opt?.text || id;
     });
-    return;
-  }
 
-  /* ===============================
-     2️⃣ Obtener nombres visibles (UI)
-  =============================== */
-  const hojasSeleccionadas = hojasAExportar.map(id => {
-    const opt = [...menu.options].find(o => o.value === id);
-    return opt?.text || id;
-  });
-
-  /* ===============================
-     3️⃣ Overlay previo (IGUAL A WORD)
-  =============================== */
-  const mensajeHTML = `
+    /* ===============================
+       3️⃣ Overlay previo (IGUAL A WORD)
+    =============================== */
+    const mensajeHTML = `
     <strong>📄 Hojas a exportar:</strong><br><br>
     <ul style="text-align:left; margin:0; padding-left:20px;">
       ${hojasSeleccionadas.map(h => `<li>${h}</li>`).join("")}
     </ul>
   `;
 
-  const ok = await mostrarOverlay({
-    mensaje: mensajeHTML,
-    aceptar: true,
-    cancelar: true,
-    autoCerrar: false,
-    textoAceptar: "Aceptar",
-    textoCancelar: "Cancelar"
-  });
-
-  if (!ok) return;
-
-  mostrarOverlay({
-    mensaje: "Generando PDF consolidado...",
-    temporal: true,
-    autoCerrar: false
-  });
-
-  try {
-    const { PDFDocument, StandardFonts } = PDFLib;
-
-    const pdfDoc = await PDFDocument.create();
-    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-
-    /* ===============================
-       4️⃣ Recorrer hojas y exportar
-    =============================== */
-    for (const hojaId of hojasAExportar) {
-
-      cambiarHoja(hojaId);
-      await esperarTablaRenderizada();
-
-      const { filas } = leerTablaDesdeDOM();
-
-      let page = pdfDoc.addPage([595, 842]);
-      let y = MARGEN_SUPERIOR;
-
-      const nombreHoja =
-        [...menu.options].find(o => o.value === hojaId)?.text || hojaId;
-
-      page.drawText(`Hoja: ${nombreHoja}`, {
-        x: 50,
-        y,
-        size: 14,
-        font: fontBold
-      });
-
-      y -= 25;
-
-      const colX = { criterio: 50, eval: 360, obs: 420 };
-
-      page.drawText("CRITERIO", { x: colX.criterio, y, size: 9, font: fontBold });
-      page.drawText("EVAL.", { x: colX.eval, y, size: 9, font: fontBold });
-      page.drawText("OBS.", { x: colX.obs, y, size: 9, font: fontBold });
-
-      y -= 8;
-
-      page.drawLine({
-        start: { x: 50, y },
-        end: { x: 545, y },
-        thickness: 1
-      });
-
-      y -= 12;
-
-    /* ===============================
-   6️⃣ Dibujar TODOS los criterios (con wrap)
-=============================== */
-for (const f of filas) {
-
-  const lineasCriterio = dividirTexto(
-    f.criterio || "-",
-    font,
-    9,
-    colWidth.criterio
-  );
-
-  const lineasObs = dividirTexto(
-    f.observaciones || "-",
-    font,
-    9,
-    colWidth.obs
-  );
-
-  const altoFila = Math.max(
-    lineasCriterio.length,
-    lineasObs.length,
-    1
-  ) * LINE_HEIGHT;
-
-  if (y - altoFila < MARGEN_INFERIOR + 40) {
-    page = pdfDoc.addPage([595, 842]);
-    y = MARGEN_SUPERIOR;
-  }
-
-  // CRITERIO (multilínea)
-  lineasCriterio.forEach((linea, i) => {
-    page.drawText(linea, {
-      x: colX.criterio,
-      y: y - i * LINE_HEIGHT,
-      size: 9,
-      font
+    const ok = await mostrarOverlay({
+      mensaje: mensajeHTML,
+      aceptar: true,
+      cancelar: true,
+      autoCerrar: false,
+      textoAceptar: "Aceptar",
+      textoCancelar: "Cancelar"
     });
-  });
 
-  // EVALUACIÓN (una línea, centrada visualmente)
-  page.drawText(f.evaluacion || "-", {
-    x: colX.eval,
-    y,
-    size: 9,
-    font
-  });
+    if (!ok) return;
 
-  // OBSERVACIONES (multilínea)
-  lineasObs.forEach((linea, i) => {
-    page.drawText(linea, {
-      x: colX.obs,
-      y: y - i * LINE_HEIGHT,
-      size: 9,
-      font
-    });
-  });
-
-  y -= altoFila;
-}
-
-
-    }
-
-    /* ===============================
-       5️⃣ Guardar PDF
-    =============================== */
-    const pdfBytes = await pdfDoc.save();
-
-    descargarArchivo(
-      pdfBytes,
-      `Auditoria_Consolidada_${fechaISO()}.pdf`
-    );
-
-  } catch (error) {
-    console.error("Error al generar PDF:", error);
     mostrarOverlay({
-      mensaje: "❌ Error al generar el PDF.",
-      aceptar: true
+      mensaje: "Generando PDF consolidado...",
+      temporal: true,
+      autoCerrar: false
     });
-  } finally {
-    setTimeout(() => {
-      ocultarOverlay();
-    }, 3000);
-  }
-}
 
+    try {
+      const { PDFDocument, StandardFonts } = PDFLib;
+
+      const pdfDoc = await PDFDocument.create();
+      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+      /* ===============================
+         4️⃣ Recorrer hojas y exportar
+      =============================== */
+      for (const hojaId of hojasAExportar) {
+
+        cambiarHoja(hojaId);
+        await esperarTablaRenderizada();
+
+        const { filas } = leerTablaDesdeDOM();
+
+        let page = pdfDoc.addPage([595, 842]);
+        let y = MARGEN_SUPERIOR;
+
+        const nombreHoja =
+          [...menu.options].find(o => o.value === hojaId)?.text || hojaId;
+
+        page.drawText(`Hoja: ${nombreHoja}`, {
+          x: 50,
+          y,
+          size: 14,
+          font: fontBold
+        });
+
+        y -= 25;
+
+        const colX = { criterio: 50, eval: 360, obs: 420 };
+
+        page.drawText("CRITERIO", { x: colX.criterio, y, size: 9, font: fontBold });
+        page.drawText("EVAL.", { x: colX.eval, y, size: 9, font: fontBold });
+        page.drawText("OBS.", { x: colX.obs, y, size: 9, font: fontBold });
+
+        y -= 8;
+
+        page.drawLine({
+          start: { x: 50, y },
+          end: { x: 545, y },
+          thickness: 1
+        });
+
+        y -= 12;
+
+        /* ===============================
+       6️⃣ Dibujar TODOS los criterios (con wrap)
+    =============================== */
+        for (const f of filas) {
+
+          const lineasCriterio = dividirTexto(
+            f.criterio || "-",
+            font,
+            9,
+            colWidth.criterio
+          );
+
+          const lineasObs = dividirTexto(
+            f.observaciones || "-",
+            font,
+            9,
+            colWidth.obs
+          );
+
+          const altoFila = Math.max(
+            lineasCriterio.length,
+            lineasObs.length,
+            1
+          ) * LINE_HEIGHT;
+
+          if (y - altoFila < MARGEN_INFERIOR + 40) {
+            page = pdfDoc.addPage([595, 842]);
+            y = MARGEN_SUPERIOR;
+          }
+
+          // CRITERIO (multilínea)
+          lineasCriterio.forEach((linea, i) => {
+            page.drawText(linea, {
+              x: colX.criterio,
+              y: y - i * LINE_HEIGHT,
+              size: 9,
+              font
+            });
+          });
+
+          // EVALUACIÓN (una línea, centrada visualmente)
+          page.drawText(f.evaluacion || "-", {
+            x: colX.eval,
+            y,
+            size: 9,
+            font
+          });
+
+          // OBSERVACIONES (multilínea)
+          lineasObs.forEach((linea, i) => {
+            page.drawText(linea, {
+              x: colX.obs,
+              y: y - i * LINE_HEIGHT,
+              size: 9,
+              font
+            });
+          });
+
+          y -= altoFila;
+        }
+
+
+      }
+
+      /* ===============================
+         5️⃣ Guardar PDF
+      =============================== */
+      const pdfBytes = await pdfDoc.save();
+
+      descargarArchivo(
+        pdfBytes,
+        `Auditoria_Consolidada_${fechaISO()}.pdf`
+      );
+
+    } catch (error) {
+      console.error("Error al generar PDF:", error);
+      mostrarOverlay({
+        mensaje: "❌ Error al generar el PDF.",
+        aceptar: true
+      });
+    } finally {
+      setTimeout(() => {
+        ocultarOverlay();
+      }, 3000);
+    }
+  }
+
+
+  /* ==== LICENCIA DE USO ======*/
+  let correosAutorizados = [];
+
+  async function cargarCorreosAutorizados() {
+    if (correosAutorizados.length > 0) return;
+
+    const res = await fetch(RUTAS_ARCHIVOS.correosAutorizados);
+    let base64 = await res.text();
+
+    // Limpieza crítica
+    base64 = base64
+      .replace(/\s+/g, "")
+      .trim();
+
+    // Decodificar base64 → texto
+    const texto = atob(base64);
+
+    correosAutorizados = texto
+      .split(/\r?\n/)
+      .map(linea => linea.trim())
+      .filter(linea => linea.length > 0)
+      .map(linea => {
+        // soporta TXT o CSV
+        return linea.split(/[;,]/)[0]
+          .toLowerCase()
+          .trim();
+      });
+  }
+
+
+
+  async function correoAutorizado(correo) {
+    if (!correo || !correo.includes("@")) return false;
+
+    await cargarCorreosAutorizados();
+    return correosAutorizados.includes(
+      correo.toLowerCase().trim()
+    );
+  }
+
+
+  document.getElementById("tipo-exportacion")
+    .addEventListener("change", async function () {
+
+      if (this.checked) { // Word
+        const correo = document.getElementById("correoElectronico")?.value || "";
+
+        const autorizado = await correoAutorizado(correo);
+
+        if (!autorizado) {
+          mostrarOverlay({
+            mensaje: "La exportación a Word es una opción de pago",
+            aceptar: true
+          });
+
+          // Volver a PDF
+          this.checked = false;
+        }
+      }
+    });
 
 
 
