@@ -1171,7 +1171,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       menuTablas.value = hoja;
       // Generar gráficas para esta hoja
       actualizarContadoresCol2();
-      await new Promise(r => setTimeout(r, 300));
+      await new Promise(r => setTimeout(r, 400));
 
       // verificar criterios evaluados
       const radios = bloque3.querySelectorAll("input[type='radio']:checked");
@@ -1352,8 +1352,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   btnExportTodo.addEventListener("click", () => {
     const tipo = obtenerTipoExportacion();
     if (tipo === "pdf") {
-      alert("Exportando Todo Como PDF  en implementación");
-      //exportarTodoPdf();
+      //alert("Exportando Todo Como PDF  en implementación");
+      exportarTodoPDF();
     } else {
       //alert("Exportando Todo Como Word");
       exportarTodoWord();
@@ -1365,8 +1365,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const tipo = obtenerTipoExportacion();
 
     if (tipo === "pdf") {
-      alert("exportar Hoja a PDF en implementación");
-      //await exportarHojaPDF(); 
+      //alert("exportar Hoja a PDF en implementación");
+      await exportarHojaPDF();
     } else {
       //alert("exportar Hoja a Word");
       await exportarHojaWord();
@@ -1472,173 +1472,641 @@ document.addEventListener("DOMContentLoaded", async () => {
     return esWord ? "word" : "pdf";
   }
 
-  // funciones para exportar a PDF
+  // funciones para exportar a
 
-function encabezadoPDF(doc, titulo) {
-  doc.setFont("helvetica", "bold");
-  doc.setFontSize(12);
-  doc.text(titulo, 14, 15);
+  const MARGEN_SUPERIOR = 800;
+  const MARGEN_INFERIOR = 100;
+  const LINE_HEIGHT = 12;
 
-  if (logoBuffer) {
-    const img = "data:image/png;base64," + btoa(
-      String.fromCharCode(...new Uint8Array(logoBuffer))
-    );
-    doc.addImage(img, "PNG", 160, 8, 30, 15);
+  function dividirTextoEnLineas(texto, font, size, maxWidth) {
+    const palabras = texto.split(" ");
+    const lineas = [];
+    let linea = "";
+
+    for (const palabra of palabras) {
+      const test = linea ? linea + " " + palabra : palabra;
+      const ancho = font.widthOfTextAtSize(test, size);
+
+      if (ancho > maxWidth) {
+        lineas.push(linea);
+        linea = palabra;
+      } else {
+        linea = test;
+      }
+    }
+
+    if (linea) lineas.push(linea);
+    return lineas;
   }
 
-  doc.setFontSize(10);
-  doc.setFont("helvetica", "normal");
+
+  function descargarArchivo(bytes, nombre) {
+    const blob = new Blob([bytes], { type: "application/pdf" });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = nombre;
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+
+  async function insertarCanvasEnPDF({
+    canvasId,
+    titulo = "",
+    maxWidth = 480
+    }) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+
+      const dataUrl = canvas.toDataURL("image/png", 1.0);
+      const img = await pdfDoc.embedPng(dataUrl);
+
+      const scale = maxWidth / img.width;
+      const imgHeight = img.height * scale;
+
+      if (y - imgHeight < MARGEN_INFERIOR) {
+        page = pdfDoc.addPage([595, 842]);
+        y = MARGEN_SUPERIOR;
+      }
+
+      if (titulo) {
+        page.drawText(titulo, {
+          x: 50,
+          y,
+          size: 10,
+          font: fontBold
+        });
+        y -= 14;
+      }
+
+      page.drawImage(img, {
+        x: 50,
+        y: y - imgHeight,
+        width: maxWidth,
+        height: imgHeight
+      });
+
+      y -= imgHeight + 20;
+  }
+
+
+
+  async function exportarHojaPDF() {
+    const selectTablas = document.getElementById("menu-tablas");
+    const nombreTabla = selectTablas?.value?.trim();
+
+    if (!nombreTabla) {
+      mostrarOverlay({
+        mensaje: "⚠️ Debes seleccionar una hoja antes de exportar el PDF.",
+        temporal: true,
+      autoCerrar: true
+      });
+      return;
+    }
+
+    mostrarOverlay({
+      mensaje: "Generando PDF...",
+      temporal: true,
+      autoCerrar: false
+    });
+
+    try {
+      // ================= CONFIG =================
+      const { PDFDocument, StandardFonts } = PDFLib;
+
+
+      // ================= DATOS =================
+      const nombreIps = document.getElementById("nombreIps")?.value?.trim() || "";
+      const numeroContacto = document.getElementById("numeroContacto")?.value?.trim() || "";
+      const correoElectronico = document.getElementById("correoElectronico")?.value?.trim() || "";
+      const nombreTabla = selectTablas?.value || "Sin tabla";
+
+      const { filas } = leerTablaDesdeDOM();
+
+      // ================= PDF =================
+      const pdfDoc = await PDFDocument.create();
+      let page = pdfDoc.addPage([595, 842]);
+      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+      let y = MARGEN_SUPERIOR;
+
+      // ================= ENCABEZADO =================
+      page.drawText("Auditoría de Criterios de Habilitación – Resolución 3100", {
+        x: 50,
+        y,
+        size: 14,
+        font: fontBold
+      });
+
+      y -= 25;
+
+      [
+        `IPS / Profesional: ${nombreIps || "-"}`,
+        `Contacto: ${numeroContacto || "-"}`,
+        `Correo: ${correoElectronico || "-"}`,
+        `Tabla evaluada: ${nombreTabla || "-"}`
+      ].forEach(txt => {
+        page.drawText(txt, { x: 50, y, size: 10, font });
+        y -= 14;
+      });
+
+      y -= 20;
+
+      // ================= COLUMNAS =================
+      const colX = { criterio: 50, eval: 350, obs: 420 };
+      const colWidth = { criterio: 280, eval: 60, obs: 120 };
+
+      // ================= FUNCIONES =================
+      function dibujarEncabezadoTabla() {
+        page.drawText("CRITERIO", { x: colX.criterio, y, size: 9, font: fontBold });
+        page.drawText("EVAL.", { x: colX.eval, y, size: 9, font: fontBold });
+        page.drawText("OBSERVACIONES", { x: colX.obs, y, size: 9, font: fontBold });
+        y -= 8;
+
+        page.drawLine({
+          start: { x: 50, y },
+          end: { x: 545, y },
+          thickness: 1
+        });
+
+        y -= 10;
+      }
+
+      function dibujarTextoConSalto({ texto, x, maxWidth, size }) {
+        const lineas = dividirTextoEnLineas(texto, font, size, maxWidth);
+
+        for (const linea of lineas) {
+          if (y - LINE_HEIGHT < MARGEN_INFERIOR) {
+            page = pdfDoc.addPage([595, 842]);
+            y = MARGEN_SUPERIOR;
+            dibujarEncabezadoTabla();
+          }
+
+          page.drawText(linea, { x, y, size, font });
+          y -= LINE_HEIGHT;
+        }
+      }
+
+      async function insertarCanvasEnPDF({
+        canvasId,
+        titulo = "",
+        maxWidth = 300
+      }) {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+
+        const dataUrl = canvas.toDataURL("image/png", 1.0);
+        const img = await pdfDoc.embedPng(dataUrl);
+
+        const scale = maxWidth / img.width;
+        const imgHeight = img.height * scale;
+
+        if (y - imgHeight < MARGEN_INFERIOR) {
+          page = pdfDoc.addPage([595, 842]);
+          y = MARGEN_SUPERIOR;
+        }
+
+        if (titulo) {
+          page.drawText(titulo, {
+            x: 50,
+            y,
+            size: 10,
+            font: fontBold
+          });
+          y -= 14;
+        }
+
+        page.drawImage(img, {
+          x: 50,
+          y: y - imgHeight,
+          width: maxWidth,
+          height: imgHeight
+        });
+
+        y -= imgHeight + 20;
+      }
+
+      function insertarResumenEnPDF() {
+
+        const resumen = [
+          { label: "Cumple", valor: "num-cumple", porcentaje: "p-cumple" },
+          { label: "No cumple", valor: "num-nocumple", porcentaje: "p-nocumple" },
+          { label: "No aplica", valor: "num-noaplica", porcentaje: "p-noaplica" }
+        ];
+
+        const alturaNecesaria = resumen.length * 16 + 40;
+
+        if (y - alturaNecesaria < MARGEN_INFERIOR) {
+          page = pdfDoc.addPage([595, 842]);
+          y = MARGEN_SUPERIOR;
+        }
+
+        // Título
+        page.drawText("Resumen", {
+          x: 50,
+          y,
+          size: 12,
+          font: fontBold
+        });
+
+        y -= 20;
+
+        // Encabezados
+        page.drawText("Estado", { x: 50, y, size: 10, font: fontBold });
+        page.drawText("Cantidad", { x: 250, y, size: 10, font: fontBold });
+        page.drawText("Porcentaje", { x: 350, y, size: 10, font: fontBold });
+
+        y -= 8;
+
+        page.drawLine({
+          start: { x: 50, y },
+          end: { x: 500, y },
+          thickness: 1
+        });
+
+        y -= 12;
+
+        // Filas
+        resumen.forEach(r => {
+          const cantidad = document.getElementById(r.valor)?.innerText || "0";
+          const porcentaje = document.getElementById(r.porcentaje)?.innerText || "0";
+
+          page.drawText(r.label, { x: 50, y, size: 10, font });
+          page.drawText(cantidad, { x: 260, y, size: 10, font });
+          page.drawText(porcentaje, { x: 360, y, size: 10, font });
+
+          y -= 16;
+        });
+
+        y -= 10;
+      }
+
+      // ===== RESUMEN =====
+      insertarResumenEnPDF();
+
+      // ================= GRÁFICOS =================
+      page.drawText("Gráficos de Resultados", {
+        x: 50,
+        y,
+        size: 12,
+        font: fontBold
+      });
+
+      y -= 20;
+
+      await insertarCanvasEnPDF({
+        canvasId: "graficaBarras",
+        titulo: "Resultados por Criterio"
+      });
+
+      await insertarCanvasEnPDF({
+        canvasId: "graficaTorta",
+        titulo: "Distribución de Cumplimiento"
+      });
+      // ================= DETALLE =================
+      page.drawText("Detalle de Criterios", {
+        x: 50,
+        y,
+        size: 12,
+        font: fontBold
+      });
+
+      y -= 20;
+      dibujarEncabezadoTabla();
+
+      for (const f of filas) {
+
+        if (y < MARGEN_INFERIOR + 40) {
+          page = pdfDoc.addPage([595, 842]);
+          y = MARGEN_SUPERIOR;
+          dibujarEncabezadoTabla();
+        }
+
+        if (f.tipo === "seccion") {
+          page.drawText(f.titulo, { x: 50, y, size: 10, font: fontBold });
+          y -= 16;
+          continue;
+        }
+
+        if (f.tipo === "subtitulo") {
+          page.drawText(f.subtitulo, { x: 55, y, size: 9, font: fontBold });
+          y -= 14;
+          continue;
+        }
+
+        const yInicioFila = y;
+
+        dibujarTextoConSalto({
+          texto: f.criterio,
+          x: colX.criterio,
+          maxWidth: colWidth.criterio,
+          size: 9
+        });
+
+        page.drawText(f.evaluacion, {
+          x: colX.eval,
+          y: yInicioFila,
+          size: 9,
+          font
+        });
+
+        dibujarTextoConSalto({
+          texto: f.observaciones || "-",
+          x: colX.obs,
+          maxWidth: colWidth.obs,
+          size: 9
+        });
+
+        y -= 6;
+      }
+
+      // ================= GUARDAR =================
+      const pdfBytes = await pdfDoc.save();
+
+      descargarArchivo(
+        pdfBytes,
+        `Hoja_${sanitizeFileName(nombreTabla)}_${fechaISO()}.pdf`
+      );
+
+    } catch (error) {
+      console.error("Error al generar PDF:", error);
+      alert("Error al generar el PDF. Revisa la consola.");
+    } finally {
+      setTimeout(() => {
+        ocultarOverlay();
+      }, 3000);
+    }
+  }
+
+  //exportar todo a PDF
+
+const colX = {
+  criterio: 50,
+  eval: 360,
+  obs: 420
+};
+
+const colWidth = {
+  criterio: 290,
+  eval: 50,
+  obs: 115
+};
+
+
+function cambiarHoja(valor) {
+  const select = document.getElementById("menu-tablas");
+  select.value = valor;
+  select.dispatchEvent(new Event("change"));
 }
 
-async function exportarHojaPDF() {
+async function esperarTablaRenderizada(timeout = 2000) {
+  const inicio = Date.now();
 
-  const nombreIps = document.getElementById("nombreIps")?.value?.trim() || "";
-  const nombreTabla = selectTablas?.value || "";
+  while (Date.now() - inicio < timeout) {
+    const contenedor = document.getElementById("contenedor-tabla");
+    const radios = contenedor?.querySelectorAll('input[type="radio"]');
 
-  const { headers, filas } = leerTablaDesdeDOM();
+    if (radios && radios.length > 0) return true;
 
-  if (!headers.length || !filas.length) {
+    await new Promise(r => setTimeout(r, 50));
+  }
+
+  return false;
+}
+
+function hojasConCriteriosEvaluados() {
+  return Object.entries(respuestasPorTabla)
+    .filter(([_, respuestas]) =>
+      Object.values(respuestas).some(r => r.opcion)
+    )
+    .map(([id]) => id);
+}
+
+function dividirTexto(texto, font, size, maxWidth) {
+  if (!texto) return ["-"];
+
+  const palabras = texto.split(" ");
+  const lineas = [];
+  let linea = "";
+
+  for (const palabra of palabras) {
+    const prueba = linea ? linea + " " + palabra : palabra;
+    const ancho = font.widthOfTextAtSize(prueba, size);
+
+    if (ancho <= maxWidth) {
+      linea = prueba;
+    } else {
+      lineas.push(linea);
+      linea = palabra;
+    }
+  }
+
+  if (linea) lineas.push(linea);
+  return lineas;
+}
+
+function tipoFila(texto) {
+  if (!texto) return "criterio";
+  if (texto.startsWith("TT-")) return "titulo";
+  if (texto.startsWith("T-")) return "subtitulo";
+  return "criterio";
+}
+
+
+
+async function exportarTodoPDF() {
+
+  const menu = document.getElementById("menu-tablas");
+
+  /* ===============================
+     1️⃣ Determinar hojas a exportar (DATOS)
+  =============================== */
+  const hojasAExportar = hojasConCriteriosEvaluados();
+
+  if (hojasAExportar.length === 0) {
     mostrarOverlay({
-      mensaje: "Selecciona una tabla con información antes de exportar.",
-      temporal: true
+      mensaje: "⚠️ Ninguna hoja tiene criterios evaluados.",
+      aceptar: true
     });
     return;
   }
 
+  /* ===============================
+     2️⃣ Obtener nombres visibles (UI)
+  =============================== */
+  const hojasSeleccionadas = hojasAExportar.map(id => {
+    const opt = [...menu.options].find(o => o.value === id);
+    return opt?.text || id;
+  });
+
+  /* ===============================
+     3️⃣ Overlay previo (IGUAL A WORD)
+  =============================== */
+  const mensajeHTML = `
+    <strong>📄 Hojas a exportar:</strong><br><br>
+    <ul style="text-align:left; margin:0; padding-left:20px;">
+      ${hojasSeleccionadas.map(h => `<li>${h}</li>`).join("")}
+    </ul>
+  `;
+
+  const ok = await mostrarOverlay({
+    mensaje: mensajeHTML,
+    aceptar: true,
+    cancelar: true,
+    autoCerrar: false,
+    textoAceptar: "Aceptar",
+    textoCancelar: "Cancelar"
+  });
+
+  if (!ok) return;
+
   mostrarOverlay({
-    mensaje: "Generando PDF...",
+    mensaje: "Generando PDF consolidado...",
     temporal: true,
     autoCerrar: false
   });
 
-  const doc = new jsPDF("p", "mm", "a4");
-  let y = 25;
+  try {
+    const { PDFDocument, StandardFonts } = PDFLib;
 
-  encabezadoPDF(doc, "Resultados Criterios de Evaluación");
+    const pdfDoc = await PDFDocument.create();
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-  doc.setFontSize(10);
-  doc.text(`IPS / Profesional: ${nombreIps}`, 14, y); y += 6;
-  doc.text(`Tabla evaluada: ${nombreTabla}`, 14, y); y += 8;
+    /* ===============================
+       4️⃣ Recorrer hojas y exportar
+    =============================== */
+    for (const hojaId of hojasAExportar) {
 
-  // ===== CONSTRUIR BODY SEGURO PARA autoTable =====
-  const body = [];
+      cambiarHoja(hojaId);
+      await esperarTablaRenderizada();
 
-  filas.forEach(f => {
-    if (f.tipo === "seccion") {
-      body.push([
-        { content: f.titulo, colSpan: 3, styles: { halign: "center", fontStyle: "bold" } }
-      ]);
-    } 
-    else if (f.tipo === "subtitulo") {
-      body.push([
-        { content: f.subtitulo, colSpan: 2, styles: { fontStyle: "italic" } },
-        f.observaciones || ""
-      ]);
-    } 
-    else if (f.tipo === "criterio") {
-      body.push([
-        f.criterio || "",
-        f.evaluacion || "",
-        f.observaciones || ""
-      ]);
-    }
-  });
+      const { filas } = leerTablaDesdeDOM();
 
-  doc.autoTable({
-    startY: y,
-    head: [headers],
-    body,
-    styles: { fontSize: 8, valign: "middle" },
-    headStyles: { fillColor: [230, 230, 230] },
-    columnStyles: {
-      0: { cellWidth: 90 },
-      1: { cellWidth: 30, halign: "center" },
-      2: { cellWidth: 60 }
-    }
-  });
+      let page = pdfDoc.addPage([595, 842]);
+      let y = MARGEN_SUPERIOR;
 
-  doc.save(`Evaluacion_${sanitizeFileName(nombreTabla)}_${fechaISO()}.pdf`);
-  ocultarOverlay();
-}
+      const nombreHoja =
+        [...menu.options].find(o => o.value === hojaId)?.text || hojaId;
 
-async function exportarTodoPdf() {
+      page.drawText(`Hoja: ${nombreHoja}`, {
+        x: 50,
+        y,
+        size: 14,
+        font: fontBold
+      });
 
-  if (!workbook) {
-    mostrarOverlay({ mensaje: "Primero carga el Excel.", temporal: true });
-    return;
-  }
+      y -= 25;
 
-  const doc = new jsPDF("p", "mm", "a4");
+      const colX = { criterio: 50, eval: 360, obs: 420 };
 
-  const hojas = workbook.SheetNames.filter(
-    h => h.toLowerCase() !== "tabla de contenido"
+      page.drawText("CRITERIO", { x: colX.criterio, y, size: 9, font: fontBold });
+      page.drawText("EVAL.", { x: colX.eval, y, size: 9, font: fontBold });
+      page.drawText("OBS.", { x: colX.obs, y, size: 9, font: fontBold });
+
+      y -= 8;
+
+      page.drawLine({
+        start: { x: 50, y },
+        end: { x: 545, y },
+        thickness: 1
+      });
+
+      y -= 12;
+
+    /* ===============================
+   6️⃣ Dibujar TODOS los criterios (con wrap)
+=============================== */
+for (const f of filas) {
+
+  const lineasCriterio = dividirTexto(
+    f.criterio || "-",
+    font,
+    9,
+    colWidth.criterio
   );
 
-  let exportoAlguna = false;
+  const lineasObs = dividirTexto(
+    f.observaciones || "-",
+    font,
+    9,
+    colWidth.obs
+  );
 
-  mostrarOverlay({
-    mensaje: "Generando PDF completo...",
-    temporal: true,
-    autoCerrar: false
+  const altoFila = Math.max(
+    lineasCriterio.length,
+    lineasObs.length,
+    1
+  ) * LINE_HEIGHT;
+
+  if (y - altoFila < MARGEN_INFERIOR + 40) {
+    page = pdfDoc.addPage([595, 842]);
+    y = MARGEN_SUPERIOR;
+  }
+
+  // CRITERIO (multilínea)
+  lineasCriterio.forEach((linea, i) => {
+    page.drawText(linea, {
+      x: colX.criterio,
+      y: y - i * LINE_HEIGHT,
+      size: 9,
+      font
+    });
   });
 
-  for (const hoja of hojas) {
+  // EVALUACIÓN (una línea, centrada visualmente)
+  page.drawText(f.evaluacion || "-", {
+    x: colX.eval,
+    y,
+    size: 9,
+    font
+  });
 
-    mostrarTabla(workbook, hoja);
-    actualizarContadoresCol2();
-    await new Promise(r => setTimeout(r, 250));
-
-    const radios = bloque3.querySelectorAll("input[type='radio']:checked");
-    if (!radios.length) continue; // 👈 respetamos tu regla
-
-    if (exportoAlguna) doc.addPage();
-    encabezadoPDF(doc, `Tabla: ${hoja}`);
-    exportoAlguna = true;
-
-    const { headers, filas } = leerTablaDesdeDOM();
-
-    const body = [];
-
-    filas.forEach(f => {
-      if (f.tipo === "seccion") {
-        body.push([
-          { content: f.titulo, colSpan: 3, styles: { halign: "center", fontStyle: "bold" } }
-        ]);
-      } 
-      else if (f.tipo === "subtitulo") {
-        body.push([
-          { content: f.subtitulo, colSpan: 2, styles: { fontStyle: "italic" } },
-          f.observaciones || ""
-        ]);
-      } 
-      else if (f.tipo === "criterio") {
-        body.push([
-          f.criterio || "",
-          f.evaluacion || "",
-          f.observaciones || ""
-        ]);
-      }
+  // OBSERVACIONES (multilínea)
+  lineasObs.forEach((linea, i) => {
+    page.drawText(linea, {
+      x: colX.obs,
+      y: y - i * LINE_HEIGHT,
+      size: 9,
+      font
     });
+  });
 
-    doc.autoTable({
-      startY: 25,
-      head: [headers],
-      body,
-      styles: { fontSize: 8 },
-      headStyles: { fillColor: [230, 230, 230] }
-    });
-  }
-
-  if (!exportoAlguna) {
-    ocultarOverlay();
-    mostrarOverlay({
-      mensaje: "No hay hojas con criterios evaluados para exportar.",
-      temporal: true
-    });
-    return;
-  }
-
-  doc.save(`Evaluacion_Completa_${fechaISO()}.pdf`);
-  ocultarOverlay();
+  y -= altoFila;
 }
+
+
+    }
+
+    /* ===============================
+       5️⃣ Guardar PDF
+    =============================== */
+    const pdfBytes = await pdfDoc.save();
+
+    descargarArchivo(
+      pdfBytes,
+      `Auditoria_Consolidada_${fechaISO()}.pdf`
+    );
+
+  } catch (error) {
+    console.error("Error al generar PDF:", error);
+    mostrarOverlay({
+      mensaje: "❌ Error al generar el PDF.",
+      aceptar: true
+    });
+  } finally {
+    setTimeout(() => {
+      ocultarOverlay();
+    }, 3000);
+  }
+}
+
+
+
+
 });
