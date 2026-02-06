@@ -148,8 +148,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Cargar Excel solo una vez
     if (!bloque2.dataset.loaded) {
-      cargarExcel(RUTAS_ARCHIVOS.TablaExcel);  //local
-      //cargarExcel("public/lista-chequeo.xlsx");  //web
+      cargarExcel(RUTAS_ARCHIVOS.TablaExcel);  
       bloque2.dataset.loaded = "true";
     }
 
@@ -628,6 +627,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       const texto = await response.text();
       bloque3.innerHTML = `<div style="padding: 20px; text-align: center;">${texto}</div>`;
       bloque3.classList.remove("oculto");
+
+      // 🔹 Resetear select a "Seleccione..."
+      const selectTablas = document.getElementById("menu-tablas");
+      if (selectTablas) {
+        selectTablas.value = "";
+      }
+
 
       // Resetear contadores columna 2
       document.getElementById("num-criterios").textContent = "0";
@@ -1133,71 +1139,109 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   };
 
+  async function obtenerHojasExportables(workbook) {
+    const hojas = workbook.SheetNames.filter(
+      h => h.toLowerCase() !== "tabla de contenido"
+    );
+
+    const menuTablas = document.getElementById("menu-tablas");
+    const exportables = [];
+
+    for (const hoja of hojas) {
+      mostrarTabla(workbook, hoja);
+      menuTablas.value = hoja;
+
+      // ⏳ dar un frame al DOM para reflejar radios
+      await new Promise(r => requestAnimationFrame(r));
+
+      const radiosMarcados = bloque3.querySelectorAll(
+        "input[type='radio']:checked"
+      );
+
+      if (radiosMarcados.length > 0) {
+        exportables.push(hoja);
+      }
+    }
+
+    return exportables;
+  }
 
   async function exportarTodoWord() {
 
     if (!workbook) {
       mostrarOverlay({
         mensaje: "⚠️ Primero carga el Excel antes de exportar.",
-        aceptar: false,
-        cancelar: false,
-        temporal: true,
-        autoCerrar: true,
-        tiempo: 3000,
-        textoAceptar: "Aceptar",
-        textoCancelar: "Cancelar"
+        temporal: true
       });
-
-      // alert("⚠️ Primero carga el Excel antes de exportar.");
-
       return;
     }
 
-    const hojas = workbook.SheetNames.filter(
-      nombre => nombre.toLowerCase() !== "tabla de contenido"
-    );
+    mostrarOverlay({
+      mensaje: "🔎 Analizando hojas...",
+      autoCerrar: false
+    });
+
+    const hojasSeleccionadas = await obtenerHojasExportables(workbook);
+
+    ocultarOverlay();
+
+    if (hojasSeleccionadas.length === 0) {
+      mostrarOverlay({
+        mensaje: "⚠️ No hay hojas con criterios evaluados.",
+        temporal: true
+      });
+      return;
+    }
+
+    // 🧾 Confirmación del usuario
+    const mensajeHTML = `
+    <strong>📄 Hojas a exportar:</strong><br><br>
+    <ul style="text-align:left; padding-left:20px;">
+      ${hojasSeleccionadas.map(h => `<li>${h}</li>`).join("")}
+    </ul>
+  `;
+
+    const ok = await mostrarOverlay({
+      mensaje: mensajeHTML,
+      aceptar: true,
+      cancelar: true,
+      autoCerrar: false
+    });
+
+    if (!ok) {
+      mostrarOverlay({
+        mensaje: "❌ Exportación cancelada.",
+        temporal: true
+      });
+      return;
+    }
+
+    // 🚀 SOLO AQUÍ empieza el trabajo pesado
+    await generarWordDesdeHojas(hojasSeleccionadas);
+  }
+
+  async function generarWordDesdeHojas(hojasSeleccionadas) {
 
     const secciones = [];
-    const hojasSeleccionadas = [];
     const menuTablas = document.getElementById("menu-tablas");
 
     mostrarOverlay({
-      mensaje: "Recopilando Información.",
-      aceptar: false,
-      cancelar: false,
-      temporal: true,
-      autoCerrar: false,
-      tiempo: 3000,
-      textoAceptar: "Aceptar",
-      textoCancelar: "Cancelar"
+      mensaje: "📄 Generando informe...",
+      autoCerrar: false
     });
 
-    for (const hoja of hojas) {
+    for (const hoja of hojasSeleccionadas) {
 
-      // fuerza visualización para que leerTablaDesdeDOM lea correctamente
       mostrarTabla(workbook, hoja);
       menuTablas.value = hoja;
-      // Generar gráficas para esta hoja
+
       actualizarContadoresCol2();
-      await new Promise(r => setTimeout(r, 400));
+      await new Promise(r => setTimeout(r, 800));
 
-      // verificar criterios evaluados
-      const radios = bloque3.querySelectorAll("input[type='radio']:checked");
-
-      if (radios.length === 0) {
-        console.log(`⏭ Hoja "${hoja}" ignorada (sin criterios calificados)`);
-        continue;
-      }
-      hojasSeleccionadas.push(hoja);
-
-      console.log(`✔ Hoja "${hoja}" incluida (${radios.length} criterios).`);
 
       const { headers, filas } = leerTablaDesdeDOM();
 
-      if (!headers.length || !filas.length) {
-        console.log(`⏭ Hoja "${hoja}" no tiene datos visibles`);
-        continue;
-      }
+      if (!headers.length || !filas.length) continue;
 
       const section = construirSeccionWord({
         nombreTabla: hoja,
@@ -1210,104 +1254,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     ocultarOverlay();
 
-    if (secciones.length === 0) {
-      mostrarOverlay({
-        mensaje: "⚠️ No hay hojas con criterios evaluados para exportar.",
-        aceptar: false,
-        cancelar: false,
-        temporal: true,
-        autoCerrar: true,
-        tiempo: 3000,
-        textoAceptar: "Aceptar",
-        textoCancelar: "Cancelar"
-      });
-
-      //alert("⚠️ No hay hojas con criterios evaluados para exportar.");
-      return;
-    }
-
     const documento = new Document({
       styles: {
         default: {
-          document: {
-            run: { font: "Arial", size: 22 }
-          },
-          paragraph: {
-            spacing: { after: 120 }
-          }
+          document: { run: { font: "Arial", size: 22 } }
         }
       },
       sections: secciones
     });
 
-    if (hojasSeleccionadas.length === 0) {
-      mostrarOverlay({
-        mensaje: "⚠️ No hay hojas con criterios evaluados para exportar.",
-        aceptar: false,
-        cancelar: false,
-        temporal: true,
-        autoCerrar: true,
-        tiempo: 3000,
-        textoAceptar: "Aceptar",
-        textoCancelar: "Cancelar"
-      });
-
-
-      //alert("⚠️ No hay hojas con criterios evaluados para exportar.");
-      return;
-      cargarTextoEjemplo(RUTAS_ARCHIVOS.MensajeEjemplo);
-    }
-
-    const mensajeHTML = `
-    <strong>📄 Hojas a exportar:</strong><br><br>
-    <ul style="text-align:left; margin:0; padding-left:20px;">
-      ${hojasSeleccionadas.map(h => `<li>${h}</li>`).join("")}
-    </ul>
-  `;
-
-    const ok = await mostrarOverlay({
-      mensaje: mensajeHTML,
-      aceptar: true,
-      cancelar: true,
-      temporal: false,
-      autoCerrar: false,
-      tiempo: 3000,
-      textoAceptar: "Aceptar",
-      textoCancelar: "Cancelar"
-    });
-    //alert(ok)
-    if (!ok) {
-      mostrarOverlay({
-        mensaje: "❌ Exportación Cancelada.",
-        aceptar: false,
-        cancelar: false,
-        temporal: true,
-        autoCerrar: true,
-        tiempo: 3000,
-        textoAceptar: "Aceptar",
-        textoCancelar: "Cancelar"
-      });
-      return;
-    }
-
-    //alert("📄 Hojas a exportar:\n\n" + hojasSeleccionadas.join("\n"));
-
-
     const blob = await Packer.toBlob(documento);
     saveAs(blob, `Evaluacion_Todas_${fechaISO()}.docx`);
-    ocultarOverlay();
+
     mostrarOverlay({
       mensaje: "✅ Exportación completada.",
-      aceptar: false,
-      cancelar: false,
-      temporal: true,
-      autoCerrar: true,
-      tiempo: 3000,
-      textoAceptar: "Aceptar",
-      textoCancelar: "Cancelar"
+      temporal: true
     });
-
-    //alert("✅ Exportación completada.");
     cargarTextoEjemplo(RUTAS_ARCHIVOS.MensajeEjemplo);
   }
 
@@ -1360,7 +1322,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   btnExportTodo.addEventListener("click", () => {
     const tipo = obtenerTipoExportacion();
     if (tipo === "pdf") {
-      alert("Exportando Todo Como PDF  en implementación");
+      //alert("Exportando Todo Como PDF  en implementación");
       exportarTodoPDF();
     } else {
       //alert("Exportando Todo Como Word");
@@ -1373,7 +1335,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const tipo = obtenerTipoExportacion();
 
     if (tipo === "pdf") {
-      alert("exportar Hoja a PDF en implementación");
+      //alert("exportar Hoja a PDF en implementación");
       await exportarHojaPDF();
     } else {
       //alert("exportar Hoja a Word");
@@ -1849,6 +1811,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         ocultarOverlay();
       }, 3000);
     }
+    cargarTextoEjemplo(RUTAS_ARCHIVOS.MensajeEjemplo);
   }
 
   //exportar todo a PDF
@@ -2112,6 +2075,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         ocultarOverlay();
       }, 3000);
     }
+    cargarTextoEjemplo(RUTAS_ARCHIVOS.MensajeEjemplo);
   }
 
 
@@ -2157,24 +2121,37 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
   document.getElementById("tipo-exportacion")
-    .addEventListener("change", async function () {
+  .addEventListener("change", async function () {
 
-      if (this.checked) { // Word
-        const correo = document.getElementById("correoElectronico")?.value || "";
+    if (this.checked) { // Word
+      const correo = document.getElementById("correoElectronico")?.value || "";
 
-        const autorizado = await correoAutorizado(correo);
+      const autorizado = await correoAutorizado(correo);
 
-        if (!autorizado) {
-          mostrarOverlay({
-            mensaje: "La exportación a Word es una opción de pago",
-            aceptar: true
-          });
+      if (!autorizado) {
 
-          // Volver a PDF
-          this.checked = false;
+        const irContacto = await mostrarOverlay({
+          mensaje: "La exportación a Word es una opción de pago",
+          aceptar: true,
+          cancelar: true,
+          textoAceptar: "Contactar",
+          textoCancelar: "Cerrar"
+        });
+
+        // 🔹 Si acepta → abrir página
+        if (irContacto) {
+          window.open(
+            "https://ssh-excelencia.github.io/#contacto", // 👈 cambia la URL
+            "_blank",
+            "noopener,noreferrer"
+          );
         }
+
+        // 🔹 Volver a PDF
+        this.checked = false;
       }
-    });
+    }
+  });
 
 
 
