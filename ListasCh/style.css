@@ -810,10 +810,7 @@ textarea {
     width: 100%;              /* 👈 botones táctiles */
   }
 
- 
-
-
-  .campo.acciones.acciones-horizontal {
+ .campo.acciones.acciones-horizontal {
     flex-direction: column;   /* 👈 todo en filas */
     align-items: stretch;     /* ocupa todo el ancho */
     width: 100%;
@@ -827,7 +824,6 @@ textarea {
   .exportar-header {
   flex-direction: column;
 }
-
 
 }
 
