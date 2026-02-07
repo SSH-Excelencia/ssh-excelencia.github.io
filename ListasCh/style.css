@@ -178,6 +178,7 @@ main {
   min-height: 0;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   /* opcional */
+  
 }
 
 
@@ -187,7 +188,8 @@ main {
   flex: 1;
   /* ancho por defecto */
   box-sizing: border-box;
-  flex: 0 0 auto;   /* ✅ solo lo que mida su contenido */
+  flex: 0 0 auto;
+  /* ✅ solo lo que mida su contenido */
   height: auto;
 }
 
@@ -204,8 +206,9 @@ main {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 200px;
+  height: 210px;
   padding: var(--padding);
+  min-width: 100px;
 }
 
 canvas {
@@ -228,13 +231,14 @@ canvas {
 
 .grafica {
   flex: 1;
-  max-width: 50%;
-  /* 50% para cada una */
-  max-height: 200px;
-  /* 👈 límite de alto */
+  width: 100%;
+  height: 100%;         /* 👈 CLAVE */
+  max-width: none;      /* elimina límite anterior */
+  max-height: none;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+
   border: 1px solid var(--color-borde);
 
 }
@@ -249,7 +253,8 @@ canvas {
   justify-content: flex-start;
   width: auto;
   height: auto;
-  flex: 0 0 auto;   /* ✅ solo lo que mida su contenido */
+  flex: 0 0 auto;
+  /* ✅ solo lo que mida su contenido */
   height: auto;
 }
 
@@ -260,6 +265,20 @@ canvas {
   /* vertical */
   align-items: flex-start;
   /* izquierda */
+  gap: 10px;
+}
+
+.campo.acciones.acciones-horizontal {
+  display: flex;
+  flex-direction: column;   /* estructura base */
+  gap: 10px;
+}
+
+
+.acciones-botones {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 10px;
 }
 
@@ -305,6 +324,8 @@ canvas {
   align-items: center;
   gap: 10px;
   margin-bottom: 12px;
+  font-size: clamp(0.70rem, 2.5vw, 1.1rem);
+  
 }
 
 .toggle-label {
@@ -347,11 +368,11 @@ canvas {
   border-radius: 50%;
 }
 
-input:checked + .slider {
+input:checked+.slider {
   background-color: #4CAF50;
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
   transform: translateX(24px);
 }
 
@@ -364,7 +385,7 @@ input:checked + .slider:before {
   margin: 0 0 8px 0;
   padding: var(--padding);
   line-height: 1;
-  
+
 }
 
 .export-toggle {
@@ -384,10 +405,13 @@ input:checked + .slider:before {
 }
 
 .exportar-header h3 {
-  margin: 0;                /* 👈 elimina el alto fantasma */
+  margin: 0;
+  /* 👈 elimina el alto fantasma */
   padding: 0;
-  line-height: 1.2;         /* compacto */
-  font-size: 1.1rem;        /* opcional */
+  line-height: 1.2;
+  /* compacto */
+  font-size: 1.1rem;
+  /* opcional */
 }
 
 .bloque {
@@ -407,8 +431,10 @@ input:checked + .slider:before {
 }
 
 .campo h3 {
-  margin: 0 0 8px 0;
+  font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+  line-height: 1.2;
 }
+
 
 .lista-metrica {
   list-style: none;
@@ -441,7 +467,8 @@ input:checked + .slider:before {
 }
 
 .btn.secundario {
-  background: var(--color-secundario)
+  background: var(--color-secundario);
+  max-width: 120px ;
 }
 
 .btn:hover {
@@ -490,9 +517,7 @@ input:checked + .slider:before {
 /* ========================= */
 /* 📱 MOBILE */
 /* ========================= */
-@media (max-width: 767px) {
-
-  
+@media (max-width: 767px) and (orientation: landscape) {
 
   body {
     padding: 6px;
@@ -500,13 +525,15 @@ input:checked + .slider:before {
 
   /* 🔒 MANTENER COLUMNAS */
   main {
-    flex-direction: row;   /* 👈 NO CAMBIA */
+    flex-direction: row;
+    /* 👈 NO CAMBIA */
     gap: 6px;
   }
 
   /* Panel inicial más compacto */
   #panel-inicial {
-    flex: 0 0 38%;         /* 👈 proporción */
+    flex: 0 0 38%;
+    /* 👈 proporción */
     max-width: 38%;
     overflow-y: auto;
   }
@@ -523,10 +550,10 @@ input:checked + .slider:before {
     grid-template-columns: 1fr;
   }
 
-  /* Gráficas una debajo de otra */
+  /* Gráficas una debajo de otra 
   .contenedor-graficas {
     flex-direction: column;
-  }
+  } */
 
   .grafica {
     max-width: 100%;
@@ -536,6 +563,9 @@ input:checked + .slider:before {
   .btn {
     width: 100%;
   }
+
+
+
 }
 
 
@@ -563,6 +593,8 @@ input:checked + .slider:before {
     flex: 1;
     max-width: 68%;
   }
+
+
 }
 
 body.sin-header header {
@@ -587,7 +619,6 @@ body.sin-header header {
     display: flex;
   }
 }
-
 
 
 
@@ -750,3 +781,87 @@ textarea {
   border-radius: 6px;
   cursor: pointer;
 }
+
+/* =====================================================
+   📱 PORTRAIT FINAL – layout correcto + scroll funcional
+   ===================================================== */
+@media (max-width: 1023px) and (orientation: portrait) {
+
+  /* Main en columnas con altura fija */
+  main {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden; /* evita scroll doble */
+  }
+
+  /* Panel inicial: 4 campos en columnas */
+  #panel-inicial {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    width: 100%;
+    max-width: 100%;
+    flex: 0 0 auto;
+    overflow-x: auto;
+  }
+
+  #panel-inicial > .campo {
+    grid-column: span 1;
+    width: 100%;
+    align-self: stretch;
+  }
+
+  /* TABLA: ocupa el resto y TIENE SCROLL */
+  #tabla-excel {
+    flex: 1 1 auto;      /* 👈 ocupa el espacio sobrante */
+    min-height: 0;       /* 🔑 CLAVE ABSOLUTA PARA EL SCROLL */
+    width: 100%;
+    max-width: 100%;
+    overflow-y: auto;
+    overflow-x: auto;
+    align-self: stretch;
+    margin: 0;
+  }
+
+  #tabla-excel table {
+    width: 100%;
+    max-width: 100%;
+  }
+
+   /* Gráficas una debajo de otra */ 
+  .contenedor-graficas {
+    flex-direction: column;
+  } 
+
+   .acciones-botones {
+    flex-direction: column;   /* 👈 botones uno debajo del otro */
+    width: 100%;
+  }
+
+  .acciones-botones .btn {
+    width: 100%;              /* 👈 botones táctiles */
+  }
+
+ 
+
+
+  .campo.acciones.acciones-horizontal {
+    flex-direction: column;   /* 👈 todo en filas */
+    align-items: stretch;     /* ocupa todo el ancho */
+    width: 100%;
+  }
+
+  /* Botones y bloques internos */
+  .campo.acciones.acciones-horizontal * {
+    width: 100%;
+  }
+
+  .exportar-header {
+  flex-direction: column;
+
+}
+
+}
+
+
