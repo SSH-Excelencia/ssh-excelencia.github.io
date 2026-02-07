@@ -757,7 +757,7 @@ textarea {
   main {
     display: flex;
     flex-direction: column;
-    height: auto;
+    height: 100%;
     overflow: hidden; /* evita scroll doble */
   }
 
