@@ -43,13 +43,17 @@ header {
   color: white;
   align-items: center;
   padding: var(--padding);
-  height: 70px;
-  /* ajusta a tu header real */
-  flex-shrink: 0;
-  /* no se achica */
+  height: 70px;   /* ajusta a tu header real */
+  flex-shrink: 0;   /* no se achica */
   justify-content: space-between;
   border-bottom: 1px solid rgba(255, 255, 255, .2);
   border-radius: var(--radio);
+}
+
+header.sticky {
+  gap: 20px;    /* espacio entre elementos */
+  padding: 12px 20px;   /* opcional: relleno del header */
+  flex-wrap: nowrap;    /* todo en la misma línea */
 }
 
 header h1 {
@@ -58,62 +62,35 @@ header h1 {
 }
 
 .contenedor-circular {
-  width: 60px;
-  /* ancho */
-  height: 100%;
-  /*60px;       /* alto */
-  border-radius: 50%;
-  /* hace el círculo */
+  width: 60px;    /* ancho */
+  aspect-ratio: 1/1;  /* alto */
+  border-radius: 50%;   /* hace el círculo */
   /*overflow: hidden;    /* recorta la imagen */
   object-fit: contain;
-  box-shadow: 0 20px 15px rgba(0, 0, 0, 0.3);
-  /* sombra */
+  box-shadow: 0 20px 15px rgba(0, 0, 0, 0.3);  /* sombra */
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #faf6cd;
-  /* opcional, fondo blanco */
+  background: var(--color-fondo);  
 }
 
 .contenedor-circular img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  /* mantiene proporción y recorta */
-}
-
-header.sticky {
-  display: flex;
-  /* convierte header en flex */
-  align-items: center;
-  /* centra verticalmente h1 y botones */
-  justify-content: space-between;
-  /* h1 a la izquierda, botones a la derecha */
-  gap: 20px;
-  /* espacio entre elementos */
-  padding: 12px 20px;
-  /* opcional: relleno del header */
-  flex-wrap: nowrap;
-  /* todo en la misma línea */
 }
 
 
 
-
-/* Bloque 1: reducir margen/padding interno */
+/* Bloque 1: informacion de usuario */
 #form-inicial {
-  margin: 5px;
-  /* menos espacio desde arriba */
-  padding: 5px 10px;
-  /* menos espacio interno */
+  margin: 5px;  /* menos espacio desde arriba */
+  padding: var(--padding);  /* menos espacio interno */
 }
 
 /* Título del bloque */
 #form-inicial h2 {
-  margin-top: 0;
-  /* elimina margen superior del h2 */
-  margin-bottom: 3px;
-  /* opcional, separa un poco del contenido */
+  margin-top: 0;  /* elimina margen superior del h2 */
+  margin-bottom: 3px;  /* opcional, separa un poco del contenido */
   text-align: center;
 }
 
@@ -122,7 +99,8 @@ header.sticky {
   display: block;
   margin-bottom: 0px;
   /* espacio entre campos */
-  color: #e63946
+  color: #e63946;
+  text-align: center;
 }
 
 .grid2 {
@@ -131,9 +109,7 @@ header.sticky {
   gap: 12px
 }
 
-.grid2 input,
-select,
-textarea {
+.grid2 input, select, textarea {
   width: 100%;
   border: 1px solid var(--color-borde);
   border-radius: var(--radio);
@@ -153,12 +129,10 @@ main {
   display: flex;
   flex-direction: row;
   flex: 1;
-  overflow: hidden;
+  overflow: auto;
   height: auto;
   min-height: 0;
   min-width: 0;
-
-  overflow-x: hidden;
   align-items: stretch;
 }
 
@@ -268,7 +242,7 @@ canvas {
   gap: 10px;
 }
 
-.campo.acciones.acciones-horizontal {
+#panel-inicial .campo.acciones.acciones-horizontal {
   display: flex;
   flex-direction: column;   /* estructura base */
   gap: 10px;
@@ -325,11 +299,11 @@ canvas {
   gap: 10px;
   margin-bottom: 12px;
   font-size: clamp(0.70rem, 2.5vw, 1.1rem);
-  
 }
 
+
 .toggle-label {
-  font-size: 14px;
+  font-size: clamp(0.70rem, 13px, 1.1rem);
   font-weight: 600;
 }
 
@@ -388,21 +362,13 @@ input:checked+.slider:before {
 
 }
 
-.export-toggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
+
 
 .titulo-derecha {
   margin: 0;
 }
 
-/* Tamaño un poco más compacto para el header */
-.toggle-label {
-  font-size: 13px;
-  font-weight: 600;
-}
+
 
 .exportar-header h3 {
   margin: 0;
@@ -791,7 +757,7 @@ textarea {
   main {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: auto;
     overflow: hidden; /* evita scroll doble */
   }
 
@@ -803,7 +769,8 @@ textarea {
     width: 100%;
     max-width: 100%;
     flex: 0 0 auto;
-    overflow-x: auto;
+    overflow: auto;
+    
   }
 
   #panel-inicial > .campo {
@@ -859,8 +826,8 @@ textarea {
 
   .exportar-header {
   flex-direction: column;
-
 }
+
 
 }
 
