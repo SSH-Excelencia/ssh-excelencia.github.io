@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Listas Chequeo Habilitación</title>
+  <title>Listas Chequeo</title>
   <link rel="icon" type="image/png" href="Image/logo1fav.png">
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -106,11 +106,17 @@
           <button id="btn-export-todo" class="btn secundario" aria-label="Exportar Todo">Exportar Todo</button>
         </div>
       </div>
-        <div class="fila"></div>
-        <!-- Nota sobre el nombre del archivo -->
+      <!-- Campo 5: Métricas y progreso -->
+      <div class="campo progreso">
         <ul class="lista-metrica">
-          <li><span>Total criterios</span><strong id="num-criterios">0</strong></li>
-          <li><span>Pendientes</span><strong id="num-ptes">0</strong></li>
+          <li>
+            <span>Total criterios</span>
+            <strong id="num-criterios">0</strong>
+          </li>
+          <li>
+            <span>Pendientes</span>
+            <strong id="num-ptes">0</strong>
+          </li>
         </ul>
         <div class="progreso-contenedor">
           <div id="barra-progreso"></div>
@@ -147,6 +153,7 @@
 
   <script src="https://unpkg.com/pdf-lib/dist/pdf-lib.min.js"></script>
   
+
   <!-- Script app -->
   <script type="module" src="src/script.js"></script>
 </body>
