@@ -6,7 +6,7 @@
   --color-fondo: #f7f9fc;
   --color-card: #ffffff;
   --color-borde: #e5e7eb;
-  --radio: 12px;
+  --radio: 15px;
   --padding: 8px;
   --font-size: 14px;
 }
@@ -21,8 +21,8 @@ body {
   height: 100%;
   margin: 0;
   padding: var(--padding);
-  overflow: hidden;
-  /* evita scroll global */
+  overflow-x: hidden;
+  overflow-y: hidden;   /* evita scroll global */
 }
 
 body {
@@ -36,7 +36,6 @@ body {
 }
 
 /* ===== Header ===== */
-
 header {
   display: flex;
   background: var(--color-primario);
@@ -48,6 +47,7 @@ header {
   justify-content: space-between;
   border-bottom: 1px solid rgba(255, 255, 255, .2);
   border-radius: var(--radio);
+  box-shadow: 0 10px 5px rgba(0, 0, 0, 0.1);
 }
 
 header.sticky {
@@ -65,7 +65,7 @@ header h1 {
   width: 60px;    /* ancho */
   aspect-ratio: 1/1;  /* alto */
   border-radius: 50%;   /* hace el círculo */
-  /*overflow: hidden;    /* recorta la imagen */
+  overflow: hidden;    /* recorta la imagen */
   object-fit: contain;
   box-shadow: 0 20px 15px rgba(0, 0, 0, 0.3);  /* sombra */
   display: flex;
@@ -79,22 +79,26 @@ header h1 {
   height: 100%;
 }
 
-
-
 /* Bloque 1: informacion de usuario */
 #form-inicial {
   margin: 5px;  /* menos espacio desde arriba */
   padding: var(--padding);  /* menos espacio interno */
+  box-shadow: 0 10px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+
 }
 
-/* Título del bloque */
+/* Título del form inicial */
 #form-inicial h2 {
   margin-top: 0;  /* elimina margen superior del h2 */
   margin-bottom: 3px;  /* opcional, separa un poco del contenido */
   text-align: center;
 }
 
-/* Labels dentro del bloque */
+/* Labels dentro del form inicial */
 #form-inicial label {
   display: block;
   margin-bottom: 0px;
@@ -105,7 +109,7 @@ header h1 {
 
 .grid2 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr;
   gap: 12px
 }
 
@@ -117,84 +121,102 @@ header h1 {
   background: white;
 }
 
-.input {
-max-width: 120px;
-}
 .contacto-boton {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
 }
 
-
 /* ===== Contenedor Principal ===== */
 main {
+  align-items: stretch;
   display: flex;
-  flex-direction: row;
   flex: 1;
-  overflow: auto;
-  height: auto;
   min-height: 0;
   min-width: 0;
-  align-items: stretch;
+  height: 100vh;
+  gap: 5px;
 }
+
 
 /* ===== Bloque 2: Panel inicial ===== */
 #panel-inicial {
-  flex: 0 0 28%;
-  /* ancho fijo */
+  width: 360px;
+  min-width: 250px;
+  max-width: 360px;
+  background: var(--color-card);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: var(--padding);
+  box-shadow: 0 10px 5px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background: var(--color-card);
-  padding: var(--padding);
+  overflow-y: auto;
+  overflow-x: hidden;
+  visibility: hidden;
+}
+
+.campo {
+  background: #fff;
   border: 1px solid var(--color-borde);
   border-radius: var(--radio);
-  overflow-y: auto;
-  /* scroll solo aquí */
-  min-height: 0;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  /* opcional */
-  
+  padding: var(--padding);
+  padding-top: 0;
 }
 
+.campo h3 {
+  font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+  line-height: 1.2;
+  margin: 0;   /* 👈 elimina el alto fantasma */
+  padding: var(--padding);
+}
 
-
-/* Campos por defecto */
-#panel-inicial .campo {
-  flex: 1;
-  /* ancho por defecto */
-  box-sizing: border-box;
-  flex: 0 0 auto;
-  /* ✅ solo lo que mida su contenido */
+/* Campo 1: Menú + Resumen */
+.campo.menu-resumen {
+  display: flex;
+  flex-direction: column;
   height: auto;
+  padding: var(--padding);
+  min-width: 100px;
+  width: auto;  /* ancho completo dentro del panel */
 }
 
-/* Campo 1 y 2: Menú + Resumen */
-#panel-inicial .campo.menu-resumen {
-  width: 100%;
-  /* ancho completo dentro del panel */
+#menu-tablas option.hoja-evaluada {
+  background-color: rgb(144, 221, 1);
+  /*color: greenyellow;*/
+  font-weight: bold;
+}
+
+.lista-metrica {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.lista-metrica li {
+  display: flex;
+  justify-content:space-between;
+  border: 1px dashed var(--color-borde);
+  border-radius: var(--radio);
+  padding: 6px 8px;
+  background: #fafafa;
+  font-size: clamp(0.85rem, 12px, 1.1rem);
 }
 
 /* Campo 3: Gráficas */
-#panel-inicial .campo.graficos {
+.campo.graficos {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 210px;
-  padding: var(--padding);
+  height: auto;
+  padding: 3px ; /*var(--padding); */
   min-width: 100px;
-}
-
-canvas {
-  width: 100% !important;
-  /* ocupa todo el ancho disponible */
-  height: auto !important;
-  /* mantiene proporción */
-  /*margin-bottom: 10px; */
-
 }
 
 .contenedor-graficas {
@@ -203,7 +225,7 @@ canvas {
   gap: 5px;
   margin-top: 5px;
   width: 100%;
-
+  height: 200px;
 }
 
 .grafica {
@@ -215,84 +237,34 @@ canvas {
   display: flex;
   align-items: center;
   justify-content: center;
-
   border: 1px solid var(--color-borde);
-
 }
 
+canvas {
+  width: 100% !important;  /* ocupa todo el ancho disponible */
+  height: auto !important;   /* mantiene proporción */
+}
 
 /* Campo 4: Acciones */
-#panel-inicial .campo.acciones-horizontal {
-
+.campo.acciones {
   display: flex;
-  flex-direction: column;
-  /* vertical */
+  flex-direction: column;   /* vertical */
   justify-content: flex-start;
   width: auto;
   height: auto;
-  flex: 0 0 auto;
-  /* ✅ solo lo que mida su contenido */
+  flex: 0 0 auto;   /* ✅ solo lo que mida su contenido */
   height: auto;
 }
 
-/* Botones verticales alineados a la izquierda */
-#panel-inicial .campo.acciones-horizontal .fila {
-  display: flex;
-  flex-direction: column;
-  /* vertical */
-  align-items: flex-start;
-  /* izquierda */
-  gap: 10px;
-}
-
-#panel-inicial .campo.acciones.acciones-horizontal {
-  display: flex;
-  flex-direction: column;   /* estructura base */
-  gap: 10px;
-}
-
-
-.acciones-botones {
-  display: flex;
-  justify-content: center;
+.exportar-header {
+  display: inline-flex;
+  justify-content: space-between;
   align-items: center;
+  width: auto;
   gap: 10px;
-}
-
-/* Ajuste adicional para la fila de acciones (si hay otros estilos) */
-.campo.acciones .fila {
-  margin-top: 10px;
-}
-
-
-/* ===== Barra de progreso ===== */
-.progreso-contenedor {
-  width: 100%;
-  height: 20px;
-  background-color: #e5e7eb;
-  /* gris claro */
-  border-radius: 10px;
-  margin-top: 12px;
-  overflow: hidden;
-}
-
-#barra-progreso {
-  height: 100%;
-  width: 0%;
-  /* empieza vacía */
-  background-color: var(--color-primario);
-  border-radius: 10px;
-  transition: width 0.4s ease;
-  /* animación suave */
-  display: flex;
-  /* Para alinear el texto */
-  align-items: center;
-  /* Centrado vertical */
-  justify-content: center;
-  /* Centrado horizontal */
-  color: #fff;
-  /* Texto blanco */
-  font-weight: bold;
+  margin: 0 0 8px 0;
+  padding: var(--padding);
+  line-height: 1;
 }
 
 .export-toggle {
@@ -303,7 +275,6 @@ canvas {
   margin-bottom: 12px;
   font-size: clamp(0.70rem, 2.5vw, 1.1rem);
 }
-
 
 .toggle-label {
   font-size: clamp(0.70rem, 13px, 1.1rem);
@@ -346,288 +317,97 @@ canvas {
 }
 
 input:checked+.slider {
-  background-color: #4CAF50;
+  background-color: var(--color-primario);
 }
 
 input:checked+.slider:before {
   transform: translateX(24px);
 }
 
-.exportar-header {
-  display: inline-flex;
-  justify-content: space-between;
-  align-items: center;
-  width: auto;
-  gap: 10px;
-  margin: 0 0 8px 0;
-  padding: var(--padding);
-  line-height: 1;
-
-}
-
-
-
-.titulo-derecha {
-  margin: 0;
-}
-
-
-
-.exportar-header h3 {
-  margin: 0;
-  /* 👈 elimina el alto fantasma */
-  padding: 0;
-  line-height: 1.2;
-  /* compacto */
-  font-size: 1.1rem;
-  /* opcional */
-}
-
-.bloque {
-  margin: 5px;
-  padding: var(--padding);
-  background: var(--color-card);
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
-}
-
-.campo {
-  background: #fff;
-  border: 1px solid var(--color-borde);
-  border-radius: var(--radio);
-  padding: var(--padding);
-}
-
-.campo h3 {
-  font-size: clamp(0.85rem, 2.5vw, 1.1rem);
-  line-height: 1.2;
-}
-
-
-.lista-metrica {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  gap: 6px
-}
-
-.lista-metrica li {
+.acciones-botones {
   display: flex;
-  justify-content: space-between;
-  border: 1px dashed var(--color-borde);
-  border-radius: 8px;
-  padding: 6px 8px;
-  background: #fafafa
+  justify-content: space-around;
+  gap: 10px;
+}
+
+/* ===== Barra de progreso ===== */
+.progreso-contenedor {
+  width: 100%;
+  height: 20px;
+  background-color: #e5e7eb;  /* gris claro */
+  border-radius: var(--radio);
+  margin-top: 12px;
+}
+
+#barra-progreso {
+  height: 100%;
+  width: 0%;  /* empieza vacía */
+  background-color: var(--color-primario);
+  border-radius: var(--radio);
+  transition: width 0.4s ease;  /* animación suave */
+  display: flex;  /* Para alinear el texto */
+  align-items: center;    /* Centrado vertical */
+  justify-content: center;    /* Centrado horizontal */
+  color: #fff;    /* Texto blanco */
+  font-weight: bold;
 }
 
 /* ===== Configuracion Botones =====  */
 .btn {
   color: white;
   border: none;
-  border-radius: 10px;
-  padding: 5px 18px;
+  border-radius: var(--radio);
+  padding: var(--padding);
   cursor: pointer;
+  max-width: 100px ;
 }
 
 .btn.primario {
   background: var(--color-primario);
-  max-width: 100px ;
 }
 
 .btn.secundario {
   background: var(--color-secundario);
-  max-width: 100px;
 }
 
+.btn.danger {
+  background-color: #e63946;
+}
 
 .btn:hover {
   opacity: .75
 }
 
-.btn.danger {
-  background-color: #e63946;
-  color: white;
-  border: none;
-}
-
-
-
-.acciones .fila {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap
-}
-
-.nota-archivo {
-  font-size: 12px;
-  color: #6b7280;
-  margin-top: 6px
-}
-
-
-
-/* Responsive */
-@media (max-width: 960px) {
-  #panel-inicial {
-    flex: 1
-  }
-}
-
-@media (max-width: 640px) {
-  #panel-inicial {
-    grid-template-columns: 1fr
-  }
-
-  .grid2 {
-    flex: 1
-  }
-}
-
-/* ========================= */
-/* 📱 MOBILE */
-/* ========================= */
-@media (max-width: 767px) and (orientation: landscape) {
-
-  body {
-    padding: 6px;
-  }
-
-    #form-inicial {
-  
-    flex-direction: column;   /* 👈 todo en filas */
-    align-items: stretch;     /* ocupa todo el ancho */
-    width: 100%;
-}
-  /* 🔒 MANTENER COLUMNAS */
-  main {
-    flex-direction: row;
-    /* 👈 NO CAMBIA */
-    gap: 6px;
-  }
-
-  /* Panel inicial más compacto */
-  #panel-inicial {
-    flex: 0 0 38%;
-    /* 👈 proporción */
-    max-width: 38%;
-    overflow-y: auto;
-  }
-
-  /* Tabla más grande */
-  #tabla-excel {
-    flex: 1;
-    max-width: 62%;
-    overflow-y: auto;
-  }
-
-  /* Inputs en una sola columna */
-  .grid2 {
-    grid-template-columns: 1fr;
-  }
-
-  /* Gráficas una debajo de otra 
-  .contenedor-graficas {
-    flex-direction: column;
-  } */
-
-  .grafica {
-    max-width: 100%;
-  }
-
-  /* Botones más táctiles */
-  .btn {
-    width: 100%;
-  }
-
-
-
-}
-
-
-/* ========================= */
-/* 📲 TABLET */
-/* ========================= */
-@media (min-width: 768px) and (max-width: 1023px) {
-
-  /* Header visible */
-  header.sticky {
-    display: flex;
-  }
-
-     #form-inicial {
-  
-    flex-direction: column;   /* 👈 todo en filas */
-    align-items: stretch;     /* ocupa todo el ancho */
-    width: 100%;
-}
-  /* Columnas siempre */
-  main {
-    flex-direction: row;
-  }
-
-  #panel-inicial {
-    flex: 0 0 32%;
-    max-width: 32%;
-  }
-
-  #tabla-excel {
-    flex: 1;
-    max-width: 68%;
-  }
-
-
-}
-
-body.sin-header header {
+/* Botón reiniciar solo portrait */
+.btn-reiniciar-portrait {
   display: none;
+  margin-top: 10px;
+  margin: 12px auto 0 auto; /* 👈 centra horizontal */
 }
-
-/* =========================================
-   Ocultar header SOLO en mobile y tablet
-   cuando la app está en estado "sin-header"
-   ========================================= */
-
-/* Mobile + Tablet */
-@media (max-width: 1023px) {
-  body.sin-header header {
-    display: none;
-  }
-}
-
-/* Desktop: nunca se oculta */
-@media (min-width: 1024px) {
-  body.sin-header header {
-    display: flex;
-  }
-}
-
-
 
 /* ===== Bloque 3: Tabla Excel ===== */
 #tabla-excel {
-  flex: 1;
-  /* ocupa todo el espacio sobrante */
-  overflow-y: auto;
-  /* scroll solo aquí */
+  flex: 1;    /* ocupa todo el espacio sobrante */
+  overflow: auto;   /* scroll solo aquí */
+  border-radius: var(--radio);
   padding: var(--padding);
-  background: #fafafa;
-  vertical-align: middle;
-  /*margin-top: 0;     /* sin margen arriba */
-  padding-top: 0;
-  /* sin padding arriba */
+  background: var(--color-card);
+  padding-top: 0;  /* sin padding arriba */
   height: auto;
-
-  border-collapse: collapse;
-  width: 100%;
+  width: 100%; 
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
 }
 
-.tabla-excel th,
-.tabla-excel td {
-  border: 1px solid #ccc;
-  padding: 6px 8px;
-  text-align: left;
+#tabla-excel th,
+#tabla-excel td {
+  border: 1px solid var(--color-borde);
+  padding: var(--padding);
+  vertical-align: middle;
+  word-wrap: break-word;
+}
+
+#tabla-excel th {
+  background: #f3f4f6;
 }
 
 /* Congelar primera fila */
@@ -642,19 +422,7 @@ body.sin-header header {
 #tabla-excel table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed
-}
-
-#tabla-excel th,
-#tabla-excel td {
-  border: 1px solid var(--color-borde);
-  padding: var(--padding);
-  vertical-align: middle;
-  word-wrap: break-word
-}
-
-#tabla-excel th {
-  background: #f3f4f6
+  table-layout: fixed;
 }
 
 textarea {
@@ -662,21 +430,15 @@ textarea {
   resize: vertical
 }
 
-
-
-
 /* ==== OTROS AJUSTES GRAFICOS  ==== */
-
 .marquesina {
   width: 80%;
-  margin: 0 auto;
-  /* esto lo centra en el contenedor principal*/
+  margin: 0 auto;  /* esto lo centra en el contenedor principal*/
   overflow: hidden;
   background: #ebeaea;
   padding: 2px;
   border-radius: var(--radio);
   text-align: center;
-
 }
 
 .marquesina p {
@@ -720,12 +482,6 @@ textarea {
   }
 }
 
-#menu-tablas option.hoja-evaluada {
-  background-color: rgb(144, 221, 1);
-  /*color: greenyellow;*/
-  font-weight: bold;
-}
-
 #overlay {
   position: fixed;
   top: 0;
@@ -765,102 +521,143 @@ textarea {
   cursor: pointer;
 }
 
-/* =====================================================
-   📱 PORTRAIT FINAL – layout correcto + scroll funcional
-   ===================================================== */
-@media (max-width: 1023px) and (orientation: portrait) {
 
-  /* Main en columnas con altura fija */
+
+
+/* ===== CONFIGURACION DE RESPOSIVE ===== */
+@media (min-width: 1024px) {
+
   main {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    overflow: hidden; /* evita scroll doble */
+    flex-direction: row;
   }
 
-  #form-inicial {
-  display: flex;
-    flex-direction: column;   /* 👈 todo en filas */
-    align-items: stretch;     /* ocupa todo el ancho */
-    width: 100%;
-}
-.contacto-boton{
-flex-direction: column;   /* 👈 todo en filas */
-    align-items: stretch;     /* ocupa todo el ancho */
-    width: 100%;
+  #panel-inicial {
+    flex: 0 0 320px;
+    max-width: 360px;
+  }
 
+  #tabla-excel {
+    flex: 1;
+  }
+
+  body.sin-header header {
+    display: flex;
+  }
 }
-#form-inicial .btn.primario {
-max-width: 100px;
+
+/* == TABLET + MOBILE LANDSCAPE == */
+@media (max-width: 1023px) and (orientation: landscape) {
+
+  body {
+    padding: 6px;
+  }
+
+  main {
+    flex-direction: row;
+    gap: 6px;
+  }
+
+  #panel-inicial {
+    flex: 0 0 38%;
+    max-width: 38%;
+    overflow-x: auto;
+  }
+
+  #tabla-excel {
+    flex: 1;
+    max-width: 62%;
+    overflow: auto;
+  }
+
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  body.sin-header header {
+    display: none;
+  }
+
+  .btn-reiniciar-portrait {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    font-size: clamp(0.85rem, var(--font-size), 1.1rem);
+    
+  }
 }
-  /* Panel inicial: 4 campos en columnas */
+
+
+/* == MOBILE + TABLET PORTRAIT == */
+@media (max-width: 1023px) and (orientation: portrait) {
+
+  main {
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* PANEL SUPERIOR */
   #panel-inicial {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 8px;
     width: 100%;
     max-width: 100%;
+    overflow-x: auto;
     flex: 0 0 auto;
-    overflow: auto;
-    
   }
 
   #panel-inicial > .campo {
     grid-column: span 1;
     width: 100%;
-    align-self: stretch;
+    max-width: 100%;
   }
 
-  /* TABLA: ocupa el resto y TIENE SCROLL */
+  /* TABLA INFERIOR */
   #tabla-excel {
-    flex: 1 1 auto;      /* 👈 ocupa el espacio sobrante */
-    min-height: 0;       /* 🔑 CLAVE ABSOLUTA PARA EL SCROLL */
+    flex: 1 1 auto;
+    min-height: 0;     /* 🔑 CLAVE */
     width: 100%;
-    max-width: 100%;
-    overflow-y: auto;
-    overflow-x: auto;
-    align-self: stretch;
-    margin: 0;
+    overflow: auto;
   }
 
   #tabla-excel table {
     width: 100%;
-    max-width: 100%;
   }
 
-   /* Gráficas una debajo de otra */ 
+  /* BOTONES */
+  .acciones-botones,
+  .campo.acciones.acciones-horizontal,
+  .contacto-boton,
+  .exportar-header {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .acciones-botones .btn,
+  .campo.acciones * {
+    width: 100%;
+  }
+
+  body.sin-header header {
+    display: none;
+  }
+  /* Gráficas una debajo de otra */ 
   .contenedor-graficas {
     flex-direction: column;
   } 
 
-   .acciones-botones {
-    flex-direction: column;   /* 👈 botones uno debajo del otro */
+  .btn-reiniciar-portrait {
+    display: block;
     width: 100%;
+    margin-top: 12px;
+    font-size: clamp(0.85rem, var(--font-size), 1.1rem);
   }
-
-  .acciones-botones .btn {
-    width: 100%;              /* 👈 botones táctiles */
-  }
-
- 
-
-
-  .campo.acciones.acciones-horizontal {
-    flex-direction: column;   /* 👈 todo en filas */
-    align-items: stretch;     /* ocupa todo el ancho */
-    width: 100%;
-  }
-
-  /* Botones y bloques internos */
-  .campo.acciones.acciones-horizontal * {
-    width: 100%;
-  }
-
-  .exportar-header {
-  flex-direction: column;
 }
 
-
-}
 
 
