@@ -6,7 +6,7 @@
   --color-fondo: #f7f9fc;
   --color-card: #ffffff;
   --color-borde: #e5e7eb;
-  --radio: 12px;
+  --radio: 15px;
   --padding: 8px;
   --font-size: 14px;
 }
@@ -22,7 +22,7 @@ body {
   margin: 0;
   padding: var(--padding);
   overflow-x: hidden;
-  /* evita scroll global */
+  overflow-y: hidden;   /* evita scroll global */
 }
 
 body {
@@ -36,20 +36,24 @@ body {
 }
 
 /* ===== Header ===== */
-
 header {
   display: flex;
   background: var(--color-primario);
   color: white;
   align-items: center;
   padding: var(--padding);
-  height: 70px;
-  /* ajusta a tu header real */
-  flex-shrink: 0;
-  /* no se achica */
+  height: 70px;   /* ajusta a tu header real */
+  flex-shrink: 0;   /* no se achica */
   justify-content: space-between;
   border-bottom: 1px solid rgba(255, 255, 255, .2);
   border-radius: var(--radio);
+  box-shadow: 0 10px 5px rgba(0, 0, 0, 0.1);
+}
+
+header.sticky {
+  gap: 20px;    /* espacio entre elementos */
+  padding: 12px 20px;   /* opcional: relleno del header */
+  flex-wrap: nowrap;    /* todo en la misma línea */
 }
 
 header h1 {
@@ -58,82 +62,58 @@ header h1 {
 }
 
 .contenedor-circular {
-  width: 60px;
-  /* ancho */
-  height: 100%;
-  /*60px;       /* alto */
-  border-radius: 50%;
-  /* hace el círculo */
-  /*overflow: hidden;    /* recorta la imagen */
+  width: 60px;    /* ancho */
+  aspect-ratio: 1/1;  /* alto */
+  border-radius: 50%;   /* hace el círculo */
+  overflow: hidden;    /* recorta la imagen */
   object-fit: contain;
-  box-shadow: 0 20px 15px rgba(0, 0, 0, 0.3);
-  /* sombra */
+  box-shadow: 0 20px 15px rgba(0, 0, 0, 0.3);  /* sombra */
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #faf6cd;
-  /* opcional, fondo blanco */
+  background: var(--color-fondo);  
 }
 
 .contenedor-circular img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  /* mantiene proporción y recorta */
 }
 
-header.sticky {
-  display: flex;
-  /* convierte header en flex */
-  align-items: center;
-  /* centra verticalmente h1 y botones */
-  justify-content: space-between;
-  /* h1 a la izquierda, botones a la derecha */
-  gap: 20px;
-  /* espacio entre elementos */
-  padding: 12px 20px;
-  /* opcional: relleno del header */
-  flex-wrap: nowrap;
-  /* todo en la misma línea */
-}
-
-
-
-
-/* Bloque 1: reducir margen/padding interno */
+/* Bloque 1: informacion de usuario */
 #form-inicial {
-  margin: 5px;
-  /* menos espacio desde arriba */
-  padding: 5px 10px;
-  /* menos espacio interno */
+  margin: 5px;  /* menos espacio desde arriba */
+  padding: var(--padding);  /* menos espacio interno */
+  box-shadow: 0 10px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+
 }
 
-/* Título del bloque */
+/* Título del form inicial */
 #form-inicial h2 {
-  margin-top: 0;
-  /* elimina margen superior del h2 */
-  margin-bottom: 3px;
-  /* opcional, separa un poco del contenido */
+  margin-top: 0;  /* elimina margen superior del h2 */
+  margin-bottom: 3px;  /* opcional, separa un poco del contenido */
   text-align: center;
 }
 
-/* Labels dentro del bloque */
+/* Labels dentro del form inicial */
 #form-inicial label {
   display: block;
   margin-bottom: 0px;
   /* espacio entre campos */
-  color: #e63946
+  color: #e63946;
+  text-align: center;
 }
 
 .grid2 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 2fr 1fr 1fr;
   gap: 12px
 }
 
-.grid2 input,
-select,
-textarea {
+.grid2 input, select, textarea {
   width: 100%;
   border: 1px solid var(--color-borde);
   border-radius: var(--radio);
@@ -144,77 +124,99 @@ textarea {
 .contacto-boton {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
 }
 
-
 /* ===== Contenedor Principal ===== */
 main {
+  align-items: stretch;
   display: flex;
-  flex-direction: row;
   flex: 1;
-  overflow: hidden;
-  height: auto;
   min-height: 0;
   min-width: 0;
-
-  overflow-x: hidden;
-  align-items: stretch;
+  height: 100vh;
+  gap: 5px;
 }
+
 
 /* ===== Bloque 2: Panel inicial ===== */
 #panel-inicial {
-  flex: 0 0 28%;
-  /* ancho fijo */
+  width: 360px;
+  min-width: 250px;
+  max-width: 360px;
+  background: var(--color-card);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: var(--padding);
+  box-shadow: 0 10px 5px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background: var(--color-card);
-  padding: var(--padding);
+  overflow-y: auto;
+  overflow-x: hidden;
+  visibility: hidden;
+}
+
+.campo {
+  background: #fff;
   border: 1px solid var(--color-borde);
   border-radius: var(--radio);
-  overflow-y: auto;
-  /* scroll solo aquí */
-  min-height: 0;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  /* opcional */
+  padding: var(--padding);
+  padding-top: 0;
 }
 
+.campo h3 {
+  font-size: clamp(0.85rem, 2.5vw, 1.1rem);
+  line-height: 1.2;
+  margin: 0;   /* 👈 elimina el alto fantasma */
+  padding: var(--padding);
+}
 
-
-/* Campos por defecto */
-#panel-inicial .campo {
-  flex: 1;
-  /* ancho por defecto */
-  box-sizing: border-box;
-  flex: 0 0 auto;   /* ✅ solo lo que mida su contenido */
+/* Campo 1: Menú + Resumen */
+.campo.menu-resumen {
+  display: flex;
+  flex-direction: column;
   height: auto;
+  padding: var(--padding);
+  min-width: 100px;
+  width: auto;  /* ancho completo dentro del panel */
 }
 
-/* Campo 1 y 2: Menú + Resumen */
-#panel-inicial .campo.menu-resumen {
-  width: 100%;
-  /* ancho completo dentro del panel */
+#menu-tablas option.hoja-evaluada {
+  background-color: rgb(144, 221, 1);
+  /*color: greenyellow;*/
+  font-weight: bold;
+}
+
+.lista-metrica {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.lista-metrica li {
+  display: flex;
+  justify-content:space-between;
+  border: 1px dashed var(--color-borde);
+  border-radius: var(--radio);
+  padding: 6px 8px;
+  background: #fafafa;
+  font-size: clamp(0.85rem, 12px, 1.1rem);
 }
 
 /* Campo 3: Gráficas */
-#panel-inicial .campo.graficos {
+.campo.graficos {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 200px;
-  padding: var(--padding);
-}
-
-canvas {
-  width: 100% !important;
-  /* ocupa todo el ancho disponible */
-  height: auto !important;
-  /* mantiene proporción */
-  /*margin-bottom: 10px; */
-
+  height: auto;
+  padding: 3px ; /*var(--padding); */
+  min-width: 100px;
 }
 
 .contenedor-graficas {
@@ -223,29 +225,30 @@ canvas {
   gap: 5px;
   margin-top: 5px;
   width: 100%;
-
+  height: 200px;
 }
 
 .grafica {
   flex: 1;
-  max-width: 50%;
-  /* 50% para cada una */
-  max-height: 200px;
-  /* 👈 límite de alto */
+  width: 100%;
+  height: 100%;         /* 👈 CLAVE */
+  max-width: none;      /* elimina límite anterior */
+  max-height: none;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   border: 1px solid var(--color-borde);
-
 }
 
+canvas {
+  width: 100% !important;  /* ocupa todo el ancho disponible */
+  height: auto !important;   /* mantiene proporción */
+}
 
 /* Campo 4: Acciones */
-#panel-inicial .campo.acciones-horizontal {
-
+.campo.acciones {
   display: flex;
-  flex-direction: column;
-  /* vertical */
+  flex-direction: column;   /* vertical */
   justify-content: flex-start;
   width: auto;
   height: auto;
@@ -253,50 +256,15 @@ canvas {
   height: auto;
 }
 
-/* Botones verticales alineados a la izquierda */
-#panel-inicial .campo.acciones-horizontal .fila {
-  display: flex;
-  flex-direction: column;
-  /* vertical */
-  align-items: flex-start;
-  /* izquierda */
-  gap: 10px;
-}
-
-/* Ajuste adicional para la fila de acciones (si hay otros estilos) */
-.campo.acciones .fila {
-  margin-top: 10px;
-}
-
-
-/* ===== Barra de progreso ===== */
-.progreso-contenedor {
-  width: 100%;
-  height: 20px;
-  background-color: #e5e7eb;
-  /* gris claro */
-  border-radius: 10px;
-  margin-top: 12px;
-  overflow: hidden;
-}
-
-#barra-progreso {
-  height: 100%;
-  width: 0%;
-  /* empieza vacía */
-  background-color: var(--color-primario);
-  border-radius: 10px;
-  transition: width 0.4s ease;
-  /* animación suave */
-  display: flex;
-  /* Para alinear el texto */
+.exportar-header {
+  display: inline-flex;
+  justify-content: space-between;
   align-items: center;
-  /* Centrado vertical */
-  justify-content: center;
-  /* Centrado horizontal */
-  color: #fff;
-  /* Texto blanco */
-  font-weight: bold;
+  width: auto;
+  gap: 10px;
+  margin: 0 0 8px 0;
+  padding: var(--padding);
+  line-height: 1;
 }
 
 .export-toggle {
@@ -305,10 +273,11 @@ canvas {
   align-items: center;
   gap: 10px;
   margin-bottom: 12px;
+  font-size: clamp(0.70rem, 2.5vw, 1.1rem);
 }
 
 .toggle-label {
-  font-size: 14px;
+  font-size: clamp(0.70rem, 13px, 1.1rem);
   font-weight: 600;
 }
 
@@ -347,173 +316,98 @@ canvas {
   border-radius: 50%;
 }
 
-input:checked + .slider {
-  background-color: #4CAF50;
+input:checked+.slider {
+  background-color: var(--color-primario);
 }
 
-input:checked + .slider:before {
+input:checked+.slider:before {
   transform: translateX(24px);
 }
 
-.exportar-header {
-  display: inline-flex;
-  justify-content: space-between;
-  align-items: center;
-  width: auto;
+.acciones-botones {
+  display: flex;
+  justify-content: space-around;
   gap: 10px;
-  margin: 0 0 8px 0;
-  padding: var(--padding);
-  line-height: 1;
-  
 }
 
-.export-toggle {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.titulo-derecha {
-  margin: 0;
-}
-
-/* Tamaño un poco más compacto para el header */
-.toggle-label {
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.exportar-header h3 {
-  margin: 0;                /* 👈 elimina el alto fantasma */
-  padding: 0;
-  line-height: 1.2;         /* compacto */
-  font-size: 1.1rem;        /* opcional */
-}
-
-.bloque {
-  margin: 5px;
-  padding: var(--padding);
-  background: var(--color-card);
-  border: 1px solid var(--color-borde);
+/* ===== Barra de progreso ===== */
+.progreso-contenedor {
+  width: 100%;
+  height: 20px;
+  background-color: #e5e7eb;  /* gris claro */
   border-radius: var(--radio);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+  margin-top: 12px;
 }
 
-.campo {
-  background: #fff;
-  border: 1px solid var(--color-borde);
+#barra-progreso {
+  height: 100%;
+  width: 0%;  /* empieza vacía */
+  background-color: var(--color-primario);
   border-radius: var(--radio);
-  padding: var(--padding);
-}
-
-.campo h3 {
-  margin: 0 0 8px 0;
-}
-
-.lista-metrica {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: grid;
-  gap: 6px
-}
-
-.lista-metrica li {
-  display: flex;
-  justify-content: space-between;
-  border: 1px dashed var(--color-borde);
-  border-radius: 8px;
-  padding: 6px 8px;
-  background: #fafafa
+  transition: width 0.4s ease;  /* animación suave */
+  display: flex;  /* Para alinear el texto */
+  align-items: center;    /* Centrado vertical */
+  justify-content: center;    /* Centrado horizontal */
+  color: #fff;    /* Texto blanco */
+  font-weight: bold;
 }
 
 /* ===== Configuracion Botones =====  */
 .btn {
   color: white;
   border: none;
-  border-radius: 10px;
-  padding: 5px 18px;
+  border-radius: var(--radio);
+  padding: var(--padding);
   cursor: pointer;
+  max-width: 100px ;
 }
 
 .btn.primario {
-  background: var(--color-primario)
+  background: var(--color-primario);
 }
 
 .btn.secundario {
-  background: var(--color-secundario)
+  background: var(--color-secundario);
+}
+
+.btn.danger {
+  background-color: #e63946;
 }
 
 .btn:hover {
   opacity: .75
 }
 
-.btn.danger {
-  background-color: #e63946;
-  color: white;
-  border: none;
+/* Botón reiniciar solo portrait */
+.btn-reiniciar-portrait {
+  display: none;
+  margin-top: 10px;
+  margin: 12px auto 0 auto; /* 👈 centra horizontal */
 }
-
-
-
-.acciones .fila {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap
-}
-
-.nota-archivo {
-  font-size: 12px;
-  color: #6b7280;
-  margin-top: 6px
-}
-
-
-
-/* Responsive */
-@media (max-width: 960px) {
-  #panel-inicial {
-    flex: 1
-  }
-}
-
-@media (max-width: 640px) {
-  #panel-inicial {
-    grid-template-columns: 1fr
-  }
-
-  .grid2 {
-    flex: 1
-  }
-}
-
-
-
-
 
 /* ===== Bloque 3: Tabla Excel ===== */
 #tabla-excel {
-  flex: 1;
-  /* ocupa todo el espacio sobrante */
-  overflow-y: auto;
-  /* scroll solo aquí */
+  flex: 1;    /* ocupa todo el espacio sobrante */
+  overflow: auto;   /* scroll solo aquí */
+  border-radius: var(--radio);
   padding: var(--padding);
-  background: #fafafa;
-  vertical-align: middle;
-  /*margin-top: 0;     /* sin margen arriba */
-  padding-top: 0;
-  /* sin padding arriba */
+  background: var(--color-card);
+  padding-top: 0;  /* sin padding arriba */
   height: auto;
-
-  border-collapse: collapse;
-  width: 100%;
+  width: 100%; 
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
 }
 
-.tabla-excel th,
-.tabla-excel td {
-  border: 1px solid #ccc;
-  padding: 6px 8px;
-  text-align: left;
+#tabla-excel th,
+#tabla-excel td {
+  border: 1px solid var(--color-borde);
+  padding: var(--padding);
+  vertical-align: middle;
+  word-wrap: break-word;
+}
+
+#tabla-excel th {
+  background: #f3f4f6;
 }
 
 /* Congelar primera fila */
@@ -528,19 +422,7 @@ input:checked + .slider:before {
 #tabla-excel table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed
-}
-
-#tabla-excel th,
-#tabla-excel td {
-  border: 1px solid var(--color-borde);
-  padding: var(--padding);
-  vertical-align: middle;
-  word-wrap: break-word
-}
-
-#tabla-excel th {
-  background: #f3f4f6
+  table-layout: fixed;
 }
 
 textarea {
@@ -548,21 +430,15 @@ textarea {
   resize: vertical
 }
 
-
-
-
 /* ==== OTROS AJUSTES GRAFICOS  ==== */
-
 .marquesina {
   width: 80%;
-  margin: 0 auto;
-  /* esto lo centra en el contenedor principal*/
+  margin: 0 auto;  /* esto lo centra en el contenedor principal*/
   overflow: hidden;
   background: #ebeaea;
   padding: 2px;
   border-radius: var(--radio);
   text-align: center;
-
 }
 
 .marquesina p {
@@ -606,12 +482,6 @@ textarea {
   }
 }
 
-#menu-tablas option.hoja-evaluada {
-  background-color: rgb(144, 221, 1);
-  /*color: greenyellow;*/
-  font-weight: bold;
-}
-
 #overlay {
   position: fixed;
   top: 0;
@@ -650,3 +520,144 @@ textarea {
   border-radius: 6px;
   cursor: pointer;
 }
+
+
+
+
+/* ===== CONFIGURACION DE RESPOSIVE ===== */
+@media (min-width: 1024px) {
+
+  main {
+    flex-direction: row;
+  }
+
+  #panel-inicial {
+    flex: 0 0 320px;
+    max-width: 360px;
+  }
+
+  #tabla-excel {
+    flex: 1;
+  }
+
+  body.sin-header header {
+    display: flex;
+  }
+}
+
+/* == TABLET + MOBILE LANDSCAPE == */
+@media (max-width: 1023px) and (orientation: landscape) {
+
+  body {
+    padding: 6px;
+  }
+
+  main {
+    flex-direction: row;
+    gap: 6px;
+  }
+
+  #panel-inicial {
+    flex: 0 0 38%;
+    max-width: 38%;
+    overflow-x: auto;
+  }
+
+  #tabla-excel {
+    flex: 1;
+    max-width: 62%;
+    overflow: auto;
+  }
+
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  body.sin-header header {
+    display: none;
+  }
+
+  .btn-reiniciar-portrait {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    font-size: clamp(0.85rem, var(--font-size), 1.1rem);
+    
+  }
+}
+
+
+/* == MOBILE + TABLET PORTRAIT == */
+@media (max-width: 1023px) and (orientation: portrait) {
+
+  main {
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* PANEL SUPERIOR */
+  #panel-inicial {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    flex: 0 0 auto;
+  }
+
+  #panel-inicial > .campo {
+    grid-column: span 1;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* TABLA INFERIOR */
+  #tabla-excel {
+    flex: 1 1 auto;
+    min-height: 0;     /* 🔑 CLAVE */
+    width: 100%;
+    overflow: auto;
+  }
+
+  #tabla-excel table {
+    width: 100%;
+  }
+
+  /* BOTONES */
+  .acciones-botones,
+  .campo.acciones.acciones-horizontal,
+  .contacto-boton,
+  .exportar-header {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .acciones-botones .btn,
+  .campo.acciones * {
+    width: 100%;
+  }
+
+  body.sin-header header {
+    display: none;
+  }
+  /* Gráficas una debajo de otra */ 
+  .contenedor-graficas {
+    flex-direction: column;
+  } 
+
+  .btn-reiniciar-portrait {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    font-size: clamp(0.85rem, var(--font-size), 1.1rem);
+  }
+}
+
+
+
