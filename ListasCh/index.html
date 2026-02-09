@@ -19,14 +19,14 @@
 
     <!-- Botones de acciones ahora en el header -->
     <div class="acciones-header">
-      <button id="btnReiniciar" class="btn danger" aria-label="Reinciar la aplicación">🔄 Reiniciar Evaluación</button>
+      <button id="btnReiniciar" class="btn danger" aria-label="Reinciar la aplicación">🔄 Reiniciar</button>
       <button id="btn-export-pdf" class="btn secundario" aria-label="Salir de la aplicación">Salir</button>
       <!-- <button id="btn-testOv" class="btn secundario" aria-label="Test overlay">Test overlay</button> -->
     </div>
   </header>
 
   <!-- Bloque 1: Datos del evaluador -->
-  <section id="form-inicial" class="bloque sticky">
+  <section id="form-inicial" class="campo">
     <h2>Datos del Evaluador</h2>
     <div class="grid2">
       <!-- Nombre -->
@@ -37,23 +37,20 @@
       <!-- Número de contacto + botón en la misma línea -->
       <label>
         Datos de contacto
-        <div class="contacto-boton">
-          <input type="text" id="numeroContacto" placeholder="Número contacto" />
-          <input type="email" id="correoElectronico" placeholder="Ingrese correo electrónico" />
-          <button id="btnContinuar" class="btn primario" aria-label="Opción de continuar">Continuar</button>
-        </div>
+        <input type="text" id="numeroContacto" placeholder="Número contacto" />
+        <input type="email" id="correoElectronico" placeholder="Ingrese correo electrónico" />
       </label>
+      <div class="contacto-boton">
+        <button id="btnContinuar" class="btn primario" aria-label="Opción de continuar">Continuar</button>
+      </div>
     </div>
   </section>
   <main>
     <!-- Bloque 2: Panel inicial -->
-    <section id="panel-inicial" class="bloque sticky" style="visibility: hidden;">
-      <!-- style="opacity:0.5; pointer-events:none;"> -->
-
+    <section id="panel-inicial">
       <!-- Campo 1: Menú + Resumen -->
-      <div class="campo menu-resumen">
-        <!-- Menú de selección -->
-        <label for="menu-tablas"><strong>Selecciona Tabla</strong></label>
+      <div class="campo menu-resumen">  <!-- Menú de selección -->
+        <h3>Selecciona Tabla</h3>
         <select id="menu-tablas">
           <option value="" selected>Seleccione...</option>
         </select>
@@ -61,7 +58,7 @@
         <!-- Resumen de la tabla -->
         <h3>Resumen</h3>
         <div style="display:flex">
-          <ul class="lista-metrica" style="width: 85%">
+          <ul class="lista-metrica" style="width: 80%">
             <li><span>Cumple</span><strong id="num-cumple">0</strong></li>
             <li><span>No cumple</span><strong id="num-nocumple">0</strong></li>
             <li><span>No aplica</span><strong id="num-noaplica">0</strong></li>
@@ -87,9 +84,9 @@
       </div>
 
       <!-- Campo 4: Acciones -->
-      <div class="campo acciones acciones-horizontal">
+      <div class="campo acciones">
         <div class="exportar-header">
-          <h3 class="titulo-derecha">Exportar</h3>
+          <h3>Exportar</h3>
           <!-- Selector PDF / Word -->
           <div class="export-toggle">
             <span class="toggle-label">PDF</span>
@@ -102,13 +99,13 @@
         </div>
         <!-- Botones apilados verticales -->
         <div class="acciones-botones">
-          <button id="btn-export-word" class="btn secundario">Exportar Hoja</button>
-          <button id="btn-export-todo" class="btn secundario">Exportar Todo</button>
+          <button id="btn-export-word" class="btn primario">Exportar Hoja</button>
+          <button id="btn-export-todo" class="btn primario">Exportar Todo</button>
         </div>
 
       </div>
       <!-- Campo 5: Métricas y progreso -->
-      <div class="campo progreso">
+      <div class="campo metricas">
         <ul class="lista-metrica">
           <li>
             <span>Total criterios</span>
@@ -122,12 +119,14 @@
         <div class="progreso-contenedor">
           <div id="barra-progreso"></div>
         </div>
-      </div>
+        <button class="btn danger btn-reiniciar-portrait">🔄 Reiniciar
+        </button>
 
+      </div>
     </section>
 
     <!-- Bloque 3: Contenedor tabla Excel -->
-    <section id="tabla-excel" class="bloque sticky">
+    <section id="tabla-excel" class="campo">
       <!-- Se carga dinámicamente -->
     </section>
   </main>
