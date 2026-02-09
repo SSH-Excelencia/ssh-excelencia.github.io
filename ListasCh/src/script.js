@@ -144,19 +144,30 @@ btnContinuar.addEventListener("click", () => {
 
 
   // --- BOTÓN REINICIAR ---
-  btnReiniciar.addEventListener("click", async () => {
-    const ok = await mostrarOverlay({
-      mensaje: "⚠️ <strong>Todos los datos se eliminarán.</strong><br><br>¿Deseas reiniciar la evaluación?",
-      aceptar: true,
-      cancelar: true,
-      textoAceptar: "Sí, reiniciar",
-      textoCancelar: "Cancelar"
-    });
+  btnReiniciar.addEventListener("click", reiniciarTodo);
 
-    if (ok) {
-      location.reload();
-    }
+  btnReiniciar.addEventListener("click", reiniciarTodo);
+
+const btnReiniciarPortrait = document.querySelector(".btn-reiniciar-portrait");
+if (btnReiniciarPortrait) {
+  btnReiniciarPortrait.addEventListener("click", reiniciarTodo);
+}
+
+async function reiniciarTodo() {
+  const ok = await mostrarOverlay({
+    mensaje: "⚠️ <strong>Todos los datos se eliminarán.</strong><br><br>¿Deseas reiniciar la evaluación?",
+    aceptar: true,
+    cancelar: true,
+    textoAceptar: "Sí, reiniciar",
+    textoCancelar: "Cancelar"
   });
+
+  if (ok) {
+    location.reload();
+  }
+}
+
+
 
   // --- BOTÓN SALIR ---
   btnExportPdf.addEventListener("click", () => {
