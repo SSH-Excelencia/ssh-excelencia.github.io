@@ -444,6 +444,49 @@ async function reiniciarTodo() {
     }
   }
 
+  //  FUNCION PARA GUARDAR EN CSV  
+  function convertirRespuestasACSV() {
+  let filas = [];
+
+  filas.push([
+    "Hoja",
+    "Fila",
+    "Criterio",
+    "Opción",
+    "Observación"
+  ]);
+
+  for (const hoja in respuestasPorTabla) {
+    for (const fila in respuestasPorTabla[hoja]) {
+      const data = respuestasPorTabla[hoja][fila];
+
+      filas.push([
+        hoja,
+        fila,
+        data.criterio || "",
+        data.opcion || "",
+        data.observacion || ""
+      ]);
+    }
+  }
+
+  return filas.map(f => f.join(",")).join("\n");
+}
+
+  // - PARA DESCARGAR EL CSV
+  function descargarCSV() {
+  const csv = convertirRespuestasACSV();
+
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "respuestas.csv";
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
 
   // --- FUNCION ACTUALIZAR CONTADORES COLUMNA 2 ---
 
