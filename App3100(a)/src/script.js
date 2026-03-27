@@ -146,8 +146,8 @@ btnContinuar.addEventListener("click", () => {
   // --- BOTÓN REINICIAR ---
   btnReiniciar.addEventListener("click", reiniciarTodo);
 
-  btnReiniciar.addEventListener("click", reiniciarTodo);
-
+ 
+  
 const btnReiniciarPortrait = document.querySelector(".btn-reiniciar-portrait");
 if (btnReiniciarPortrait) {
   btnReiniciarPortrait.addEventListener("click", reiniciarTodo);
@@ -444,7 +444,7 @@ async function reiniciarTodo() {
     }
   }
 
-  //  FUNCION PARA GUARDAR EN CSV  
+  // - generarndo csv
   function convertirRespuestasACSV() {
   let filas = [];
 
@@ -470,11 +470,12 @@ async function reiniciarTodo() {
     }
   }
 
-  return filas.map(f => f.join(",")).join("\n");
+  return filas.map(f => 
+  f.map(c => `"${c}"`).join(",")
+  ).join("\n");
 }
 
-  // - PARA DESCARGAR EL CSV
-  function descargarCSV() {
+function descargarCSV() {
   const csv = convertirRespuestasACSV();
 
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -487,6 +488,137 @@ async function reiniciarTodo() {
 
   URL.revokeObjectURL(url);
 }
+
+function importarCSV() {
+
+  mostrarOverlay({
+    mensaje: `
+      📥 <strong>Cargar archivo CSV</strong><br><br>
+      
+      <input type="file" id="input-csv-overlay" accept=".csv"><br><br>
+      
+      <button id="btn-cancelar-csv">❌ Cancelar</button>
+    `,
+    aceptar: false,
+    cancelar: false,
+    temporal: false
+  });
+
+  // ⏳ Esperar a que el DOM del overlay renderice
+  setTimeout(() => {
+
+    const input = document.getElementById("input-csv-overlay");
+    const btnCancelar = document.getElementById("btn-cancelar-csv");
+
+    // ❌ Botón cancelar manual
+    if (btnCancelar) {
+      btnCancelar.onclick = () => {
+        console.log("❌ Proceso cancelado");
+        ocultarOverlay();
+      };
+    }
+
+    // 📂 Selección de archivo
+    if (input) {
+      input.addEventListener("change", function (e) {
+
+        const file = e.target.files[0];
+
+        // ❌ Usuario canceló selector
+        if (!file) {
+          console.log("❌ Selección cancelada");
+          return;
+        }
+
+        // 🔒 Validación básica
+        if (!file.name.endsWith(".csv")) {
+          mostrarOverlay({
+            mensaje: "⚠️ El archivo debe ser formato CSV",
+            temporal: true
+          });
+          return;
+        }
+
+        // ⏳ Loading
+        mostrarOverlay({
+          mensaje: "⏳ Procesando archivo...",
+          temporal: true,
+          autoCerrar: false
+        });
+
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+          const contenido = event.target.result;
+
+          cargarCSVEnMemoria(contenido);
+        };
+
+        reader.readAsText(file);
+      });
+    }
+
+  }, 100);
+}
+
+function cargarCSVEnMemoria(csv) {
+
+  const lineas = csv.split("\n").map(l => l.trim()).filter(l => l);
+
+  if (lineas.length <= 1) {
+    mostrarOverlay({
+      mensaje: "⚠️ El archivo CSV está vacío o no es válido",
+      temporal: true
+    });
+    return;
+  }
+
+  lineas.shift(); // quitar encabezado
+
+  respuestasPorTabla = {};
+
+  lineas.forEach(linea => {
+
+    // 🔥 NUEVO PARSER CORRECTO
+    const valores = linea.match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+
+    if (!valores) return;
+
+    const hoja = valores[0]?.replace(/"/g, "").trim();
+    const fila = Number(valores[1]?.replace(/"/g, "").trim());
+    const opcion = valores[3]?.replace(/"/g, "").trim();
+    const observacion = valores[4]?.replace(/"/g, "").trim();
+
+    if (!hoja || isNaN(fila)) return;
+
+    if (!respuestasPorTabla[hoja]) {
+      respuestasPorTabla[hoja] = {};
+    }
+
+    respuestasPorTabla[hoja][fila] = {
+      opcion: opcion || "",
+      observacion: observacion || ""
+    };
+    if (opcion) {
+      registrarHojaEvaluada(hoja);
+    }
+  });
+
+  console.log("📦 respuestasPorTabla:", respuestasPorTabla);
+  
+  mostrarOverlay({
+    mensaje: "✅ CSV cargado correctamente",
+    temporal: true
+  });
+
+  // 🔁 recargar tabla
+  const hojaActual = document.getElementById("menu-tablas").value;
+  if (hojaActual) {
+    mostrarTabla(workbook, hojaActual);
+  }
+}
+
+
 
   // --- FUNCION ACTUALIZAR CONTADORES COLUMNA 2 ---
 
@@ -1382,6 +1514,97 @@ async function reiniciarTodo() {
       await exportarHojaWord();
     }
   });
+
+  // == boton para exportar csv
+
+  document.getElementById("btn-export-csv")
+  .addEventListener("click", async () => {
+
+    const correo = document.getElementById("correoElectronico")?.value || "";
+    const autorizado = await correoAutorizado(correo);
+
+    if (!autorizado) {
+
+      const irContacto = await mostrarOverlay({
+        mensaje: "La exportación a CSV es una opción de pago",
+        aceptar: true,
+        cancelar: true,
+        textoAceptar: "Contactar",
+        textoCancelar: "Cerrar"
+      });
+
+      if (irContacto) {
+        window.open(
+          "https://ssh-excelencia.github.io/#contacto",
+          "_blank",
+          "noopener,noreferrer"
+        );
+      }
+
+      return; // 🔴 BLOQUEA descarga
+    }
+
+    // ✅ SI ESTÁ AUTORIZADO → DESCARGA
+    mostrarOverlay({
+        mensaje: "La exportación del CSV esta en proceso",
+        temporal: true,
+        autoCerrar: true
+      })
+    try {
+    descargarCSV();
+  
+     } catch (error) {
+      console.error("Error al generar csv:", error);
+      mostrarOverlay({
+        mensaje: "❌ Error al generar el csv.",
+        aceptar: true
+      });
+    }
+});
+
+  // -- boton importar
+  document.getElementById("btn-inport-csv")
+  .addEventListener("click", async () => {
+
+    const correo = document.getElementById("correoElectronico")?.value || "";
+    const autorizado = await correoAutorizado(correo);
+
+    if (!autorizado) {
+
+      const irContacto = await mostrarOverlay({
+        mensaje: "La importación de CSV es una opción de pago",
+        aceptar: true,
+        cancelar: true,
+        textoAceptar: "Contactar",
+        textoCancelar: "Cerrar"
+      });
+
+      if (irContacto) {
+        window.open(
+          "https://ssh-excelencia.github.io/#contacto",
+          "_blank",
+          "noopener,noreferrer"
+        );
+      }
+
+      return; // 🔴 BLOQUEA descarga
+    }
+
+    // ✅ SI ESTÁ AUTORIZADO → IMPORTA
+    try {
+      importarCSV();
+  
+    } catch (error) {
+      console.error("Error al IMPORTAR csv:", error);
+      mostrarOverlay({
+        mensaje: "❌ Error al IMPORTAR el csv.",
+        aceptar: true
+      });
+    }
+    
+});
+
+
 
 
   // --- BOTÓN TEST OVER ---
