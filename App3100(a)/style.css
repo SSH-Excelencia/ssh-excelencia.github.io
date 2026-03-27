@@ -324,9 +324,12 @@ input:checked+.slider:before {
   transform: translateX(24px);
 }
 
+
 .acciones-botones {
-  display: flex;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* 2 columnas */
+  justify-items: center; /* centra botones horizontalmente */
+  align-items: center;   /* centra verticalmente */
   gap: 10px;
 }
 
@@ -360,6 +363,7 @@ input:checked+.slider:before {
   padding: var(--padding);
   cursor: pointer;
   max-width: 100px ;
+  justify-content: right;
 }
 
 .btn.primario {
