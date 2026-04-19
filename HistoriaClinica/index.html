@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Historia Clínica</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- HEADER -->
+ <header class="header-public">
+
+  <div class="header-left">
+      <div class="logo-container">
+        <img src="img/logo.png" alt="Logo" class="logo">
+      </div>
+  </div>
+
+  <div class="header-center">
+    <h2>Sistema de Control de Citas e Historia Clínica</h2>
+  </div>
+
+  <div class="header-right">
+    <button class="btn btn-secundario" id="btnLoginTop">Login</button>
+  </div>
+
+</header>
+
+
+<!-- CONTENIDO -->
+<div class="container">
+
+  <div class="col col-left">20%</div>
+
+  <div class="col col-center">
+    <h1>Bienvenido</h1>
+    <p>Sistema de gestión clínica</p>
+  </div>
+
+  <div class="col col-right">20%</div>
+
+</div> 
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div id="footer-col-1">👤 Usuario</div>
+    <div id="footer-col-2">© Sistema de Gestión Clínica</div>
+    <div id="footer-col-3">🔐 ROL</div>
+
+</footer>
+
+<!-- 🔴 LOGIN OVERLAY -->
+<div id="loginOverlay" class="overlay hidden">
+  <div class="login-box">
+    <h3>Iniciar Sesión</h3>
+
+    <input id="usuario" placeholder="Usuario">
+    <div class="password-container">
+      <input id="password" type="password" placeholder="Contraseña">
+      <span id="togglePassword" class="toggle-password">👁</span>
+    </div>
+
+    <select id="rol">
+      <option value="Usuario">Usuario</option>
+      <option value="Operador">Operador</option>
+      <option value="Administrador">Administrador</option>
+    </select>
+
+    <!-- BOTONES EN COLUMNA -->
+    <div class="login-buttons">
+      <button id="btnLogin" class="btn btn-primario">Ingresar</button>
+      <button id="btnCancelar" class="btn btn-secundario">Cancelar</button>
+    </div>
+
+    <!-- LINKS -->
+    <div class="login-links">
+      <a href="#" id="linkRegistro">Registrarse</a>
+      <a href="#">Recuperar credenciales</a>
+    </div>
+
+  </div>
+</div>
+
+<!-- OVERLAY APP -->
+<div id="appOverlay" class="overlay app-overlay hidden">
+
+  <div id="appModal" class="app-modal">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar"></aside>
+
+    <!-- MAIN -->
+    <div class="main">
+      <header class="header-app">
+        <button class="btn btn-primario" id="btnMenu">☰</button>
+        <h3>Gestión Clinica - Pagina Principal</h3>
+        <button class="btn btn-secundario" id="logout">Salir</button>
+        
+      </header>
+
+      <div id="contenido"></div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- modal de registro-->
+<div id="registroOverlay" class="overlay hidden">
+
+  <div class="modal-registro">
+
+    <!-- 🔷 FILA 1: TÍTULO -->
+    <div class="fila titulo">
+      <h3>Registro de Usuario</h3>
+    </div>
+
+    <!-- 🔷 FILA 2: FORMULARIO (2 COLUMNAS) -->
+    <div class="fila formulario">
+
+      <!-- COLUMNA IZQUIERDA -->
+      <div class="col-form">
+          <input class="input" id="NUsuario" placeholder="Nombre Usuario">
+
+        <select id="Tdoc">
+          <option value="">Seleccione...</option>
+          <option value="CC">Cedula Ciudadania</option>
+          <option value="TI">Tarjeta Identidad</option>
+          <option value="CE">Cedula Extrangeria</option>
+          <option value="REG">Registro Civil</option>
+          <option value="PAS">Pasaporte</option>
+        </select>
+
+        <input class="input" type="number" id="NDocumento" placeholder="Documento">
+
+        <input class="input" id="direccion" placeholder="Dirección">
+        <input class="input" id="Ciudad" placeholder="Ciudad residencia">
+      </div>
+
+      <!-- COLUMNA DERECHA -->
+      <div class="col-form">
+        <input id="regEmail" type="email" placeholder="Correo">
+
+        <input id="regPassword" type="password" placeholder="Contraseña">
+
+        <input id="regPassword2" type="password" placeholder="Confirme Contraseña">
+
+        <input class="input" id="contacto" placeholder="Número Contacto">
+
+        <input class="input" type="date" id="FNacimiento">
+      </div>
+
+    </div>
+
+    <!-- 🔷 FILA 3: NOTA + BOTONES -->
+    <div style="text-align: center;"">
+
+      <p style="text-align: center;">
+        NOTA: El usuario de acceso corresponde al correo electrónico registrado
+      </p>
+
+      <div class="login-buttons">
+        <button id="btnGuardarUsuario" class="btn btn-primario">Guardar</button>
+        <button id="btnCerrarRegistro" class="btn btn-secundario">Cancelar</button>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

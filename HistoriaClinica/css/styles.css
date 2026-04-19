@@ -1,0 +1,463 @@
+:root {
+  --color-principal: #2c3e50;
+  --color-secundario: #3498db;
+  --color-columnas: #ecf0f1;
+  --color-BtnPpal: #2c3e50;
+  --color-BtnSec: #bdc3c7;
+  --color-text: white;
+  --color-text1: black;
+  --gap-general: 10px;
+  --radius-general: 10px;
+  --padding-general: 10px;
+}
+/* =========================
+   RESET Y BASE
+========================= */
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+}
+
+/* =========================
+   HEADER PÚBLICO
+========================= */
+.header-public {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  background: var(--color-principal);
+  color: var(--color-text);
+  padding: var(--padding-general);
+}
+
+/* Columnas */
+.header-left,
+.header-center,
+.header-right {
+  flex: 1;
+}
+
+/* IZQUIERDA */
+.header-left {
+  display: flex;
+  align-items: center;
+}
+
+/* CENTRO */
+.header-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* DERECHA */
+.header-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* LOGO */
+.logo-container {
+  background: white;
+  padding: var(--padding-general);
+  border-radius: 50px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  height: 40px;
+  object-fit: contain;
+}
+
+/* =========================
+   CONTENIDO PRINCIPAL
+========================= */
+.container {
+  flex: 1;
+  display: flex;
+}
+
+.col {
+  padding: var(--padding-general);
+}
+
+.col-left,
+.col-right {
+  width: 20%;
+  background: var(--color-columnas);
+}
+
+.col-center {
+  width: 60%;
+  text-align: center;
+}
+
+/* =========================
+   FOOTER
+========================= */
+.footer {
+  height: 50px;
+  background: #2c3e50;
+  color: var(--color-text);
+  text-align: center;
+  display: grid;
+  grid-template-columns: 20% 1fr 20%;
+  align-items: center;
+  border-radius: var(--radius-general);
+ 
+}
+
+/* =========================
+   BOTÓN BASE GLOBAL
+========================= */
+.btn {
+  padding: var(--padding-general);
+  border: none;
+  cursor: pointer;
+  border-radius: var(--radius-general);
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+/* Hover general */
+.btn:hover {
+  opacity: 0.7;
+}
+
+/* TIPOS DE BOTÓNES */
+.btn-primario {
+  background: var(--color-BtnPpal);
+  color: var(--color-text);
+}
+.btn-secundario {
+  background: var(--color-BtnSec);
+  color: ar(--color-text1);
+}
+
+/* =========================
+   OVERLAY BASE (REUTILIZABLE)
+========================= */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  background: rgba(0,0,0,0.6);
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* modal */
+.modal-registro {
+  width: 600px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-general);
+}
+
+/* FILAS */
+.fila {
+  width: 100%;
+}
+
+.titulo{
+  text-align: center;
+}
+/* FILA 2: 2 COLUMNAS */
+.formulario {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+
+/* botones */
+.login-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* nota */
+.nota {
+  font-size: 12px;
+  
+  text-align: center;
+}
+
+input,
+select {
+  width: 92%;
+  margin: 10px 0;
+  padding: var(--padding-general);
+  border-radius: var(--radius-general);
+  
+}
+
+
+
+/* asegurar capas */
+#appOverlay {
+  z-index: 1000;
+}
+
+#registroOverlay {
+  z-index: 2000; /* 🔥 encima del app */
+}
+
+
+/* UTILIDAD */
+.hidden {
+  display: none !important;
+}
+
+/* =========================
+   LOGIN
+========================= */
+.login-box {
+  background: white;
+  padding: calc(var(--padding-general) + 10px);
+  width: 300px;
+  border-radius: var(--radius-general);
+  text-align: center;
+  gap: var(--gap-general);
+  
+}
+
+.login-box input,
+.login-box select {
+  width: 92%;
+  margin: 10px 0;
+  padding: var(--padding-general)
+  
+}
+
+.password-container {
+  position: relative;
+  width: 100%;
+  align-items: center;
+}
+
+/* INPUT */
+.password-container input {
+  width: 100%;
+  padding: var(--padding-general);
+  padding-right: 40px; /* espacio para el icono */
+  box-sizing: border-box;
+}
+
+/* ICONO */
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  
+  cursor: pointer;
+  font-size: 16px;
+  opacity: 0.6;
+}
+
+.toggle-password:hover {
+  opacity: 1;
+}
+.login-box button {
+  width: 100%;
+  padding: var(--padding-general);
+  margin-top: 5px;
+  border: none;
+  cursor: pointer;
+}
+/* BOTONES EN COLUMNA */
+.login-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: var(--gap-general);
+  margin-top: 10px;
+  justify-content: center;  /* centra horizontal */
+}
+
+
+
+/* LINKS */
+.login-links {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.login-links a {
+  text-decoration: none;
+  color: #3498db;
+}
+
+.login-links a:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   APP OVERLAY (MODAL SISTEMA)
+========================= */
+.app-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: calc(100vh - 50px);
+
+  display: flex;
+  justify-content: center;   /* centra horizontalmente */
+  align-items: flex-start;
+
+  z-index: 3000;
+}
+
+/* =========================
+   MODAL APP (VENTANA)
+========================= */
+.app-modal {
+  width: 98%;
+  height: 100%;
+
+  background: white;
+  border-radius: var(--radius-general);
+
+  display: flex;
+  overflow: hidden;
+
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+
+  flex: 1;
+  
+  flex-direction: row;
+
+  position: relative;
+  z-index: 1;
+}
+
+.app-modal::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.2);
+  display: none;
+}
+
+#btnMenu {
+  position: relative;
+  z-index: 6000;
+  cursor: pointer;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+/* SIDEBAR OCULTO POR DEFECTO */
+.sidebar {
+  position: absolute;   /* clave: sale del flujo */
+  top: 50px;
+  left: 0;
+  height: 100%;
+
+  width: 250px;
+  
+  background: #34495e; 
+  color: var(--color-text);
+  padding: var(--padding-general);
+
+  transform: translateX(-100%);
+  transition: 0.3s ease;
+
+  z-index: 4000; /* encima del app-modal */
+}
+
+.sidebar div {
+  padding: var(--padding-general);
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  display: block;
+}
+
+.sidebar div:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+/* SIDEBAR ABIERTO */
+.sidebar.open {
+  
+  transform: translateX(0);
+}
+
+/* =========================
+   CONTENIDO INTERNO APP
+========================= */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER INTERNO */
+.header-app {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+
+  background: #2c3e50;
+  color: var(--color-text);
+  padding: var(--padding-general);
+  height: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 5000;
+}
+
+/* CONTENIDO DINÁMICO */
+#contenido {
+  flex: 1;
+  padding: var(--padding-general);
+  overflow: auto;
+  background: #f4f6f9;
+}
+
+/* CSS DE MODULOS */
+/* Modulo Pagina Principal */
+.pagina-principal {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: var(--gap-general);
+  padding: var(--padding-general);
+  align-items: center;
+  text-align: center;
+  
+}
+
+.col {
+  background: #f4f6f8;
+  padding: 15px;
+  border-radius: 8px;
+  height: 80vh;
+  border: 1px solid #2c3e50;
+  gap: var(--gap-general);
+}
