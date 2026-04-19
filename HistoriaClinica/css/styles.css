@@ -90,6 +90,12 @@ body {
 
 .col {
   padding: var(--padding-general);
+  background: #f4f6f8;
+  padding: 15px;
+  border-radius: 8px;
+  height: 92%;
+  border: 1px solid #2c3e50;
+  gap: var(--gap-general);
 }
 
 .col-left,
@@ -453,11 +459,3 @@ select {
   
 }
 
-.col {
-  background: #f4f6f8;
-  padding: 15px;
-  border-radius: 8px;
-  height: 80vh;
-  border: 1px solid #2c3e50;
-  gap: var(--gap-general);
-}
