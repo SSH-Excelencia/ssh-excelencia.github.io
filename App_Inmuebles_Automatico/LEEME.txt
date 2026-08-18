@@ -1,0 +1,16 @@
+APLICACION DE CONSULTA DE INMUEBLES
+
+1. Abra index.html en Google Chrome.
+2. Seleccione el archivo Excel que contiene la información de los inmuebles.
+3. La aplicación lee la primera hoja disponible (preferentemente "Table 1").
+4. Los datos se cargan en memoria del navegador; el Excel original NO se modifica.
+5. Para una nueva actualización, seleccione el nuevo Excel sin cambiar el código.
+
+REQUISITOS DEL EXCEL
+- La primera fila debe contener encabezados.
+- Se reconocen automáticamente nombres equivalentes para las columnas.
+- No es necesario que las columnas estén en un orden específico.
+- Se recomienda conservar los encabezados del archivo Cuota2026.xlsx.
+
+NOTA
+La biblioteca SheetJS se carga desde CDN, por lo que el navegador requiere conexión a Internet para abrir la aplicación.

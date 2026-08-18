@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consulta de Inmuebles</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{--primary:#17365d;--secondary:#2f75b5;--bg:#f4f7fb;--card:#fff;--text:#1f2937;--muted:#64748b;--border:#dbe3ee;--ok:#0f766e}
+*{box-sizing:border-box} body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+header{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;padding:24px 18px;text-align:center}
+header h1{margin:0 0 6px;font-size:28px} header p{margin:0;opacity:.9}
+.container{max-width:1100px;margin:24px auto;padding:0 16px}
+.panel,.result{background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:0 5px 18px rgba(15,23,42,.06);padding:20px;margin-bottom:18px}
+.upload{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+input[type=file]{max-width:100%}
+button{border:0;border-radius:9px;padding:11px 16px;font-weight:700;cursor:pointer;background:var(--secondary);color:#fff}
+button.secondary{background:#64748b} button.print{background:var(--ok)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.status{margin-top:12px;color:var(--muted);font-size:14px}
+.filters{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+label{font-weight:700;font-size:13px;color:#475569;display:block;margin-bottom:6px}
+select,input[type=text]{width:100%;padding:11px;border:1px solid var(--border);border-radius:9px;background:#fff}
+.summary{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+.badge{background:#eef4fb;padding:9px 12px;border-radius:20px;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.item{border:1px solid var(--border);border-radius:10px;padding:14px;background:#fafcff}
+.item .label{color:var(--muted);font-size:12px;margin-bottom:4px}.item .value{font-size:18px;font-weight:700}
+.main-value{background:#eef6ff;border:1px solid #cfe3fa;padding:18px;border-radius:12px;margin:16px 0;text-align:center}
+.main-value small{display:block;color:var(--muted)} .main-value strong{font-size:32px;color:var(--primary)}
+.notice{padding:14px;border-radius:10px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412}
+.empty{text-align:center;color:var(--muted);padding:35px}
+@media(max-width:800px){.filters{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.filters,.grid{grid-template-columns:1fr} header h1{font-size:23px}}
+@media print{header,.upload,.filters,.summary,.no-print{display:none!important}.container{margin:0;max-width:none}.panel,.result{box-shadow:none;border:0}}
+</style>
+</head>
+<body>
+<header>
+  <h1>Consulta de Inmuebles</h1>
+  <p>Lectura directa desde archivo Excel</p>
+</header>
+
+<div class="container">
+  <section class="panel">
+    <h2>Consulta de inmuebles</h2>
+    <div class="status" id="status">Cargando información de inmuebles...</div>
+    <div class="summary">
+      <span class="badge" id="registros">Registros: 0</span>
+      <span class="badge" id="archivo">Archivo: Cuota2026.xlsx</span>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Seleccione paso a paso</h2>
+    <div class="filters">
+      <div>
+        <label for="tipo">1. Tipo de inmueble</label>
+        <select id="tipo"><option value="">Seleccione tipo de inmueble</option></select>
+      </div>
+      <div>
+        <label for="torre">2. Torre</label>
+        <select id="torre" disabled><option value="">Primero seleccione el tipo</option></select>
+      </div>
+      <div>
+        <label for="inmueble">3. Inmueble</label>
+        <select id="inmueble" disabled><option value="">Primero seleccione la torre</option></select>
+      </div>
+      <div>
+        <label for="buscar">4. Buscar</label>
+        <input id="buscar" type="text" placeholder="Opcional: código o inmueble" disabled>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>3. Resultados</h2>
+    <div id="results"><div class="empty">Cargue el Excel y seleccione un inmueble.</div></div>
+  </section>
+</div>
+
+<script>
+let rows=[], filtered=[];
+const $=id=>document.getElementById(id);
+
+const aliases={
+ tipo:["Tipo Inmueble","Tipo de Inmueble"],
+ torre:["Torre"],
+ codigo:["CODIGO","Código","Codigo"],
+ inmueble:["Codigo de Inmueble","Código de Inmueble","No. Inmueble","No Inmueble"],
+ cuota:["Cuota de Administración 2026","Cuota de Administracion 2026"],
+ descuento:["Descuento Pronto Pago 20%","Descuento Pronto Pago"],
+ cuotaDesc:["Cuota con Descuentp","Cuota con Descuento","Cuota con Descuento 20%"],
+ distribucion:["Distribución","Distribucion"],
+ cuota2:["Cuota 2026-2","Cuota 2026 2"]
+};
+function norm(s){return String(s??"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g," ").trim().toLowerCase()}
+function pick(obj,names){
+  const keys=Object.keys(obj); for(const n of names){const k=keys.find(x=>norm(x)===norm(n)); if(k!==undefined)return obj[k]}
+  const wanted=names.map(norm); const k=keys.find(x=>wanted.some(n=>norm(x).includes(n))); return k!==undefined?obj[k]:"";
+}
+function money(v){let n=Number(String(v).replace(/[^\d.-]/g,"")); return Number.isFinite(n)?"$"+Math.round(n).toLocaleString("es-CO"):"—"}
+function percent(v){if(v===""||v==null)return "—"; let n=Number(String(v).replace("%","").replace(",",".")); if(!Number.isFinite(n))return String(v); return (n<1?n*100:n).toLocaleString("es-CO",{minimumFractionDigits:5,maximumFractionDigits:5})+" %"}
+function unique(vals){return [...new Set(vals.map(v=>String(v??"").trim()).filter(Boolean))].sort((a,b)=>a.localeCompare(b,"es",{numeric:true}))}
+function fillSelect(sel,vals,all){sel.innerHTML="";let o=document.createElement("option");o.value="";o.textContent=all;sel.appendChild(o);unique(vals).forEach(v=>{o=document.createElement("option");o.value=v;o.textContent=v;sel.appendChild(o)})}
+function updateFilters(){
+  const t=$("tipo").value, tr=$("torre").value;
+  let base=rows.filter(r=>(!t||r.tipo===t)&&(!tr||r.torre===tr));
+  fillSelect($("inmueble"),base.map(r=>r.inmueble),"Todos");
+  applySearch();
+}
+function applySearch(){
+  const t=$("tipo").value,tr=$("torre").value,im=$("inmueble").value,q=norm($("buscar").value);
+  filtered=rows.filter(r=>{
+    if(t&&r.tipo!==t)return false;if(tr&&r.torre!==tr)return false;if(im&&r.inmueble!==im)return false;
+    if(q&&!norm([r.tipo,r.torre,r.codigo,r.inmueble,r.cuota,r.cuotaDesc].join(" ")).includes(q))return false; return true;
+  });
+  renderResults();
+}
+function renderResults(){
+  $("registros").textContent="Registros: "+filtered.length;
+  if(!filtered.length){$("results").innerHTML='<div class="empty">No se encontraron inmuebles con los filtros actuales.</div>';return}
+  if(filtered.length===1){renderDetail(filtered[0]);return}
+  let html='<div class="grid">';
+  filtered.slice(0,100).forEach((r,i)=>html+=`<div class="item" style="cursor:pointer" onclick="renderDetail(filtered[${i}])"><div class="label">Inmueble</div><div class="value">${esc(r.inmueble||"—")}</div><div>${esc(r.tipo)} · Torre ${esc(r.torre)}</div><div class="label" style="margin-top:8px">Cuota 2026</div><strong>${money(r.cuota)}</strong></div>`);
+  html+='</div>';
+  if(filtered.length>100)html+=`<p class="status">Se muestran los primeros 100 resultados. Use los filtros para precisar la búsqueda.</p>`;
+  $("results").innerHTML=html;
+}
+function renderDetail(r){
+  $("results").innerHTML=`
+  <div class="result">
+    <div class="no-print" style="display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap">
+      <button class="print" onclick="window.print()">🖨 Imprimir</button>
+      <button class="secondary" onclick="renderResults()">← Volver a resultados</button>
+    </div>
+    <h2>${esc(r.tipo||"Inmueble")} ${esc(r.inmueble||"")}</h2>
+    <p><strong>Torre:</strong> ${esc(r.torre||"—")} &nbsp; | &nbsp; <strong>Código:</strong> ${esc(r.codigo||"—")}</p>
+    <div class="main-value"><small>Cuota de Administración 2026</small><strong>${money(r.cuota)}</strong></div>
+    <div class="grid">
+      <div class="item"><div class="label">Tipo de inmueble</div><div class="value">${esc(r.tipo)}</div></div>
+      <div class="item"><div class="label">Torre</div><div class="value">${esc(r.torre)}</div></div>
+      <div class="item"><div class="label">Código</div><div class="value">${esc(r.codigo)}</div></div>
+      <div class="item"><div class="label">Código de inmueble</div><div class="value">${esc(r.inmueble)}</div></div>
+      <div class="item"><div class="label">Descuento pronto pago 20%</div><div class="value">${money(r.descuento)}</div></div>
+      <div class="item"><div class="label">Cuota con descuento</div><div class="value">${money(r.cuotaDesc)}</div></div>
+      <div class="item"><div class="label">Distribución</div><div class="value">${percent(r.distribucion)}</div></div>
+      <div class="item"><div class="label">Cuota 2026-2</div><div class="value">${money(r.cuota2)}</div></div>
+    </div>
+  </div>`;
+}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+
+
+async function cargarExcelAutomaticamente(){
+ try{
+   const response=await fetch("Cuota2026.xlsx");
+   if(!response.ok) throw new Error("No se encontró Cuota2026.xlsx");
+   const data=await response.arrayBuffer();
+   const wb=XLSX.read(data,{type:"array",cellDates:true});
+   const sheetName=wb.SheetNames.find(s=>norm(s)==="table 1")||wb.SheetNames[0];
+   const ws=wb.Sheets[sheetName];
+   const raw=XLSX.utils.sheet_to_json(ws,{defval:""});
+   rows=raw.map(o=>({
+     tipo:String(pick(o,aliases.tipo)).trim(), torre:String(pick(o,aliases.torre)).trim(),
+     codigo:String(pick(o,aliases.codigo)).trim(), inmueble:String(pick(o,aliases.inmueble)).trim(),
+     cuota:pick(o,aliases.cuota), descuento:pick(o,aliases.descuento), cuotaDesc:pick(o,aliases.cuotaDesc),
+     distribucion:pick(o,aliases.distribucion), cuota2:pick(o,aliases.cuota2)
+   })).filter(r=>r.tipo||r.torre||r.inmueble||r.codigo);
+
+   fillSelect($("tipo"),rows.map(r=>r.tipo),"Seleccione tipo de inmueble");
+   $("tipo").disabled=false;
+   $("status").textContent=`Información cargada correctamente. Hoja: ${sheetName}. Registros: ${rows.length}.`;
+   $("registros").textContent="Registros: "+rows.length;
+   filtered=[];
+   $("results").innerHTML='<div class="empty">Seleccione el tipo de inmueble para comenzar.</div>';
+ }catch(err){
+   console.error(err);
+   $("status").innerHTML='<span class="notice">No fue posible cargar automáticamente <strong>Cuota2026.xlsx</strong>. Verifique que el archivo esté en la misma carpeta que index.html y abra la aplicación mediante un servidor web (por ejemplo GitHub Pages).</span>';
+ }
+}
+
+function resetSelect(sel, text){
+ sel.innerHTML="";
+ const o=document.createElement("option"); o.value=""; o.textContent=text; sel.appendChild(o);
+ sel.disabled=true;
+}
+
+$("tipo").addEventListener("change",()=>{
+ const tipo=$("tipo").value;
+ resetSelect($("torre"),"2. Seleccione torre");
+ resetSelect($("inmueble"),"3. Seleccione inmueble");
+ $("buscar").value=""; $("buscar").disabled=true;
+ if(!tipo){
+   $("results").innerHTML='<div class="empty">Seleccione el tipo de inmueble para comenzar.</div>';
+   return;
+ }
+ const base=rows.filter(r=>r.tipo===tipo);
+ fillSelect($("torre"),base.map(r=>r.torre),"Seleccione torre");
+ $("torre").disabled=false;
+ $("results").innerHTML=`<div class="empty">Tipo seleccionado: <strong>${esc(tipo)}</strong>. Ahora seleccione la torre.</div>`;
+});
+
+$("torre").addEventListener("change",()=>{
+ const tipo=$("tipo").value, torre=$("torre").value;
+ resetSelect($("inmueble"),"3. Seleccione inmueble");
+ $("buscar").value="";
+ $("buscar").disabled=!torre;
+ if(!torre){
+   $("results").innerHTML='<div class="empty">Seleccione una torre.</div>'; return;
+ }
+ const base=rows.filter(r=>r.tipo===tipo&&r.torre===torre);
+ fillSelect($("inmueble"),base.map(r=>r.inmueble),"Seleccione inmueble");
+ $("inmueble").disabled=false;
+ $("results").innerHTML=`<div class="empty">Torre <strong>${esc(torre)}</strong> seleccionada. Ahora seleccione el inmueble.</div>`;
+});
+
+$("inmueble").addEventListener("change",()=>{
+ const tipo=$("tipo").value, torre=$("torre").value, inmueble=$("inmueble").value;
+ if(!inmueble){
+   $("results").innerHTML='<div class="empty">Seleccione un inmueble.</div>'; return;
+ }
+ filtered=rows.filter(r=>r.tipo===tipo&&r.torre===torre&&r.inmueble===inmueble);
+ renderResults();
+});
+
+$("buscar").addEventListener("input",()=>{
+ const tipo=$("tipo").value, torre=$("torre").value, q=norm($("buscar").value);
+ if(!q){$("inmueble").value=""; filtered=[]; $("results").innerHTML='<div class="empty">Seleccione el inmueble o use la búsqueda.</div>'; return}
+ filtered=rows.filter(r=>r.tipo===tipo&&r.torre===torre&&norm([r.codigo,r.inmueble].join(" ")).includes(q));
+ renderResults();
+});
+
+cargarExcelAutomaticamente();
+</script>
+</body>
+</html>
