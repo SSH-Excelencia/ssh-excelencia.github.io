@@ -47,7 +47,7 @@ select,input[type=text]{width:100%;padding:11px;border:1px solid var(--border);b
     <div class="status" id="status">Cargando información de inmuebles...</div>
     <div class="summary">
       <span class="badge" id="registros">Registros: 0</span>
-      <span class="badge" id="archivo">Archivo: Cuota2026.xlsx</span>
+      <span class="badge" id="archivo">Archivo: Cuota2026</span>
     </div>
   </section>
 
@@ -135,7 +135,7 @@ function renderDetail(r){
       <button class="secondary" onclick="renderResults()">← Volver a resultados</button>
     </div>
     <h2>${esc(r.tipo||"Inmueble")} ${esc(r.inmueble||"")}</h2>
-    <p><strong>Torre:</strong> ${esc(r.torre||"—")} &nbsp; | &nbsp; <strong>Código:</strong> ${esc(r.codigo||"—")}</p>
+    <p><strong>Torre:</strong> ${esc(r.torre||"—")} &nbsp; | &nbsp; <strong>Inmueble:</strong> ${esc(r.codigo||"—")}</p>
     <div class="main-value"><small>Cuota de Administración 2026</small><strong>${money(r.cuota)}</strong></div>
     <div class="grid">
       <div class="item"><div class="label">Tipo de inmueble</div><div class="value">${esc(r.tipo)}</div></div>
