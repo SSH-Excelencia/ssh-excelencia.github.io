@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CitaSalud | Sistema de Gestión de Citas</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+
+<script>
+    // Redireccionar al index.htm al cancelar
+    function cancelarIngreso() {
+        window.location.href = "index.html";
+    }
+    // Mostrar confirmación al ingresar
+    document.addEventListener("DOMContentLoaded", function () {
+        const formulario = document.querySelector("form");
+        if (formulario) {
+            formulario.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                alert("¡Ingreso confirmado! Bienvenido a la plataforma CITASALUD.");
+            });
+        }
+    });
+</script>
+
+<body class="pagina-login">
+    <main class="contenedor">
+        <!-- ENCABEZADO -->
+        <header class="encabezado">
+            <div class="marca">
+                <span class="marca-icono">
+                    <img src="CitaSalud-Logo.png" alt="Logo CitaSalud">
+                </span>
+                <span>CitaSalud</span>
+            </div>
+        </header>
+        <!-- CONTENIDO PRINCIPAL -->
+        <section class="contenido">
+            <!-- PANEL IZQUIERDO -->
+            <section class="panel-informacion">
+                <span class="etiqueta">
+                    TU SALUD, NUESTRA PRIORIDAD
+                </span>
+                <h1>
+                    Sistema de<br>
+                    Gestión de <span>Citas</span>
+                </h1>
+                <p class="descripcion">
+                    Conecta tu salud, mejora tu bienestar.
+                    Gestiona tus citas médicas y accede a
+                    los servicios de salud de manera fácil,
+                    segura y oportuna.
+                </p>
+                <!-- LOGOTIPO CitaSalud -->
+                <div class="logo">
+                    <div class="logo-grafico">
+                        <img src="CitaSalud-Logo.png"
+                        alt="Logotipo CitaSalud"
+                        class="imagen-logo">
+                    </div>
+                </div>
+            </section>
+            <!-- PANEL DERECHO: LOGIN -->
+            <section class="panel-acceso">
+                <div class="tarjeta-login">
+                    <span class="subtitulo">BIENVENIDO(A)</span>
+                    <h2>Datos de Acceso</h2>
+                    <p class="texto-acceso">
+                        Ingresa tus credenciales para continuar.
+                    </p>
+                    <form id="formLogin">
+                        <div class="campo">
+                            <label for="usuario">Usuario</label>
+                            <input
+                                type="text"
+                                id="usuario"
+                                name="usuario"
+                                placeholder="Ingrese su usuario"
+                                autocomplete="username"
+                                required>
+                        </div>
+                        <div class="campo">
+                            <label for="contrasena">Contraseña</label>
+                            <div class="campo-password">
+                                <input
+                                    type="password"
+                                    id="contrasena"
+                                    name="contrasena"
+                                    placeholder="Ingrese su contraseña"
+                                    autocomplete="current-password"
+                                    required>
+                                <button
+                                    type="button"
+                                    id="mostrarPassword"
+                                    aria-label="Mostrar contraseña">
+                                    ◉
+                                </button>
+                            </div>
+                        </div>
+                        <div class="opciones">
+                            <label class="recordar">
+                                <input type="checkbox" id="recordar">
+                                Recordar usuario
+                            </label>
+                            <a href="#" id="recuperar">
+                                ¿Olvidó su contraseña?
+                            </a>
+                        </div>
+                        <div id="mensaje" class="mensaje"></div>
+                        <div class="botones">
+                            <button type="submit" class="btn-ingresar">
+                                Ingresar <span>→</span>
+                            </button>
+                            <button type="button" class="btn-cancelar" onclick="cancelarIngreso()">
+                                Cancelar
+                            </button>
+                        </div>
+                    </form>
+                    <div class="registro">
+                        ¿No tiene una cuenta?
+                        <a href="#" id="registro">
+                            Regístrese aquí
+                        </a>
+                    </div>
+                    <div class="seguridad">
+                        <span>🔒</span>
+                        Su información está protegida.
+                    </div>
+                </div>
+            </section>
+        </section>
+
+
+        <!-- PIE DE PAGINA -->
+        <footer class="pie-pagina">
+            <div>
+                © 2026 <strong>CitaSalud</strong> |
+                Sistema de Gestión de Citas | Versión académica
+            </div>
+
+            <div>
+                IPS "Tu Salud Primero" |
+                NIT XXX.XXX.XXX-X |
+                Licencia vigente diciembre 2028
+            </div>
+        </footer>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>

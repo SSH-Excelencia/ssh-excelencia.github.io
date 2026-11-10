@@ -1,175 +1,188 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Historia Clínica</title>
-  <link rel="stylesheet" href="css/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="CitaSalud, sistema de gestión de citas y servicios de salud.">
+    <title>CitaSalud | Inicio</title>
+    <link rel="stylesheet" href="estilos.css">
 </head>
-<body>
 
-<!-- HEADER -->
- <header class="header-public">
+<body class="pagina-inicio">
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-contenedor">
+            <a href="index.html" class="marca">
+                <span class="marca-icono">
+                    <img src="CitaSalud-Logo.png" alt="Logo CitaSalud">
+                </span>
+                <span>CitaSalud</span>
+            </a>
+            <nav class="navegacion">
+                <a href="#inicio">Inicio</a>
+                <a href="#nosotros">Acerca del sistema</a>
+                <a href="#contacto">Contacto</a>
+            </nav>
+            <a href="login.html" class="btn-acceso">
+                Ingresar al sistema
+                <span>→</span>
+            </a>
+        </div>
+    </header>
 
-  <div class="header-left">
-      <div class="logo-container">
-        <img src="img/logo.png" alt="Logo" class="logo">
-      </div>
-  </div>
+    <!-- CONTENIDO PRINCIPAL -->
+    <main>
+        <section class="principal" id="inicio">
+            <!-- PANEL IZQUIERDO -->
+            <section class="informacion" id="nosotros">
+                <h1>
+                    Gestionar tu salud
+                    <span>es más fácil.</span>
+                </h1>
+                <div class="separador"></div>
+                <h3>Una plataforma pensada para ti</h3>
+                <div class="lista-beneficios" id="servicios">
+                    <div class="item-beneficio">
+                        <div>
+                            <strong>Gestión de citas</strong>
+                            <p>
+                                Organización y administración
+                                de citas médicas.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="item-beneficio">
+                        <div>
+                            <strong>Atención eficiente</strong>
+                            <p>
+                                Facilita el acceso a los
+                                servicios de salud.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="item-beneficio">
+                        <div>
+                            <strong>Bienestar del usuario</strong>
+                            <p>
+                                Una experiencia sencilla,
+                                organizada y oportuna.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="item-beneficio">
+                        <div>
+                            <strong>Información clínica</strong>
+                            <p>
+                                Consulta de información
+                                conforme a los permisos asignados.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-  <div class="header-center">
-    <h2>Sistema de Control de Citas e Historia Clínica</h2>
-  </div>
+            <!-- PANEL CENTRAL: LOGOTIPO -->
+            <section class="panel-logo">
+                <div class="decoracion decoracion-superior"></div>
+                <div class="logo-contenedor">
+                    <div class="logo-circulo">
+                        <img src="CitaSalud-Logo.png"
+                        alt="Logotipo CitaSalud"
+                        class="imagen-logo">
+                    </div>
+                </div>
+                <div class="tarjeta-secundaria">
+                    <div class="icono-secundario">✓</div>
+                    <div>
+                        <strong>Siempre conectado</strong>
+                        <p>
+                            Accede a las funcionalidades
+                            habilitadas para tu usuario.
+                        </p>
+                    </div>
+                </div>
+                <div class="decoracion decoracion-inferior"></div>
+            </section>
 
-  <div class="header-right">
-    <button class="btn btn-secundario" id="btnLoginTop">Login</button>
-  </div>
+            <!-- PANEL DERECHO: PUBLICIDAD -->
+            <aside class="panel-publicidad">
+                <div class="publicidad-principal">
+                    <div class="publicidad-etiqueta">
+                        INFORMACION DE INTERES
+                    </div>
+                    <div class="ilustracion-publicidad">
+                        <img src="img/publicidad.jpg"
+                        alt="Publicidad de CitaSalud"
+                        class="imagen-publicidad">
+                    </div>
+                    
+                    <h2>
+                        Tu salud merece
+                        <span>una mejor experiencia.</span>
+                    </h2>
+                    <a href="login.html" class="btn-publicidad">
+                        Conoce CitaSalud
+                        <span>→</span>
+                    </a>
+                </div>
+                
+            </aside>
+        </section>
+    </main>
 
-</header>
+    <!-- FOOTER  -->
+    <footer class="footer" id="contacto">
+        <div class="footer-contenido">
+            <!-- INFORMACION DE LA PLATAFORMA -->
+            <div class="footer-columna footer-marca">
+                <div class="footer-logo">
+                    CitaSalud
+                </div>
+                <p>
+                    Sistema de Gestión de Citas,
+                    desarrollado para apoyar los
+                    procesos administrativos y
+                    asistenciales en salud.
+                </p>
+            </div>
+            <!-- ENLACES -->
+            <div class="footer-columna">
+                <h3>Enlaces de interés</h3>
+                <a href="index.html">Inicio</a>
+                <a href="#nosotros">Acerca del sistema</a>
+                <a href="login.html">Acceso al sistema</a>
+            </div>
 
+            <!-- INFORMACION INSTITUCIONAL -->
+            <div class="footer-columna">
+                <h3>Información institucional</h3>
+                <p>IPS "Tu Salud Primero"</p>
+                <p>NIT: XXX.XXX.XXX-X</p>
+                <p>Licencia vigente: diciembre 2028</p>
+            </div>
 
-<!-- CONTENIDO -->
-<div class="container">
+            <!-- CONTACTO -->
+            <div class="footer-columna">
+                <h3>Contacto</h3>
+                <p>Correo: contacto@citasalud.com.co</p>
+                <p>Atención al usuario</p>
+                <p>Soporte de plataforma</p>
+            </div>
+        </div>
 
-  <div class="col col-left">20%</div>
-
-  <div class="col col-center">
-    <h1>Bienvenido</h1>
-    <p>Sistema de gestión clínica</p>
-  </div>
-
-  <div class="col col-right">20%</div>
-
-</div> 
-
-<!-- FOOTER -->
-<footer class="footer">
-    <div id="footer-col-1">👤 Usuario</div>
-    <div id="footer-col-2">© Sistema de Gestión Clínica</div>
-    <div id="footer-col-3">🔐 ROL</div>
-
-</footer>
-
-<!-- 🔴 LOGIN OVERLAY -->
-<div id="loginOverlay" class="overlay hidden">
-  <div class="login-box">
-    <h3>Iniciar Sesión</h3>
-
-    <input id="usuario" placeholder="Usuario">
-    <div class="password-container">
-      <input id="password" type="password" placeholder="Contraseña">
-      <span id="togglePassword" class="toggle-password">👁</span>
-    </div>
-
-    <select id="rol">
-      <option value="Usuario">Usuario</option>
-      <option value="Operador">Operador</option>
-      <option value="Administrador">Administrador</option>
-    </select>
-
-    <!-- BOTONES EN COLUMNA -->
-    <div class="login-buttons">
-      <button id="btnLogin" class="btn btn-primario">Ingresar</button>
-      <button id="btnCancelar" class="btn btn-secundario">Cancelar</button>
-    </div>
-
-    <!-- LINKS -->
-    <div class="login-links">
-      <a href="#" id="linkRegistro">Registrarse</a>
-      <a href="#">Recuperar credenciales</a>
-    </div>
-
-  </div>
-</div>
-
-<!-- OVERLAY APP -->
-<div id="appOverlay" class="overlay app-overlay hidden">
-
-  <div id="appModal" class="app-modal">
-
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar"></aside>
-
-    <!-- MAIN -->
-    <div class="main">
-      <header class="header-app">
-        <button class="btn btn-primario" id="btnMenu">☰</button>
-        <h3>Gestión Clinica - Pagina Principal</h3>
-        <button class="btn btn-secundario" id="logout">Salir</button>
-        
-      </header>
-
-      <div id="contenido"></div>
-    </div>
-
-  </div>
-
-</div>
-
-<!-- modal de registro-->
-<div id="registroOverlay" class="overlay hidden">
-
-  <div class="modal-registro">
-
-    <!-- 🔷 FILA 1: TÍTULO -->
-    <div class="fila titulo">
-      <h3>Registro de Usuario</h3>
-    </div>
-
-    <!-- 🔷 FILA 2: FORMULARIO (2 COLUMNAS) -->
-    <div class="fila formulario">
-
-      <!-- COLUMNA IZQUIERDA -->
-      <div class="col-form">
-          <input class="input" id="NUsuario" placeholder="Nombre Usuario">
-
-        <select id="Tdoc">
-          <option value="">Seleccione...</option>
-          <option value="CC">Cedula Ciudadania</option>
-          <option value="TI">Tarjeta Identidad</option>
-          <option value="CE">Cedula Extrangeria</option>
-          <option value="REG">Registro Civil</option>
-          <option value="PAS">Pasaporte</option>
-        </select>
-
-        <input class="input" type="number" id="NDocumento" placeholder="Documento">
-
-        <input class="input" id="direccion" placeholder="Dirección">
-        <input class="input" id="Ciudad" placeholder="Ciudad residencia">
-      </div>
-
-      <!-- COLUMNA DERECHA -->
-      <div class="col-form">
-        <input id="regEmail" type="email" placeholder="Correo">
-
-        <input id="regPassword" type="password" placeholder="Contraseña">
-
-        <input id="regPassword2" type="password" placeholder="Confirme Contraseña">
-
-        <input class="input" id="contacto" placeholder="Número Contacto">
-
-        <input class="input" type="date" id="FNacimiento">
-      </div>
-
-    </div>
-
-    <!-- 🔷 FILA 3: NOTA + BOTONES -->
-    <div style="text-align: center;"">
-
-      <p style="text-align: center;">
-        NOTA: El usuario de acceso corresponde al correo electrónico registrado
-      </p>
-
-      <div class="login-buttons">
-        <button id="btnGuardarUsuario" class="btn btn-primario">Guardar</button>
-        <button id="btnCerrarRegistro" class="btn btn-secundario">Cancelar</button>
-      </div>
-
-    </div>
-
-  </div>
-</div>
-
-
-<script type="module" src="js/app.js"></script>
+        <!-- DERECHOS DE AUTOR -->
+        <div class="footer-inferior">
+            <p>
+                © 2026 CitaSalud.
+                Todos los derechos reservados.
+            </p>
+            <p>
+                Sistema de Gestión de Citas |
+                Versión académica
+            </p>
+        </div>
+    </footer>
 </body>
 </html>
