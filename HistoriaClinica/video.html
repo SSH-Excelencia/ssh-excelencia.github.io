@@ -1,0 +1,49 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video informativo | CITASALUD</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body class="pagina-video">
+
+    <!-- ENCABEZADO -->
+    <header class="video-header">
+        <div class="video-header-contenido">
+            <div class="video-marca">
+                <img src="CitaSalud-Logo.png" alt="Logo CITASALUD">
+                <span>CITASALUD</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENIDO: REPRODUCTOR -->
+    <main class="video-principal">
+        <section class="video-contenedor">
+            <h1>Bienvenido a CITASALUD</h1>
+            <p>Te invitamos a conocer nuestra plataforma y sus principales funcionalidades.</p>
+
+            <div class="video-reproductor">
+                <video controls autoplay>
+                    <source src="videos/video-informativo.mp4" type="video/mp4">
+                    Tu navegador no permite reproducir este video.
+                </video>
+            </div>
+
+            <button type="button" class="video-btn-cerrar"
+                    onclick="window.location.href='index.html'">
+                Cerrar
+            </button>
+        </section>
+    </main>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="video-footer">
+        <p>© 2026 CITASALUD. Todos los derechos reservados.</p>
+        <p>Plataforma de gestión de servicios de salud.</p>
+    </footer>
+
+</body>
+</html>
